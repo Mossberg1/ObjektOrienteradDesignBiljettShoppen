@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: ticketshop_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: titcketshop_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+
+# Connection string
+# Host=localhost;Port=5432;Username=admin;Password=admin;Database=ticketshop_db
