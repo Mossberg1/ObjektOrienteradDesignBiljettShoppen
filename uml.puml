@@ -1,0 +1,91 @@
+@startuml
+
+enum SeatType {
+    Chair
+    Bench
+}
+
+enum PaymentMethod {
+    Invoice
+    CreditCard
+    Swish
+}
+
+class Arena {
+    + Id: int
+    + Address: string
+    + Name: string
+    + NumberOfSeats: int
+    + NumberOfLoges: int
+    + Indoors: bool
+}
+
+class Entrance {
+    + Id: int
+    + Name: string
+    + VipEntrance: bool
+}
+
+class Event {
+    + Id: int
+    + Name: string
+    + Date: DateOnly
+    + StartTime: TimeOnly
+    + EndTime: TimeOnly
+    + ReleaseTicketsDate: DateTime
+    + NumberOfSeatsToSell: int
+    + NumberOfLogesToSell: int
+    + Price: decimal
+    + Cost: decimal
+    + CalculateEventLength(): TimeSpan
+    + CalculateEarnings(): decimal
+}
+
+class Ticket {
+    + Id: int
+    + Price: decimal
+    + FirstName: string
+    + LastName: string
+}
+
+class Seat {
+    + Id: int
+    + SeatNumber: string
+    + Price: decimal
+    + Type: SeatType
+    + TypeToString(): string 
+}
+
+class Loge { 
+    + Id: int
+    + Name: string
+    + LogeNumber: string
+    + NumberOfPeople: int
+    + Price: decimal
+}
+
+class Booking {
+    + Id: int
+    + TotalPrice: decimal
+    + IsPaid: bool
+}
+
+class Payment {
+    + Id: int
+    + Method: PaymentMethod
+    + PaymentMethodToString(): string
+}
+
+Arena "1" *-- "0..*" Event
+Arena "1" *-- "1..*" Entrance
+Arena "1" *-- "1..*" Seat
+Ticket "1..*" *-- "1"  Event
+Seat "0..1" o-- "0..1" Ticket
+Seat "0..*" o-- "1" Entrance
+Ticket "1..*" *-- "0..1" Booking
+Booking "1" *-- "0..1" Payment
+Loge "0..1" o-- "0..1" Ticket
+Loge "0..*" o-- "1" Entrance
+Arena "1" *-- "0..1" Loge
+
+@enduml
