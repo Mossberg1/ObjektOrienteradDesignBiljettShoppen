@@ -12,9 +12,7 @@ public class Arena : BaseEntity
     
     public List<Entrance> EntrancesNavigation { get; set; } = new List<Entrance>();
     
-    public List<Seat> SeatsNavigation { get; set; } = new List<Seat>();
-    
-    public List<Loge> LogesNavigation { get; set; } = new List<Loge>();
+    public List<BookableSpace> BookableSpacesNavigation { get; set; } = new List<BookableSpace>();
     
     public List<Event> EventsNavigation { get; set; } = new List<Event>();
 }

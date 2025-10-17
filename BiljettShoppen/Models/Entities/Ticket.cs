@@ -16,19 +16,14 @@ public class Ticket : BaseEntity
     public Booking? BookingNavigation { get; set; }
     
     public int EventId { get; set; }
-    
+     
     [ForeignKey(nameof(EventId))]
     public Event EventNavigation { get; set; }
     
-    public int? SeatId { get; set; }
+    public int BookableSpaceId { get; set; }
     
-    [ForeignKey(nameof(SeatId))]
-    public Seat? SeatNavigation { get; set; }
-    
-    public int? LogeId { get; set; }
-    
-    [ForeignKey(nameof(LogeId))]
-    public Loge? LogeNavigation { get; set; }
+    [ForeignKey(nameof(BookableSpaceId))]
+    public BookableSpace BookableSpaceNavigation { get; set; }
 
     public bool IsBooked() => BookingId.HasValue;
 }

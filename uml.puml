@@ -11,29 +11,52 @@ enum PaymentMethod {
     Swish
 }
 
-class Arena {
+enum EventType {
+    Concert
+    Sports
+    Theater
+    ComedyShow
+}
+
+abstract class BaseEntity {
     + Id: int
+    + CreatedAt: DateTime
+    + UpdatedAt: DateTime
+}
+
+note right of BaseEntity
+  Klasser som är markerade med <<BaseEntity>>
+  ärver från BaseEntity för att undvika
+  ett spindelnät av pilar.
+end note
+
+abstract class BookableSpace <<BaseEntity>> {
+    + Price: decimal
+    + ArenaId: int
+    + ArenaNavigation: Arena
+    + EntranceId: int
+    + EntranceNavigation: Entrance
+}
+
+class Arena <<BaseEntity>> {
     + Address: string
     + Name: string
     + NumberOfSeats: int
     + NumberOfLoges: int
     + Indoors: bool
-    + EntranceNavigation: List<Entrance> 
-    + SeatNavigation: List<Seat> 
-    + LogeNavigation: List<Loge> 
-    + EventNavigation: List<Event>
+    + EntrancesNavigation: List<Entrance> 
+    + BookableSpacesNavigation: List<BookableSpace>
+    + EventsNavigation: List<Event>
 }
 
-class Entrance {
-    + Id: int
+class Entrance <<BaseEntity>> {
     + Name: string
     + VipEntrance: bool
     + ArenaId: int 
     + ArenaNavigation: Arena 
 }
 
-class Event {
-    + Id: int
+class Event <<BaseEntity>> {
     + Name: string
     + Date: DateOnly
     + StartTime: TimeOnly
@@ -43,14 +66,17 @@ class Event {
     + NumberOfLogesToSell: int
     + Price: decimal
     + Cost: decimal
+    + Type: EventType
+    + IsFamilyFriendly: bool 
     + TicketsNavigation: List<Ticket> 
     + ArenaId: int 
     + ArenaNavigation: Arena
     + CalculateEventLength(): TimeSpan
     + CalculateEarnings(): decimal
+    + TypeToString(): string
 }
 
-class Ticket {
+class Ticket <<BaseEntity>> {
     + Id: int
     + Price: decimal
     + FirstName: string
@@ -60,60 +86,45 @@ class Ticket {
     + EventId: int 
     + EventNavigation: Event
     + IsBooked(): bool
-    + SeatId: int? 
-    + SeatNavigation: Seat? 
-    + LogeId: int? 
-    + LogeNavigation: Loge? 
 }
 
-class Seat {
-    + Id: int
-    + SeatNumber: string
-    + Price: decimal
+class Seat <<BaseEntity>>{
+    + RowNumber: int
+    + ColNumber: int
     + Type: SeatType
     + TypeToString(): string 
-    + TicketNavigation: Ticket? 
-    + ArenaId: int 
-    + ArenaNavigation: Arena
 }
 
-class Loge { 
-    + Id: int
+class Loge <<BaseEntity>> { 
     + Name: string
     + LogeNumber: string
     + NumberOfPeople: int
-    + Price: decimal
-    + TicketNavigation: Ticket? 
-    + ArenaId: int 
-    +ArenaNavigation: Arena
 }
 
-class Booking {
-    + Id: int
+class Booking <<BaseEntity>> {
     + TotalPrice: decimal
     + IsPaid: bool
-    + PlaymentId: int? 
+    + PaymentId: int? 
     + PaymentNavigation: Payment? 
     + TicketsNavigation: List<Ticket>
 }
 
-class Payment {
-    + Id: int
+class Payment <<BaseEntity>> {
     + Method: PaymentMethod
     + BookingNavigation: Booking 
     + PaymentMethodToString(): string
 }
 
 Arena "1" *-- "0..*" Event
+Arena *-- BookableSpace
+BookableSpace *-- Entrance
 Arena "1" *-- "1..*" Entrance
-Arena "1" *-- "1..*" Seat
-Ticket "1..*" *-- "1"  Event
-Seat "0..1" o-- "0..1" Ticket
-Seat "0..*" o-- "1" Entrance
 Ticket "1..*" *-- "0..1" Booking
 Booking "1" *-- "0..1" Payment
-Loge "0..1" o-- "0..1" Ticket
-Loge "0..*" o-- "1" Entrance
-Arena "1" *-- "0..1" Loge
+Ticket "1..*" *-- "1"  Event
+
+BookableSpace <|-- Seat
+BookableSpace <|-- Loge
+Ticket *-- BookableSpace
 
 @enduml
