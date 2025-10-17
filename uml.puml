@@ -18,12 +18,18 @@ class Arena {
     + NumberOfSeats: int
     + NumberOfLoges: int
     + Indoors: bool
+    + EntranceNavigation: List<Entrance> 
+    + SeatNavigation: List<Seat> 
+    + LogeNavigation: List<Loge> 
+    + EventNavigation: List<Event>
 }
 
 class Entrance {
     + Id: int
     + Name: string
     + VipEntrance: bool
+    + ArenaId: int 
+    + ArenaNavigation: Arena 
 }
 
 class Event {
@@ -37,6 +43,9 @@ class Event {
     + NumberOfLogesToSell: int
     + Price: decimal
     + Cost: decimal
+    + TicketsNavigation: List<Ticket> 
+    + ArenaId: int 
+    + ArenaNavigation: Arena
     + CalculateEventLength(): TimeSpan
     + CalculateEarnings(): decimal
 }
@@ -46,6 +55,15 @@ class Ticket {
     + Price: decimal
     + FirstName: string
     + LastName: string
+    + BookingId: int? 
+    + BookingNavigation: Booking? 
+    + EventId: int 
+    + EventNavigation: Event
+    + IsBooked(): bool
+    + SeatId: int? 
+    + SeatNavigation: Seat? 
+    + LogeId: int? 
+    + LogeNavigation: Loge? 
 }
 
 class Seat {
@@ -54,6 +72,9 @@ class Seat {
     + Price: decimal
     + Type: SeatType
     + TypeToString(): string 
+    + TicketNavigation: Ticket? 
+    + ArenaId: int 
+    + ArenaNavigation: Arena
 }
 
 class Loge { 
@@ -62,17 +83,24 @@ class Loge {
     + LogeNumber: string
     + NumberOfPeople: int
     + Price: decimal
+    + TicketNavigation: Ticket? 
+    + ArenaId: int 
+    +ArenaNavigation: Arena
 }
 
 class Booking {
     + Id: int
     + TotalPrice: decimal
     + IsPaid: bool
+    + PlaymentId: int? 
+    + PaymentNavigation: Payment? 
+    + TicketsNavigation: List<Ticket>
 }
 
 class Payment {
     + Id: int
     + Method: PaymentMethod
+    + BookingNavigation: Booking 
     + PaymentMethodToString(): string
 }
 
