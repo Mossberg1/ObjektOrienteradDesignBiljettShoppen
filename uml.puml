@@ -36,6 +36,7 @@ abstract class BookableSpace <<BaseEntity>> {
     + ArenaNavigation: Arena
     + EntranceId: int
     + EntranceNavigation: Entrance
+    + TicketsNavigation: List<Ticket>
 }
 
 class Arena <<BaseEntity>> {
@@ -104,13 +105,13 @@ class Loge <<BaseEntity>> {
 class Booking <<BaseEntity>> {
     + TotalPrice: decimal
     + IsPaid: bool
-    + PaymentId: int? 
     + PaymentNavigation: Payment? 
     + TicketsNavigation: List<Ticket>
 }
 
 class Payment <<BaseEntity>> {
     + Method: PaymentMethod
+    + BookingId: int
     + BookingNavigation: Booking 
     + PaymentMethodToString(): string
 }

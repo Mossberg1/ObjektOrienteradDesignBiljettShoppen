@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Models.Entities.Base;
 using Models.Enums;
 
@@ -7,6 +8,9 @@ public class Payment : BaseEntity
 {
     public PaymentMethod Method { get; set; }
     
+    public int BookingId { get; set; }
+    
+    [ForeignKey(nameof(BookingId))]
     public Booking BookingNavigation { get; set; }
 
     public string PaymentMethodToString()

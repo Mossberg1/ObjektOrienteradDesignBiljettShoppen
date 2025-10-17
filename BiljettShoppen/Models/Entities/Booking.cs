@@ -8,9 +8,6 @@ public class Booking : BaseEntity
     public decimal TotalPrice { get; set; }
     public bool IsPaid { get; set; }
     
-    public int? PaymentId { get; set; }
-    
-    [ForeignKey(nameof(PaymentId))]
     public Payment? PaymentNavigation { get; set; }
 
     public List<Ticket> TicketsNavigation { get; set; } = new List<Ticket>();
