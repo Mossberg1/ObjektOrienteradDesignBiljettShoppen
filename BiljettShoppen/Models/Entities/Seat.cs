@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Models.Entities.Base;
 using Models.Enums;
 
@@ -9,6 +10,13 @@ public class Seat : BaseEntity
     public int Number { get; set; }
     public decimal Price { get; set; }
     public SeatType Type { get; set; }
+    
+    public Ticket? TicketNavigation { get; set; }
+    
+    public int ArenaId { get; set; }
+    
+    [ForeignKey(nameof(ArenaId))]
+    public Arena ArenaNavigation { get; set; }
 
     public string TypeToString()
     {

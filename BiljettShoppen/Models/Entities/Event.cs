@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,13 @@ namespace Models.Entities
         public decimal Price { get; set; }
         public decimal Cost { get; set; }
 
-
+        public List<Ticket> TicketsNavigation { get; set; } = new List<Ticket>();
+        
+        public int ArenaId { get; set; }
+        
+        [ForeignKey(nameof(ArenaId))]
+        public Arena ArenaNavigation { get; set; }
+        
         public TimeSpan CalculateEventLength()
         {
             return EndTime.ToTimeSpan() - StartTime.ToTimeSpan();
