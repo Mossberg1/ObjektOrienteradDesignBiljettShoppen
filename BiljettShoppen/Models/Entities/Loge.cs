@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Models.Entities.Base;
 
 namespace Models.Entities
 {
-    internal class Loge
+    public class Loge : BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string LogeNumber { get; set; }
         public int NumberOfPeople { get; set; }
