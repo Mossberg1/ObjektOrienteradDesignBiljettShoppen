@@ -5,7 +5,7 @@ namespace Models.Entities;
 
 public class Booking : BaseEntity
 {
-    public decimal Price { get; set; }
+    public decimal TotalPrice { get; set; }
     public bool IsPaid { get; set; }
     
     public int? PaymentId { get; set; }

@@ -4,10 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Models.Entities.Base;
+using Models.Enums;
 
 namespace Models.Entities
 {
-    public class Event : Base.BaseEntity
+    public class Event : BaseEntity
     {
         public string Name { get; set; } = string.Empty;
         public DateOnly Date { get; set; }
@@ -18,6 +20,8 @@ namespace Models.Entities
         public int NumberOfLogesToSell { get; set; }
         public decimal Price { get; set; }
         public decimal Cost { get; set; }
+        public EventType Type { get; set; } 
+        public bool IsFamilyFriendly { get; set; }
 
         public List<Ticket> TicketsNavigation { get; set; } = new List<Ticket>();
         
@@ -35,5 +39,7 @@ namespace Models.Entities
         {
            return Price - Cost;
         }
+
+        public string TypeToString() => Type.ToString();
     }
 }
