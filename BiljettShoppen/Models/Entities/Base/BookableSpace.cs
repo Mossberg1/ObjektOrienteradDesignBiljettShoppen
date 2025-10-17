@@ -15,4 +15,6 @@ public abstract class BookableSpace : BaseEntity
     
     [ForeignKey(nameof(EntranceId))]
     public Entrance EntranceNavigation { get; set; }
+    
+    public List<Ticket> TicketsNavigation { get; set; } = [];
 }
