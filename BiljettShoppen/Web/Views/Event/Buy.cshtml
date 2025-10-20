@@ -1,0 +1,167 @@
+@model Web.Models.BuyTicketViewModel
+
+@{
+    ViewData["Title"] = "Köp Biljett";
+}
+
+<style>
+    .seat-map-container {
+        display: grid;
+        grid-template-columns: repeat(@Model.MaxSeatNumber, 1fr);
+        gap: 5px;
+        margin-bottom: 20px;
+        max-width: 100%;
+        overflow-x: auto;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    .seat {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        border: 1px solid #ccc;
+        user-select: none;
+    }
+    .seat.chair { background-color: #a7d7f9; } /* Blue for Chair */
+    .seat.bench { background-color: #f9d4a7; } /* Orange for Bench */
+    .seat.selected { background-color: #28a745; color: white; border-color: #208b38; } /* Green for Selected */
+    .seat.booked { background-color: #6c757d; cursor: not-allowed; color: white; } /* Gray for Booked */
+    .screen {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: #343a40;
+        color: white;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container mt-4">
+    <h1>@Model.Event.Name</h1>
+    <p class="lead">@Model.Event.ArenaNavigation.Name - @Model.Event.Date.ToString("d MMMM yyyy"), kl. @Model.Event.StartTime.ToString("HH:mm")</p>
+
+    <div class="row">
+        <!-- Left side: Seat Map -->
+        <div class="col-lg-8">
+            <h4>Välj platser</h4>
+            <div class="screen">SCEN</div>
+            <div id="seat-map" class="seat-map-container">
+                @foreach (var seat in Model.Seats.Cast<Models.Entities.Seat>())
+                {
+                    var seatClass = seat.Type.ToString().ToLower();
+                    var statusClass = seat.IsBooked ? "booked" : "";
+                    <div class="seat @seatClass @statusClass" 
+                         data-seat-id="@seat.Id" 
+                         data-seat-info="Rad @seat.RowNumber, Plats @seat.ColNumber"
+                         data-price="@Model.Event.Price">
+                        @seat.ColNumber
+                    </div>
+                }
+            </div>
+            <div class="d-flex justify-content-start align-items-center mt-3">
+                <div class="d-flex align-items-center me-3"><div class="seat chair me-2"></div> Stol</div>
+                <div class="d-flex align-items-center me-3"><div class="seat bench me-2"></div> Bänk</div>
+                <div class="d-flex align-items-center me-3"><div class="seat selected me-2"></div> Vald</div>
+                <div class="d-flex align-items-center"><div class="seat booked me-2"></div> Bokad</div>
+            </div>
+        </div>
+
+        <!-- Right side: Summary and Purchase -->
+        <div class="col-lg-4">
+            <h4>Din beställning</h4>
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="ConfirmPurchase" method="post">
+                        <input type="hidden" name="eventId" value="@Model.Event.Id" />
+                        <div id="selected-seats-list">
+                            <p>Inga platser valda.</p>
+                        </div>
+                        <hr />
+                        <h5 class="d-flex justify-content-between">
+                            <span>Totalt:</span>
+                            <span id="total-price">0 kr</span>
+                        </h5>
+                        <button id="purchase-button" type="submit" class="btn btn-primary w-100 mt-3" disabled>Köp biljetter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const seatMap = document.getElementById('seat-map');
+        const selectedSeatsList = document.getElementById('selected-seats-list');
+        const totalPriceEl = document.getElementById('total-price');
+        const purchaseButton = document.getElementById('purchase-button');
+        
+        const selectedSeats = new Map();
+
+        seatMap.addEventListener('click', function (e) {
+            const seat = e.target.closest('.seat');
+            if (seat && !seat.classList.contains('booked')) {
+                const seatId = parseInt(seat.dataset.seatId, 10);
+                
+                // Toggle selection
+                seat.classList.toggle('selected');
+
+                if (seat.classList.contains('selected')) {
+                    // Add to selection
+                    selectedSeats.set(seatId, {
+                        info: seat.dataset.seatInfo,
+                        price: parseFloat(seat.dataset.price)
+                    });
+                } else {
+                    // Remove from selection
+                    selectedSeats.delete(seatId);
+                }
+                
+                updateSummary();
+            }
+        });
+
+        function updateSummary() {
+            selectedSeatsList.innerHTML = ''; // Clear current list
+            let totalPrice = 0;
+
+            if (selectedSeats.size === 0) {
+                selectedSeatsList.innerHTML = '<p>Inga platser valda.</p>';
+                purchaseButton.disabled = true;
+            } else {
+                const ul = document.createElement('ul');
+                ul.className = 'list-unstyled';
+
+                selectedSeats.forEach((seatData, seatId) => {
+                    const li = document.createElement('li');
+                    li.className = 'd-flex justify-content-between';
+                    li.innerHTML = `<span>${seatData.info}</span> <span>${seatData.price} kr</span>`;
+                    ul.appendChild(li);
+
+                    // Add a hidden input for each selected seat ID for form submission
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'selectedSeats';
+                    input.value = seatId;
+                    selectedSeatsList.appendChild(input);
+
+                    totalPrice += seatData.price;
+                });
+                selectedSeatsList.prepend(ul);
+                purchaseButton.disabled = false;
+            }
+
+            totalPriceEl.textContent = `${totalPrice} kr`;
+        }
+    });
+</script>
+}

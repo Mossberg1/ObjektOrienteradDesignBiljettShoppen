@@ -1,12 +1,14 @@
 using System.Reflection;
 using DataAccess.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Entities.Base;
 
 namespace DataAccess;
 
-internal class ApplicationDbContext : DbContext, IApplicationDbContext
+public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IApplicationDbContext
 {
     // Registrera databas tabeller.
     public DbSet<Arena> Arenas { get; set; }
