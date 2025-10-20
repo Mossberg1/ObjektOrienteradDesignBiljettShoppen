@@ -45,9 +45,19 @@ class Arena <<BaseEntity>> {
     + NumberOfSeats: int
     + NumberOfLoges: int
     + Indoors: bool
+    + StandardSeatConfigurationId: int
+    + StandardSeatConfigurationNavigation: Seatconfiguration
     + EntrancesNavigation: List<Entrance> 
-    + BookableSpacesNavigation: List<BookableSpace>
+    + SaetConfigurationsNavigation: List<SeatConfiguration>
     + EventsNavigation: List<Event>
+}
+
+class SeatConfiguration <<BaseEntity>> {
+    + NumberOfRows: int
+    + NumberOfCols: int
+    + ArenaId: int
+    + ArenaNavigation: Arena
+    + SeatsNavigation: List<Seat>
 }
 
 class Entrance <<BaseEntity>> {
@@ -72,6 +82,8 @@ class Event <<BaseEntity>> {
     + TicketsNavigation: List<Ticket> 
     + ArenaId: int 
     + ArenaNavigation: Arena
+    + SeatConfigurationId: int
+    + SeatConfigurationNavigation: SeatConfiguration
     + CalculateEventLength(): TimeSpan
     + CalculateEarnings(): decimal
     + TypeToString(): string
@@ -86,6 +98,8 @@ class Ticket <<BaseEntity>> {
     + BookingNavigation: Booking? 
     + EventId: int 
     + EventNavigation: Event
+    + BookableSpace: int
+    + BooakableSpaceNavigation: BookableSpace
     + IsBooked(): bool
 }
 
@@ -127,5 +141,9 @@ Ticket "1..*" *-- "1"  Event
 BookableSpace <|-- Seat
 BookableSpace <|-- Loge
 Ticket *-- BookableSpace
+
+SeatConfiguration "1" *-- "1..*" Seat
+Arena "1" *-- "0..*" SeatConfiguration
+Event "0..1" *-- "1" SeatConfiguration
 
 @enduml
