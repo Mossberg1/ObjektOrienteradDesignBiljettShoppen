@@ -32,6 +32,7 @@ end note
 
 abstract class BookableSpace <<BaseEntity>> {
     + Price: decimal
+    + IsBooked: bool
     + EntranceId: int
     + EntranceNavigation: Entrance
     + TicketsNavigation: List<Ticket>
