@@ -17,6 +17,7 @@ internal class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Loge> Loges { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Seat> Seats { get; set; }
+    public DbSet<SeatLayout> SeatLayouts { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     
     

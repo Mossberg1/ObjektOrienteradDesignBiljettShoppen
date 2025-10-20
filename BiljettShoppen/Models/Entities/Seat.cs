@@ -9,6 +9,11 @@ public class Seat : BookableSpace
     public int RowNumber { get; set; }
     public int ColNumber { get; set; }
     public SeatType Type { get; set; }
+    
+    public int SeatLayoutId { get; set; }
+    
+    [ForeignKey(nameof(SeatLayoutId))]
+    public SeatLayout SeatLayoutNavigation { get; set; }
 
     public string TypeToString()
     {

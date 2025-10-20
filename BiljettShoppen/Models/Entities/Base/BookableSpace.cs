@@ -6,11 +6,6 @@ public abstract class BookableSpace : BaseEntity
 {
     public decimal Price { get; set; }
     
-    public int ArenaId { get; set; }
-    
-    [ForeignKey(nameof(ArenaId))]
-    public Arena ArenaNavigation { get; set; }
-    
     public int EntranceId { get; set; }
     
     [ForeignKey(nameof(EntranceId))]

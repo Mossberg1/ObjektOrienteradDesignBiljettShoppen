@@ -32,8 +32,6 @@ end note
 
 abstract class BookableSpace <<BaseEntity>> {
     + Price: decimal
-    + ArenaId: int
-    + ArenaNavigation: Arena
     + EntranceId: int
     + EntranceNavigation: Entrance
     + TicketsNavigation: List<Ticket>
@@ -45,19 +43,20 @@ class Arena <<BaseEntity>> {
     + NumberOfSeats: int
     + NumberOfLoges: int
     + Indoors: bool
-    + StandardSeatConfigurationId: int
-    + StandardSeatConfigurationNavigation: Seatconfiguration
+    + StandardSeatLayoutId: int
+    + StandardSeatLayoutNavigation: SeatLayout
     + EntrancesNavigation: List<Entrance> 
-    + SaetConfigurationsNavigation: List<SeatConfiguration>
+    + SeatLayoutsNavigatyion: List<SeatLayout>
     + EventsNavigation: List<Event>
 }
 
-class SeatConfiguration <<BaseEntity>> {
+class SeatLayout <<BaseEntity>> {
     + NumberOfRows: int
     + NumberOfCols: int
     + ArenaId: int
     + ArenaNavigation: Arena
     + SeatsNavigation: List<Seat>
+    + EventsNavigation: List<Event>
 }
 
 class Entrance <<BaseEntity>> {
@@ -82,8 +81,8 @@ class Event <<BaseEntity>> {
     + TicketsNavigation: List<Ticket> 
     + ArenaId: int 
     + ArenaNavigation: Arena
-    + SeatConfigurationId: int
-    + SeatConfigurationNavigation: SeatConfiguration
+    + SeatLayoutId: int
+    + SeatLayoutNavigation: SeatLayout
     + CalculateEventLength(): TimeSpan
     + CalculateEarnings(): decimal
     + TypeToString(): string
@@ -107,6 +106,8 @@ class Seat <<BaseEntity>>{
     + RowNumber: int
     + ColNumber: int
     + Type: SeatType
+    + SeatLayoutId: int
+    + SeatLayoutNavigation: SeatLayout
     + TypeToString(): string 
 }
 
@@ -131,7 +132,6 @@ class Payment <<BaseEntity>> {
 }
 
 Arena "1" *-- "0..*" Event
-Arena *-- BookableSpace
 BookableSpace *-- Entrance
 Arena "1" *-- "1..*" Entrance
 Ticket "1..*" *-- "0..1" Booking
@@ -142,8 +142,8 @@ BookableSpace <|-- Seat
 BookableSpace <|-- Loge
 Ticket *-- BookableSpace
 
-SeatConfiguration "1" *-- "1..*" Seat
-Arena "1" *-- "0..*" SeatConfiguration
-Event "0..1" *-- "1" SeatConfiguration
+SeatLayout "1" *-- "1..*" Seat
+Arena "1" *-- "0..*" SeatLayout
+Event "0..1" *-- "1" SeatLayout
 
 @enduml

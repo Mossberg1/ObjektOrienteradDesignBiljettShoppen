@@ -13,7 +13,7 @@ internal sealed class ArenaConfiguration : IEntityTypeConfiguration<Arena>
             .HasForeignKey(e => e.ArenaId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(e => e.BookableSpacesNavigation)
+        builder.HasMany(e => e.SeatLayoutsNavigation)
             .WithOne(bs => bs.ArenaNavigation)
             .HasForeignKey(bs => bs.ArenaId)
             .OnDelete(DeleteBehavior.Cascade);
