@@ -1,0 +1,1 @@
+MeditR: https://dev.to/adrianbailador/implementing-cqrs-with-mediatr-in-net-8-a-complete-guide-1kof
