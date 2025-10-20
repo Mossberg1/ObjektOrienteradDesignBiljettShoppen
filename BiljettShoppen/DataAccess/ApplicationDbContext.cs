@@ -18,7 +18,8 @@ internal class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Seat> Seats { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
-
+    
+    
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
