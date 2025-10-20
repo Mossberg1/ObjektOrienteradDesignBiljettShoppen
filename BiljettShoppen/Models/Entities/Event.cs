@@ -30,6 +30,11 @@ namespace Models.Entities
         [ForeignKey(nameof(ArenaId))]
         public Arena ArenaNavigation { get; set; }
         
+        public int SeatLayoutId { get; set; }
+        
+        [ForeignKey(nameof(SeatLayoutId))]
+        public SeatLayout SeatLayoutNavigation { get; set; }  
+        
         public TimeSpan CalculateEventLength()
         {
             return EndTime.ToTimeSpan() - StartTime.ToTimeSpan();

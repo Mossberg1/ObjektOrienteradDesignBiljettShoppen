@@ -2,6 +2,7 @@ using Models.Entities.Base;
 
 namespace Models.Entities;
 
+// TODO: Lägg till standard platskonfiguration.
 public class Arena : BaseEntity
 {
     public string Address { get; set; }
@@ -12,7 +13,7 @@ public class Arena : BaseEntity
     
     public List<Entrance> EntrancesNavigation { get; set; } = new List<Entrance>();
     
-    public List<BookableSpace> BookableSpacesNavigation { get; set; } = new List<BookableSpace>();
+    public List<SeatLayout> SeatLayoutsNavigation { get; set; } = [];
     
     public List<Event> EventsNavigation { get; set; } = new List<Event>();
 }
