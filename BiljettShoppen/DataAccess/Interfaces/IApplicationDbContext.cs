@@ -14,6 +14,7 @@ public interface IApplicationDbContext
     DbSet<Loge> Loges { get; set; }
     DbSet<Payment> Payments { get; set; }
     DbSet<Seat> Seats { get; set; }
+    DbSet<SeatLayout> SeatLayouts { get; set; }
     DbSet<Ticket> Tickets { get; set; }
     
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
