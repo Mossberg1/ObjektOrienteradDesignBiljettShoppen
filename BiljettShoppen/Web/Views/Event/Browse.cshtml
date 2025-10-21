@@ -1,11 +1,13 @@
 @using Models.Enums
 @using Models.Entities
+@using DataAccess.Utils
 
-@model IEnumerable<Event>
+@model PaginatedList<Event>
 
 @{
     ViewData["Title"] = "Alla Evenemang";
     var currentEventType = ViewData["CurrentEventType"]?.ToString();
+    var events = Model;
 }
 
 <div class="container mt-4">
@@ -20,14 +22,14 @@
                 <div class="row g-3">
                     <!-- Search Input -->
                     <div class="col-12">
-                        <label for="searchString" class="form-label">Sök på evenemang eller arena</label>
-                        <input type="text" id="searchString" name="searchString" class="form-control" placeholder="T.ex. Rockkonsert eller Globen..." value="@ViewData["CurrentFilter"]" />
+                        <label for="searchWord" class="form-label">Sök på evenemang eller arena</label>
+                        <input type="text" id="searchWord" name="searchWord" class="form-control" placeholder="T.ex. Rockkonsert eller Globen..." value="@ViewData["CurrentFilter"]" />
                     </div>
 
                     <!-- Event Type Dropdown -->
                     <div class="col-md-4">
-                        <label for="eventType" class="form-label">Typ av evenemang</label>
-                        <select id="eventType" name="eventType" asp-items="Html.GetEnumSelectList<EventType>()" class="form-select">
+                        <label for="type" class="form-label">Typ av evenemang</label>
+                        <select id="type" name="type" asp-items="Html.GetEnumSelectList<EventType>()" class="form-select">
                             <option value="">Alla typer</option>
                         </select>
                     </div>
@@ -51,7 +53,7 @@
     </div>
 
     <div class="row">
-        @foreach (var ev in Model)
+        @foreach (var ev in events.Items)
         {
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 shadow-sm">
