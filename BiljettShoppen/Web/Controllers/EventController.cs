@@ -18,9 +18,16 @@ public class EventController : Controller
     }
     
     [HttpGet]
-    public async Task<IActionResult> Browse()
+    public async Task<IActionResult> Browse(
+        [FromQuery] string? searchWord, 
+        [FromQuery] EventType? type,
+        [FromQuery] DateOnly? FromDate,
+        [FromQuery] DateOnly? ToDate,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 24
+    )
     {
-        var query = new BrowseEventsQuery();
+        var query = new BrowseEventsQuery(searchWord, type, FromDate, ToDate, pageNumber, pageSize);
         var events = await _mediator.Send(query);
 
         return View(events);
