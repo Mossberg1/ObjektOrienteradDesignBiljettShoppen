@@ -12,9 +12,15 @@ public class Payment : BaseEntity
     
     [ForeignKey(nameof(BookingId))]
     public Booking BookingNavigation { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
 
     public string PaymentMethodToString()
     {
         return Method.ToString();
+    }
+
+    public static implicit operator Payment(Payment v)
+    {
+        throw new NotImplementedException();
     }
 }
