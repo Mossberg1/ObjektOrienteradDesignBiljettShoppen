@@ -16,6 +16,6 @@ public class BrowseEventsHandler : IRequestHandler<BrowseEventsQuery, List<Event
     
     public async Task<List<Event>> Handle(BrowseEventsQuery request, CancellationToken cancellationToken)
     {
-        return await _dbContext.Events.ToListAsync(cancellationToken);
+        return await _dbContext.Events.Include(e => e.ArenaNavigation).ToListAsync(cancellationToken);
     }
 }
