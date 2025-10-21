@@ -18,9 +18,4 @@ public class Payment : BaseEntity
     {
         return Method.ToString();
     }
-
-    public static implicit operator Payment(Payment v)
-    {
-        throw new NotImplementedException();
-    }
 }
