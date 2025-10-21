@@ -1,3 +1,5 @@
+using Application.Features.Events.Browse;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using Models.Entities.Base;
@@ -8,58 +10,20 @@ namespace Web.Controllers;
 
 public class EventController : Controller
 {
-    public EventController() {}
+    private readonly IMediator _mediator;
 
-    // TODO: Example
+    public EventController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+    
     [HttpGet]
     public async Task<IActionResult> Browse()
     {
-        var fakeEvents = new List<Event>
-        {
-            new()
-            {
-                Id = 6,
-                Name = "Rockkonsert i Globen",
-                Date = new DateOnly(2025, 11, 5),
-                ArenaNavigation = new Arena { Name = "Avicii Arena" }
-            },
-            new()
-            {
-                Id = 5,
-                Name = "Stand-up Comedy Night",
-                Date = new DateOnly(2025, 11, 22),
-                ArenaNavigation = new Arena { Name = "Cirkus" }
-            },
-            new()
-            {
-                Id = 4,
-                Name = "Klassisk Musikgala",
-                Date = new DateOnly(2025, 7, 12),
-                ArenaNavigation = new Arena { Name = "Konserthuset Stockholm" }
-            },
-            new()
-            {
-                Id = 3,
-                Name = "Popfestivalen 2025",
-                Date = new DateOnly(2025, 9, 28),
-                ArenaNavigation = new Arena { Name = "Tele2 Arena" }
-            },
-            new()
-            {
-                Id = 2,
-                Name = "Teater: Hamlet",
-                Date = new DateOnly(2026, 1, 10),
-                ArenaNavigation = new Arena { Name = "Dramaten" }
-            },
-            new()
-            {
-                Id = 1,
-                Name = "Magishow med Joe Labero",
-                ArenaNavigation = new Arena { Name = "Hamburger Börs" }
-            }
-        };
+        var query = new BrowseEventsQuery();
+        var events = await _mediator.Send(query);
 
-        return View(fakeEvents);
+        return View(events);
     }
 
     // TODO: Example
