@@ -23,6 +23,7 @@ namespace Application.Features.Payments.PayBooking
 
         public async Task<Booking> Handle(PayBookingCommand request, CancellationToken cancellationToken)
         {
+            // TODO: Kolla om bokningen finns i timern genom Remove(Booking).
             var booking = await _dbContext.Bookings
                 .FirstOrDefaultAsync(b => b.Id == request.BookingId, cancellationToken);
 
@@ -54,7 +55,7 @@ namespace Application.Features.Payments.PayBooking
 
     public class PayBookingCommand : IRequest<Booking>
     {
-        public int BookingId { get; set; }
+        public int BookingId { get; set; } // TODO: Skicka boknings objekt som referens istället
         public PaymentMethod PaymentMethod { get; set; }
     }
 }

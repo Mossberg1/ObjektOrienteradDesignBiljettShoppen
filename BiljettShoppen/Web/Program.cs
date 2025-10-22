@@ -1,9 +1,13 @@
+using System.Runtime.InteropServices.JavaScript;
 using Application;
+using Application.BackgroundServices;
 using DataAccess;
 using DataAccess.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Models.Entities;
 
+// TODO: Feature för att skapa en bokning.
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +23,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+// BARA FÖR TEST
+using var timerTestScope = app.Services.CreateScope();
+var bookingTimer = timerTestScope.ServiceProvider.GetRequiredService<BookingTimer>();
+for (int i = 0; i < 1000000; i++)
+{
+    bookingTimer.AddBooking(new Booking { TotalPrice = i, CreatedAt = DateTime.UtcNow });
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,6 +1,9 @@
 using Application.Features.Events.Browse;
+using Application.Features.Events.ViewSeats;
+using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Entities.Base;
 using Models.Enums;
@@ -11,10 +14,13 @@ namespace Web.Controllers;
 public class EventController : Controller
 {
     private readonly IMediator _mediator;
+    
+    private readonly IApplicationDbContext _context;
 
-    public EventController(IMediator mediator)
+    public EventController(IMediator mediator, IApplicationDbContext context)
     {
         _mediator = mediator;
+        _context = context; // TODO: Ta bort
     }
     
     [HttpGet]
@@ -34,46 +40,22 @@ public class EventController : Controller
     }
 
     // TODO: Example
-    [HttpGet("Event/Buy/{id:int}")]
+    [HttpGet("[controller]/Buy/{id:int}")]
     public async Task<IActionResult> Buy([FromRoute] int id)
     {
-        var eventDetails = new Event
-        {
-            Id = id,
-            Name = "Rockkonsert i Globen",
-            Date = new DateOnly(2025, 10, 15),
-            StartTime = new TimeOnly(20, 0, 0),
-            Price = 795,
-            ArenaNavigation = new Arena { Name = "Avicii Arena" }
-        };
-
-        var seats = new List<BookableSpace>();
-        var seatIdCounter = 1;
-        var maxRows = 10;
-        var maxSeatsInRow = 20;
-
-        // Generate some fake seats
-        for (var row = 1; row <= maxRows; row++)
-        {
-            for (var num = 1; num <= maxSeatsInRow; num++)
-            {
-                var isBooked = (row % 4 == 0 && num % 3 == 0);
-                var seatType = (row > 7) ? SeatType.Bench : SeatType.Chair;
-
-                seats.Add(new Seat
-                {
-                    Id = seatIdCounter++,
-                    RowNumber = row,
-                    ColNumber = num,
-                    Type = seatType, 
-                    IsBooked = isBooked
-                });
-            }
-        }
+        var query = new ViewSeatsQuery(id);
+        var ev = await _mediator.Send(query);
+        if (ev == null)
+            return NotFound();
         
-        var viewModel = new BuyTicketViewModel
+        // TODO: Bryt ut byggande av viewmodel till egen klass.
+        var seats = ev.SeatLayoutNavigation.SeatsNavigation;
+        var maxRows = ev.SeatLayoutNavigation.NumberOfRows;
+        var maxSeatsInRow = ev.SeatLayoutNavigation.NumberOfCols;
+        
+        var viewModel = new BuySeatTicketViewModel
         {
-            Event = eventDetails,
+            Event = ev,
             Seats = seats,
             MaxRow = maxRows,
             MaxSeatNumber = maxSeatsInRow
