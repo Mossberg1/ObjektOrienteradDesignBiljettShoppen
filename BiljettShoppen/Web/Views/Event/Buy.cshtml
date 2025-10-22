@@ -1,4 +1,4 @@
-@model Web.Models.BuyTicketViewModel
+@model Web.Models.BuySeatTicketViewModel
 
 @{
     ViewData["Title"] = "Köp Biljett";
@@ -54,12 +54,12 @@
             <h4>Välj platser</h4>
             <div class="screen">SCEN</div>
             <div id="seat-map" class="seat-map-container">
-                @foreach (var seat in Model.Seats.Cast<Models.Entities.Seat>())
+                @foreach (var seat in Model.Seats)
                 {
                     var seatClass = seat.Type.ToString().ToLower();
                     var statusClass = seat.IsBooked ? "booked" : "";
-                    <div class="seat @seatClass @statusClass" 
-                         data-seat-id="@seat.Id" 
+                    <div class="seat @seatClass @statusClass"
+                         data-seat-id="@seat.Id"
                          data-seat-info="Rad @seat.RowNumber, Plats @seat.ColNumber"
                          data-price="@Model.Event.Price">
                         @seat.ColNumber

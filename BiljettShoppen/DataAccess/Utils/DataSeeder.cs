@@ -164,7 +164,9 @@ public class DataSeeder
         // Booking 1: 2 tickets for the concert
         var concert = events.First(e => e.Type == EventType.Concert);
         var concertTickets = await _dbContext.Tickets
+            .Include(t => t.BookableSpaceNavigation)
             .Where(t => t.EventId == concert.Id && t.BookingId == null)
+            .Skip(2)
             .Take(2).ToListAsync();
 
         if (concertTickets.Count == 2)
@@ -177,6 +179,12 @@ public class DataSeeder
             concertTickets[1].FirstName = "Erik";
             concertTickets[1].LastName = "Andersson";
             concertTickets[1].BookingNavigation = booking1;
+        }
+
+        foreach (var ticket in concertTickets)
+        {
+            ticket.BookableSpaceNavigation.IsBooked = true;
+            _dbContext.BookableSpaces.Update(ticket.BookableSpaceNavigation);
         }
 
         await _dbContext.Bookings.AddRangeAsync(bookings);
