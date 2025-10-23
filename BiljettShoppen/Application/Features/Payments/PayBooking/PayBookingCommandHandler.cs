@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Interfaces;
 using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,47 +16,50 @@ namespace Application.Features.Payments.PayBooking
     public class PayBookingCommandHandler : IRequestHandler<PayBookingCommand, Booking>
     {
         private readonly IApplicationDbContext _dbContext;
+        private readonly IBookingTimer _bookingTimer;
 
-        public PayBookingCommandHandler(IApplicationDbContext dbContext)
+        public PayBookingCommandHandler(IApplicationDbContext dbContext, IBookingTimer bookingTimer)
         {
             _dbContext = dbContext;
+            _bookingTimer = bookingTimer;
         }
 
         public async Task<Booking> Handle(PayBookingCommand request, CancellationToken cancellationToken)
         {
-            // TODO: Kolla om bokningen finns i timern genom Remove(Booking).
-            var booking = await _dbContext.Bookings
-                .FirstOrDefaultAsync(b => b.Id == request.BookingId, cancellationToken);
-
-            if (booking == null)
+         
+            bool bookingExistsInTimer = _bookingTimer.RemoveBooking(request.Booking);
+            if (!bookingExistsInTimer)
             {
-                throw new Exception("Booking not found.");
+                throw new Exception("Booking not found in timer.");
             }
 
-            if (booking.IsPaid)
-            {
-                throw new Exception("Booking is already paid.");
-            }
+            request.Booking.IsPaid = true;
+            await _dbContext.Bookings.AddAsync(request.Booking, cancellationToken);
 
             var payment = new Payment
             {
                 PaymentMethod = request.PaymentMethod,
-                BookingId = booking.Id,
+                BookingNavigation = request.Booking
             };
 
-            _dbContext.Payments.Add(payment);
-
-            booking.IsPaid = true;
-
+            await _dbContext.Payments.AddAsync(payment);
+       
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return booking!;
+            return request.Booking!;
         }
     }
 
     public class PayBookingCommand : IRequest<Booking>
     {
-        public int BookingId { get; set; } // TODO: Skicka boknings objekt som referens istället
+        public Booking Booking { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
+    
+        public PayBookingCommand(Booking booking, PaymentMethod paymentMethod)
+        {
+            Booking = booking;
+            PaymentMethod = paymentMethod;
+        }
     }
+
 }
