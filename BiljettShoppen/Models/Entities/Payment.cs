@@ -6,16 +6,15 @@ namespace Models.Entities;
 
 public class Payment : BaseEntity
 {
-    public PaymentMethod Method { get; set; }
-    
     public int BookingId { get; set; }
     
     [ForeignKey(nameof(BookingId))]
     public Booking BookingNavigation { get; set; }
+    
     public PaymentMethod PaymentMethod { get; set; }
 
     public string PaymentMethodToString()
     {
-        return Method.ToString();
+        return PaymentMethod.ToString();
     }
 }

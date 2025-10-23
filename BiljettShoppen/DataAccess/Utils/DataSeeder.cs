@@ -199,7 +199,7 @@ public class DataSeeder
         {
             var payment = new Payment
             {
-                Method = PaymentMethod.CreditCard,
+                PaymentMethod = PaymentMethod.CreditCard,
                 BookingId = booking.Id
             };
             await _dbContext.Payments.AddAsync(payment);
