@@ -14,13 +14,10 @@ namespace Web.Controllers;
 public class EventController : Controller
 {
     private readonly IMediator _mediator;
-    
-    private readonly IApplicationDbContext _context;
 
-    public EventController(IMediator mediator, IApplicationDbContext context)
+    public EventController(IMediator mediator)
     {
         _mediator = mediator;
-        _context = context; // TODO: Ta bort
     }
     
     [HttpGet]
@@ -38,10 +35,9 @@ public class EventController : Controller
 
         return View(events);
     }
-
-    // TODO: Example
-    [HttpGet("[controller]/Buy/{id:int}")]
-    public async Task<IActionResult> Buy([FromRoute] int id)
+    
+    [HttpGet("[controller]/Booking/{id:int}")]
+    public async Task<IActionResult> Booking([FromRoute] int id)
     {
         var query = new ViewSeatsQuery(id);
         var ev = await _mediator.Send(query);
@@ -64,14 +60,10 @@ public class EventController : Controller
         return View(viewModel);
     }
     
-    // TODO: Example
-    [HttpPost]
-    public async Task<IActionResult> ConfirmPurchase(int eventId, List<int> selectedSeats)
+    [HttpGet("[controller]/Pay/{bookingId:int}")] // TODO: Exempel
+    public async Task<IActionResult> Pay([FromQuery] int bookingId)
     {
-        if (selectedSeats == null || !selectedSeats.Any())
-        {
-            return RedirectToAction("Buy", new { id = eventId });
-        }
-        return RedirectToAction("Index", "Home");
+        var viewModel = new PayViewModel(bookingId, "Event Namn Exempel", 250);
+        return View(viewModel);
     }
 }

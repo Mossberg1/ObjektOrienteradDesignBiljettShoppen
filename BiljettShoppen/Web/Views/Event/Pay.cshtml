@@ -1,0 +1,90 @@
+@model Web.Models.PayViewModel
+
+@{
+    ViewData["Title"] = "Betalning";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="mb-4">Slutför din betalning</h1>
+
+            <!-- Order Summary Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Din beställning</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.EventName</h5>
+                    <p class="card-text">Granska din beställning innan du betalar.</p>
+                    <hr />
+                    <div class="d-flex justify-content-between fs-5 fw-bold">
+                        <span>Totalt att betala:</span>
+                        <span>@Model.TotalPrice.ToString("C")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <form asp-action="ProcessPayment" method="post">
+                <input type="hidden" asp-for="BookingId" />
+
+                <h4>Välj betalningsmetod</h4>
+                <div class="accordion" id="paymentAccordion">
+
+                    <!-- Option 1: Pay with Credit Card -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingCard">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCard" aria-expanded="true" aria-controls="collapseCard">
+                                Betala med kort
+                            </button>
+                        </h2>
+                        <div id="collapseCard" class="accordion-collapse collapse show" aria-labelledby="headingCard" data-bs-parent="#paymentAccordion">
+                            <div class="accordion-body">
+                                <div class="mb-3">
+                                    <label for="cardName" class="form-label">Namn på kortet</label>
+                                    <input type="text" id="cardName" class="form-control" placeholder="John Doe">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cardNumber" class="form-label">Kortnummer</label>
+                                    <input type="text" id="cardNumber" class="form-control" placeholder="0000 0000 0000 0000">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="expiryDate" class="form-label">Giltig till</label>
+                                        <input type="text" id="expiryDate" class="form-control" placeholder="MM/ÅÅ">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="cvc" class="form-label">CVC</label>
+                                        <input type="text" id="cvc" class="form-control" placeholder="123">
+                                    </div>
+                                </div>
+                                <button type="submit" name="paymentMethod" value="CreditCard" class="btn btn-primary w-100">Betala @Model.TotalPrice.ToString("C")</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Option 2: Pay with Invoice -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingInvoice">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInvoice" aria-expanded="false" aria-controls="collapseInvoice">
+                                Betala med faktura
+                            </button>
+                        </h2>
+                        <div id="collapseInvoice" class="accordion-collapse collapse" aria-labelledby="headingInvoice" data-bs-parent="#paymentAccordion">
+                            <div class="accordion-body">
+                                <p>En faktura kommer att skickas till den angivna e-postadressen. Betalningsvillkor 14 dagar.</p>
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label">E-post för faktura</label>
+                                    <input asp-for="Email" type="email" class="form-control" placeholder="din.epost@exempel.com">
+                                </div>
+                                <button type="submit" name="paymentMethod" value="Invoice" class="btn btn-primary w-100">Bekräfta och få faktura</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
