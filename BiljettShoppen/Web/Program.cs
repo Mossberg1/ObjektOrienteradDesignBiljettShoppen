@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices.JavaScript;
 using Application;
 using Application.BackgroundServices;
+using Application.Interfaces;
 using DataAccess;
 using DataAccess.Utils;
 using Microsoft.AspNetCore.Identity;
@@ -26,8 +27,8 @@ var app = builder.Build();
 
 // BARA FÖR TEST
 using var timerTestScope = app.Services.CreateScope();
-var bookingTimer = timerTestScope.ServiceProvider.GetRequiredService<BookingTimer>();
-for (int i = 0; i < 1000000; i++)
+var bookingTimer = timerTestScope.ServiceProvider.GetRequiredService<IBookingTimer>();
+for (var i = 0; i < 10; i++)
 {
     bookingTimer.AddBooking(new Booking { TotalPrice = i, CreatedAt = DateTime.UtcNow });
 }

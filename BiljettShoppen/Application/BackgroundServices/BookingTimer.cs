@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using DataAccess.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -5,7 +6,7 @@ using Models.Entities;
 
 namespace Application.BackgroundServices;
 
-public class BookingTimer : BackgroundService
+public class BookingTimer : BackgroundService, IBookingTimer
 {
     private readonly ILogger<BookingTimer> _logger; 
     private List<Booking> _bookings;
