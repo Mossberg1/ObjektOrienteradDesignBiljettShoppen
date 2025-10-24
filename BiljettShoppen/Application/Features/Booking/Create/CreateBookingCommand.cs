@@ -10,8 +10,6 @@ namespace Application.Features.Booking.Create
 {
     public record CreateBookingCommand(
         decimal TotalPrice,
-        bool IsPaid,
-        Payment? PaymentNavigation,
         List<Ticket> TicketsNavigation
     ) : IRequest<Models.Entities.Booking>;
 }

@@ -6,6 +6,7 @@ using Models.Entities;
 
 namespace Application.BackgroundServices;
 
+// TODO: Optimera med linkedlist?
 public class BookingTimer : BackgroundService, IBookingTimer
 {
     private readonly ILogger<BookingTimer> _logger; 
@@ -56,8 +57,14 @@ public class BookingTimer : BackgroundService, IBookingTimer
         _bookings.Add(booking);
     }
     
-    public bool RemoveBooking(Booking booking)
+    public bool RemoveBooking(string bookingReference)
     {
-        return _bookings.Remove(booking);
+        var booking = GetBooking(bookingReference);
+        return booking != null && _bookings.Remove(booking);
+    }
+
+    public Booking? GetBooking(string bookingReference)
+    {
+        return _bookings.FirstOrDefault(b => b.ReferenceNumber == bookingReference);
     }
 }

@@ -5,6 +5,8 @@ namespace Models.Entities;
 
 public class Booking : BaseEntity
 {
+    public string ReferenceNumber { get; set; } = Guid.NewGuid().ToString();
+    
     public decimal TotalPrice { get; set; }
     public bool IsPaid { get; set; }
     

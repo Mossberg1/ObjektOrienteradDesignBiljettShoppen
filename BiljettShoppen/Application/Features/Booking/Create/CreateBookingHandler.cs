@@ -27,14 +27,12 @@ namespace Application.Features.Booking.Create
             var booking = new Models.Entities.Booking
             {
                 TotalPrice = request.TotalPrice,
-                IsPaid = request.IsPaid,
-                PaymentNavigation = request.PaymentNavigation,
                 TicketsNavigation = request.TicketsNavigation,
             };
 
             _bookingTimer.AddBooking(booking);
 
-            _dbContext.Bookings.Add(booking);
+            await _dbContext.Bookings.AddAsync(booking, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return booking;
