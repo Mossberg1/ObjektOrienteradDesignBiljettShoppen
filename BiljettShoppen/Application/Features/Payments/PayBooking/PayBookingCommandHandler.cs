@@ -13,7 +13,7 @@ using Models.Enums;
 
 namespace Application.Features.Payments.PayBooking
 {
-    public class PayBookingCommandHandler : IRequestHandler<PayBookingCommand, Booking>
+    public class PayBookingCommandHandler : IRequestHandler<PayBookingCommand, Models.Entities.Booking>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IBookingTimer _bookingTimer;
@@ -24,7 +24,7 @@ namespace Application.Features.Payments.PayBooking
             _bookingTimer = bookingTimer;
         }
 
-        public async Task<Booking> Handle(PayBookingCommand request, CancellationToken cancellationToken)
+        public async Task<Models.Entities.Booking> Handle(PayBookingCommand request, CancellationToken cancellationToken)
         {
          
             bool bookingExistsInTimer = _bookingTimer.RemoveBooking(request.Booking);
@@ -50,12 +50,12 @@ namespace Application.Features.Payments.PayBooking
         }
     }
 
-    public class PayBookingCommand : IRequest<Booking>
+    public class PayBookingCommand : IRequest<Models.Entities.Booking>
     {
-        public Booking Booking { get; set; }
+        public Models.Entities.Booking Booking { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
     
-        public PayBookingCommand(Booking booking, PaymentMethod paymentMethod)
+        public PayBookingCommand(Models.Entities.Booking booking, PaymentMethod paymentMethod)
         {
             Booking = booking;
             PaymentMethod = paymentMethod;
