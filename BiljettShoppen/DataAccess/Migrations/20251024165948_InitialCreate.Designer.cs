@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251024083034_InitialCreate")]
+    [Migration("20251024165948_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -242,6 +242,9 @@ namespace DataAccess.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("NumberOfEntrances")
+                        .HasColumnType("integer");
 
                     b.Property<int>("NumberOfLoges")
                         .HasColumnType("integer");

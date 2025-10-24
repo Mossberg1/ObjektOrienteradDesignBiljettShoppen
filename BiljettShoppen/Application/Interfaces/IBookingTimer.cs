@@ -5,6 +5,6 @@ namespace Application.Interfaces;
 public interface IBookingTimer
 {
     void AddBooking(Booking booking);
-    bool RemoveBooking(string bookingReference);
+    bool RemoveBooking(Booking booking);
     Booking? GetBooking(string bookingReference);
 }

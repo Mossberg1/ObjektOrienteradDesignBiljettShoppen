@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Interfaces;
+using DataAccess;
 using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Models.Entities;
 using Models.Enums;
 
@@ -15,49 +17,65 @@ namespace Application.Features.Payments.PayBooking
 {
     public class PayBookingCommandHandler : IRequestHandler<PayBookingCommand, Models.Entities.Booking>
     {
-        private readonly IApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
         private readonly IBookingTimer _bookingTimer;
+        private readonly ILogger<PayBookingCommandHandler> _logger;
 
-        public PayBookingCommandHandler(IApplicationDbContext dbContext, IBookingTimer bookingTimer)
+        public PayBookingCommandHandler(ApplicationDbContext dbContext, IBookingTimer bookingTimer, ILogger<PayBookingCommandHandler> logger)
         {
             _dbContext = dbContext;
             _bookingTimer = bookingTimer;
+            _logger = logger;
         }
 
         public async Task<Models.Entities.Booking> Handle(PayBookingCommand request, CancellationToken cancellationToken)
         {
-         
-            bool bookingExistsInTimer = _bookingTimer.RemoveBooking(request.Booking.ReferenceNumber);
-            if (!bookingExistsInTimer)
+            var booking = _bookingTimer.GetBooking(request.BookingReferenceNumber);
+            if (booking == null)
+                throw new Exception("Booking not found.");
+            
+            if (!_bookingTimer.RemoveBooking(booking))
             {
                 throw new Exception("Booking not found in timer.");
             }
 
-            request.Booking.IsPaid = true;
-            await _dbContext.Bookings.AddAsync(request.Booking, cancellationToken);
+            booking.IsPaid = true;
+            
+            await _dbContext.Bookings.AddAsync(booking, cancellationToken);
+
+            // Detta måste göras eftersom bokningen redan har referenser till objekt som redan finns i databasen.
+            foreach (var ticket in booking.TicketsNavigation)
+            {
+                _dbContext.Entry(ticket).State = EntityState.Unchanged;
+                ticket.BookableSpaceNavigation.IsBooked = true;
+                _dbContext.Entry(ticket.BookableSpaceNavigation).State = EntityState.Modified;
+            }
 
             var payment = new Payment
             {
                 PaymentMethod = request.PaymentMethod,
-                BookingNavigation = request.Booking
+                BookingNavigation = booking
             };
 
-            await _dbContext.Payments.AddAsync(payment);
-       
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.Payments.AddAsync(payment, cancellationToken);
 
-            return request.Booking!;
+            if (await _dbContext.SaveChangesAsync(cancellationToken) > 0)
+            {
+                _logger.LogInformation($"Bokning betald: {booking.ReferenceNumber}");
+            }
+
+            return booking;
         }
     }
 
     public class PayBookingCommand : IRequest<Models.Entities.Booking>
     {
-        public Models.Entities.Booking Booking { get; set; }
+        public string BookingReferenceNumber { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
     
-        public PayBookingCommand(Models.Entities.Booking booking, PaymentMethod paymentMethod)
+        public PayBookingCommand(string bookingReferenceNumber, PaymentMethod paymentMethod)
         {
-            Booking = booking;
+            BookingReferenceNumber = bookingReferenceNumber;
             PaymentMethod = paymentMethod;
         }
     }

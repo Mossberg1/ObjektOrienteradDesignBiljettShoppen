@@ -12,8 +12,8 @@ public class BookingTimer : BackgroundService, IBookingTimer
     private readonly ILogger<BookingTimer> _logger; 
     private List<Booking> _bookings;
 
-    private const float _removeIntervalInMinutes = 0.1f;
-    private const int _checkIntervalInSeconds = 10;
+    private const int _removeIntervalInMinutes = 10;
+    private const int _checkIntervalInSeconds = 1;
 
     public BookingTimer(ILogger<BookingTimer> logger)
     {
@@ -33,7 +33,7 @@ public class BookingTimer : BackgroundService, IBookingTimer
                 while (firstBooking.CreatedAt.AddMinutes(_removeIntervalInMinutes) <= DateTime.UtcNow)
                 {
                     _bookings.RemoveAt(0);
-                    _logger.LogInformation($"Tog bort bokning med pris: {firstBooking.TotalPrice}");
+                    _logger.LogInformation($"Boknings tid har gått ut: {firstBooking.ReferenceNumber}");
 
                     if (_bookings.Count != 0)
                     {
@@ -54,13 +54,14 @@ public class BookingTimer : BackgroundService, IBookingTimer
 
     public void AddBooking(Booking booking)
     {
+        _logger.LogInformation($"Bokning tillagd i timern: {booking.ReferenceNumber}");
         _bookings.Add(booking);
     }
     
-    public bool RemoveBooking(string bookingReference)
+    public bool RemoveBooking(Booking booking)
     {
-        var booking = GetBooking(bookingReference);
-        return booking != null && _bookings.Remove(booking);
+        _logger.LogInformation($"Bokning borttagen från timern: {booking.ReferenceNumber}");
+        return _bookings.Remove(booking);
     }
 
     public Booking? GetBooking(string bookingReference)
