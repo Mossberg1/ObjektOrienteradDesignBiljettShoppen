@@ -1,5 +1,7 @@
+using Application.Features.Booking.Create;
 using Application.Features.Events.Browse;
 using Application.Features.Events.ViewSeats;
+using Application.Features.Seats.GetSelectedSeats;
 using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -36,16 +38,29 @@ public class EventController : Controller
         return View(events);
     }
     
-    [HttpGet("[controller]/Booking/{id:int}")]
-    public async Task<IActionResult> Booking([FromRoute] int id)
+    [HttpGet("[controller]/Booking/{eventId:int}")]
+    public async Task<IActionResult> Booking([FromRoute] int eventId)
     {
-        var query = new ViewSeatsQuery(id);
+        var query = new ViewSeatsQuery(eventId);
         var ev = await _mediator.Send(query);
         if (ev == null)
             return NotFound();
         
         // TODO: Bryt ut byggande av viewmodel till egen klass.
         var seats = ev.SeatLayoutNavigation.SeatsNavigation;
+        var seatIds = seats.Select(s => s.Id).ToArray();
+        
+        var tickets = await _mediator.Send(new GetSelectedSeatTicketsQuery(seatIds));
+        var ticketBySpace = tickets.ToDictionary(t => t.BookableSpaceId, t => t.Price);
+
+        foreach (var seat in seats)
+        {
+            if (ticketBySpace.TryGetValue(seat.Id, out var ticketPrice))
+            {
+                seat.Price = ticketPrice;
+            }
+        }
+        
         var maxRows = ev.SeatLayoutNavigation.NumberOfRows;
         var maxSeatsInRow = ev.SeatLayoutNavigation.NumberOfCols;
         
@@ -59,11 +74,27 @@ public class EventController : Controller
 
         return View(viewModel);
     }
-    
-    [HttpGet("[controller]/Pay/{bookingId:int}")] // TODO: Exempel
-    public async Task<IActionResult> Pay([FromQuery] int bookingId)
+
+    [HttpPost("[controller]/Booking/{eventId:int}")]
+    public async Task<IActionResult> CreateBooking([FromRoute] int eventId, [FromBody] CreateBookingCommand command)
     {
-        var viewModel = new PayViewModel(bookingId, "Event Namn Exempel", 250);
+        return null;
+    }
+    
+    [HttpGet("[controller]/Pay")] // TODO: Exempel
+    public async Task<IActionResult> Pay(
+        [FromQuery] int[]? selectedSeats
+    )
+    {
+        if (selectedSeats == null)
+            return BadRequest();
+
+        var tickets = await _mediator.Send(new GetSelectedSeatTicketsQuery(selectedSeats));
+        var totalPrice = tickets.Sum(s => s.Price);
+        var booking = await _mediator.Send(new CreateBookingCommand(totalPrice, tickets));
+        
+        var viewModel = new PayViewModel(booking.ReferenceNumber, booking.ReferenceNumber, booking.TotalPrice);
+        
         return View(viewModel);
     }
 }

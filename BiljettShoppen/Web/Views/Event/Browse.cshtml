@@ -63,7 +63,7 @@
                             @ev.ArenaNavigation.Name - @ev.Date.ToString("d MMMM yyyy")
                         </h6>
                         <p class="card-text flex-grow-1">Hejsan</p>
-                        <a href="#" class="btn btn-primary mt-auto">Köp biljetter</a>
+                        <a asp-controller="Event" asp-action="Booking" asp-route-eventId="@ev.Id" class="btn btn-primary mt-auto">Boka biljetter</a>
                     </div>
                 </div>
             </div>

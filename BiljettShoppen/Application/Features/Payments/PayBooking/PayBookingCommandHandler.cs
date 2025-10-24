@@ -27,7 +27,7 @@ namespace Application.Features.Payments.PayBooking
         public async Task<Models.Entities.Booking> Handle(PayBookingCommand request, CancellationToken cancellationToken)
         {
          
-            bool bookingExistsInTimer = _bookingTimer.RemoveBooking(request.Booking);
+            bool bookingExistsInTimer = _bookingTimer.RemoveBooking(request.Booking.ReferenceNumber);
             if (!bookingExistsInTimer)
             {
                 throw new Exception("Booking not found in timer.");

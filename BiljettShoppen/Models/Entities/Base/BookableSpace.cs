@@ -13,4 +13,6 @@ public abstract class BookableSpace : BaseEntity
     public Entrance EntranceNavigation { get; set; }
     
     public List<Ticket> TicketsNavigation { get; set; } = [];
+
+    public abstract string GetDescription();
 }

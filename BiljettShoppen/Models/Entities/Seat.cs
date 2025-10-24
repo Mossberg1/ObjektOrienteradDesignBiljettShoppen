@@ -15,6 +15,11 @@ public class Seat : BookableSpace
     [ForeignKey(nameof(SeatLayoutId))]
     public SeatLayout SeatLayoutNavigation { get; set; }
 
+    public override string GetDescription()
+    {
+        return $"Rad: {RowNumber}, Plats: {ColNumber}, Typ: {TypeToString()}";
+    }
+
     public string TypeToString()
     {
         return Type.ToString();

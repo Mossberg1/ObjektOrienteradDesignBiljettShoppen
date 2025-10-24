@@ -61,7 +61,7 @@
                     <div class="seat @seatClass @statusClass"
                          data-seat-id="@seat.Id"
                          data-seat-info="Rad @seat.RowNumber, Plats @seat.ColNumber"
-                         data-price="@Model.Event.Price">
+                         data-price="@seat.Price">
                         @seat.ColNumber
                     </div>
                 }
@@ -79,8 +79,7 @@
             <h4>Din beställning</h4>
             <div class="card">
                 <div class="card-body">
-                    <form asp-action="ConfirmPurchase" method="post">
-                        <input type="hidden" name="eventId" value="@Model.Event.Id" />
+                    <form asp-action="Pay" method="get">
                         <div id="selected-seats-list">
                             <p>Inga platser valda.</p>
                         </div>

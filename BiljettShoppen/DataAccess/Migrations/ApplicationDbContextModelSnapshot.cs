@@ -315,6 +315,10 @@ namespace DataAccess.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("ReferenceNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("numeric");
 
