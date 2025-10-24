@@ -6,14 +6,22 @@ using Models.Entities;
 
 namespace Application.BackgroundServices;
 
-// TODO: Optimera med linkedlist?
+// Använd ConcurrentDictionary istället för thread-safety.
+// Kolla istället alla bokningar i listan varje iteration.
+// För tillfället är operationen o(n) även fast vi kan hoppa ur tidigare.
+// Däremot eftersom listan inte har thread-safety så kan vi inte garantera att bokningarna ligger i ordning.
+// Varje iteration kommer fortfarande vara o(n) även fast vi kollar igenom alla bokningar.
+// Med denna implementation är även borttagning o(n) och hitta bokning o(n).
+// Med ConcurrentDictionary blir borttagning o(1) och hitta bokning o(1).'
+// En ConcurrentDictionary undviker att elements behöver flyttas i minnet vid borttagning?
+// En ConcurrentDictionary behöver inte skapa en ny array när max capacity nås?
 public class BookingTimer : BackgroundService, IBookingTimer
 {
     private readonly ILogger<BookingTimer> _logger; 
     private List<Booking> _bookings;
 
     private const int _removeIntervalInMinutes = 10;
-    private const int _checkIntervalInSeconds = 1;
+    private const int _checkIntervalInSeconds = 10;
 
     public BookingTimer(ILogger<BookingTimer> logger)
     {
