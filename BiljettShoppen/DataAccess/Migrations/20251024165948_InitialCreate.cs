@@ -23,6 +23,7 @@ namespace DataAccess.Migrations
                     NumberOfSeats = table.Column<int>(type: "integer", nullable: false),
                     NumberOfLoges = table.Column<int>(type: "integer", nullable: false),
                     Indoors = table.Column<bool>(type: "boolean", nullable: false),
+                    NumberOfEntrances = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },

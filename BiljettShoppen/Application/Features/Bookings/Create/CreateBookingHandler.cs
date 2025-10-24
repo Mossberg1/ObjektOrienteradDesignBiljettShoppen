@@ -32,8 +32,8 @@ namespace Application.Features.Booking.Create
 
             _bookingTimer.AddBooking(booking);
 
-            await _dbContext.Bookings.AddAsync(booking, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            //await _dbContext.Bookings.AddAsync(booking, cancellationToken);
+            //await _dbContext.SaveChangesAsync(cancellationToken);
 
             return booking;
         }

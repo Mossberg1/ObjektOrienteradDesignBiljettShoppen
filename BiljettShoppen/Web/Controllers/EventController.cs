@@ -1,6 +1,7 @@
 using Application.Features.Booking.Create;
 using Application.Features.Events.Browse;
 using Application.Features.Events.ViewSeats;
+using Application.Features.Payments.PayBooking;
 using Application.Features.Seats.GetSelectedSeats;
 using DataAccess.Interfaces;
 using MediatR;
@@ -74,14 +75,8 @@ public class EventController : Controller
 
         return View(viewModel);
     }
-
-    [HttpPost("[controller]/Booking/{eventId:int}")]
-    public async Task<IActionResult> CreateBooking([FromRoute] int eventId, [FromBody] CreateBookingCommand command)
-    {
-        return null;
-    }
     
-    [HttpGet("[controller]/Pay")] // TODO: Exempel
+    [HttpGet("[controller]/Pay")]
     public async Task<IActionResult> Pay(
         [FromQuery] int[]? selectedSeats
     )
@@ -96,5 +91,21 @@ public class EventController : Controller
         var viewModel = new PayViewModel(booking.ReferenceNumber, booking.ReferenceNumber, booking.TotalPrice);
         
         return View(viewModel);
+    }
+
+    [HttpPost("[controller]/ProcessPayment")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ProcessPayment(
+        [FromForm] string bookingReference,
+        [FromForm] PaymentMethod paymentMethod
+    )
+    {
+        if (string.IsNullOrEmpty(bookingReference))
+            return BadRequest();
+
+        var command = new PayBookingCommand(bookingReference, paymentMethod);
+        var booking = await _mediator.Send(command);
+        
+        return RedirectToAction("Browse");
     }
 }

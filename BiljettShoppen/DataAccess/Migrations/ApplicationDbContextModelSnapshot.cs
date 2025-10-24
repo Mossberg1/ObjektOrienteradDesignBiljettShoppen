@@ -240,6 +240,9 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("NumberOfEntrances")
+                        .HasColumnType("integer");
+
                     b.Property<int>("NumberOfLoges")
                         .HasColumnType("integer");
 

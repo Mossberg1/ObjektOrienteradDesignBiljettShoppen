@@ -25,14 +25,6 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-// BARA FÖR TEST
-using var timerTestScope = app.Services.CreateScope();
-var bookingTimer = timerTestScope.ServiceProvider.GetRequiredService<IBookingTimer>();
-for (var i = 0; i < 10; i++)
-{
-    bookingTimer.AddBooking(new Booking { TotalPrice = i, CreatedAt = DateTime.UtcNow });
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
