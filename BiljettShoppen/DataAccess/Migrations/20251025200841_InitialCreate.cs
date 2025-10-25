@@ -271,7 +271,6 @@ namespace DataAccess.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    IsBooked = table.Column<bool>(type: "boolean", nullable: false),
                     EntranceId = table.Column<int>(type: "integer", nullable: false),
                     Discriminator = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),

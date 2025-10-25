@@ -281,9 +281,6 @@ namespace DataAccess.Migrations
                     b.Property<int>("EntranceId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsBooked")
-                        .HasColumnType("boolean");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 

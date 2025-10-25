@@ -32,8 +32,10 @@ namespace Application.Features.Payments.PayBooking
         {
             var booking = _bookingTimer.GetBooking(request.BookingReferenceNumber);
             if (booking == null)
+            {
                 throw new Exception("Booking not found.");
-            
+            }
+
             if (!_bookingTimer.RemoveBooking(booking))
             {
                 throw new Exception("Booking not found in timer.");
@@ -43,12 +45,13 @@ namespace Application.Features.Payments.PayBooking
             
             await _dbContext.Bookings.AddAsync(booking, cancellationToken);
 
-            // Detta måste göras eftersom bokningen redan har referenser till objekt som redan finns i databasen.
             foreach (var ticket in booking.TicketsNavigation)
             {
-                _dbContext.Entry(ticket).State = EntityState.Unchanged;
-                ticket.BookableSpaceNavigation.IsBooked = true;
-                _dbContext.Entry(ticket.BookableSpaceNavigation).State = EntityState.Modified;
+                //_dbContext.Entry(ticket).State = EntityState.Unchanged;
+                _dbContext.Entry(ticket.BookableSpaceNavigation).State = EntityState.Unchanged;
+
+                ticket.BookingNavigation = booking;
+                _dbContext.Tickets.Update(ticket);
             }
 
             var payment = new Payment
