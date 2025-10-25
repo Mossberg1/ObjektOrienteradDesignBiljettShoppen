@@ -18,7 +18,7 @@ public class DataSeeder
     {
         if (await _dbContext.Arenas.AnyAsync())
         {
-            return; // DB has been seeded
+            return; 
         }
 
         var arenas = await SeedArenasAsync();
@@ -131,6 +131,57 @@ public class DataSeeder
             }
         };
 
+        var eventTypes = Enum.GetValues<EventType>();
+        var extraCount = 128;
+
+        for (var i = 1; i <= extraCount; i++)
+        {
+            var layout = seatLayouts[(i - 1) % seatLayouts.Count];
+            var arenaId = layout.ArenaId;
+
+            var daysUntilEvent = 14 + (i * 7);
+            var eventDateTime = DateTime.UtcNow.AddDays(daysUntilEvent);
+            var eventDate = DateOnly.FromDateTime(eventDateTime);
+
+            DateTime releaseDate;
+            if (i % 3 == 0)
+            {
+                releaseDate = DateTime.UtcNow.AddDays(-Math.Max(1, i % 7));
+            }
+            else
+            {
+                releaseDate = eventDateTime.AddDays(-Math.Max(2, (i % 5) + 1));
+            }
+
+            var start = new TimeOnly(19, 0);
+            var end = new TimeOnly(22, 0);
+
+            var type = eventTypes[(i - 1) % eventTypes.Length];
+
+            var seatsToSell = layout.NumberOfRows * layout.NumberOfCols;
+            var logesToSell = 0;
+
+            var price = 150 + (i % 5) * 50; 
+            var cost = 500 + i * 10; 
+
+            events.Add(new Event
+            {
+                Name = $"Demo {type} #{i}",
+                Date = eventDate,
+                StartTime = start,
+                EndTime = end,
+                ReleaseTicketsDate = releaseDate,
+                NumberOfSeatsToSell = seatsToSell,
+                NumberOfLogesToSell = logesToSell,
+                Price = price,
+                Cost = cost,
+                Type = type,
+                IsFamilyFriendly = type == EventType.Theater || type == EventType.Concert,
+                ArenaId = arenaId,
+                SeatLayoutId = layout.Id
+            });
+        }
+
         await _dbContext.Events.AddRangeAsync(events);
         await _dbContext.SaveChangesAsync();
         return events;
@@ -144,11 +195,15 @@ public class DataSeeder
             var eventSeats = seats.Where(s => s.SeatLayoutId == ev.SeatLayoutId);
             foreach (var seat in eventSeats)
             {
+                var totalPrice = ev.Price + seat.Price;
+                var description = $"Evenemang: {ev.Name} — {ev.Date.ToString("d MMM yyyy")} kl. {ev.StartTime.ToString("HH:mm")}, {seat.GetDescription()}, Pris: {totalPrice:0} kr";
+
                 tickets.Add(new Ticket
                 {
-                    Price = seat.Price,
+                    Price = totalPrice,
                     EventId = ev.Id,
-                    BookableSpaceId = seat.Id
+                    BookableSpaceId = seat.Id,
+                    Description = description
                 });
             }
         }
@@ -161,34 +216,45 @@ public class DataSeeder
     {
         var bookings = new List<Booking>();
 
-        // Booking 1: 2 tickets for the concert
-        var concert = events.First(e => e.Type == EventType.Concert);
+        var concert = events.FirstOrDefault(e => e.Type == EventType.Concert && e.ReleaseTicketsDate <= DateTime.UtcNow)
+                      ?? events.FirstOrDefault(e => e.Type == EventType.Concert);
+
+        if (concert == null)
+            return bookings;
+
         var concertTickets = await _dbContext.Tickets
             .Include(t => t.BookableSpaceNavigation)
             .Where(t => t.EventId == concert.Id && t.BookingId == null)
-            .Skip(2)
-            .Take(2).ToListAsync();
+            .OrderBy(t => t.Id)
+            .Take(2)
+            .ToListAsync();
 
         if (concertTickets.Count == 2)
         {
-            var booking1 = new Booking { TotalPrice = concertTickets.Sum(t => t.Price), IsPaid = true };
+            var booking1 = new Booking
+            {
+                ReferenceNumber = Guid.NewGuid().ToString("N"),
+                TotalPrice = concertTickets.Sum(t => t.Price),
+                IsPaid = true
+            };
+
+            await _dbContext.Bookings.AddAsync(booking1);
+            await _dbContext.SaveChangesAsync();
+
+            for (var i = 0; i < concertTickets.Count; i++)
+            {
+                var ticket = concertTickets[i];
+                ticket.BookingId = booking1.Id;
+                ticket.FirstName ??= i == 0 ? "Anna" : "Erik";
+                ticket.LastName ??= "Andersson";
+                _dbContext.Tickets.Update(ticket);
+            }
+
+            await _dbContext.SaveChangesAsync();
+
             bookings.Add(booking1);
-            concertTickets[0].FirstName = "Anna";
-            concertTickets[0].LastName = "Andersson";
-            concertTickets[0].BookingNavigation = booking1;
-            concertTickets[1].FirstName = "Erik";
-            concertTickets[1].LastName = "Andersson";
-            concertTickets[1].BookingNavigation = booking1;
         }
 
-        foreach (var ticket in concertTickets)
-        {
-            ticket.BookableSpaceNavigation.IsBooked = true;
-            _dbContext.BookableSpaces.Update(ticket.BookableSpaceNavigation);
-        }
-
-        await _dbContext.Bookings.AddRangeAsync(bookings);
-        await _dbContext.SaveChangesAsync();
         return bookings;
     }
 

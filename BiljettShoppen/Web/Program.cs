@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
-// TODO: Feature för att skapa en bokning.
+// TODO: Skapa uträkning för totalpris sålt för ett evenemang.
 
 var builder = WebApplication.CreateBuilder(args);
 

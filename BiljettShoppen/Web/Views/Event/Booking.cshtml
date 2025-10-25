@@ -57,7 +57,7 @@
                 @foreach (var seat in Model.Seats)
                 {
                     var seatClass = seat.Type.ToString().ToLower();
-                    var statusClass = seat.IsBooked ? "booked" : "";
+                    var statusClass = seat.IsBookableForEvent(Model.Event.Id) ? "" : "booked";
                     <div class="seat @seatClass @statusClass"
                          data-seat-id="@seat.Id"
                          data-seat-info="Rad @seat.RowNumber, Plats @seat.ColNumber"
@@ -79,7 +79,8 @@
             <h4>Din beställning</h4>
             <div class="card">
                 <div class="card-body">
-                    <form asp-action="Pay" method="get">
+                    <form asp-controller="Event" asp-action="Pay" asp-route-eventId="@Model.Event.Id" method="get">
+                        <input type="hidden" name="eventId" value="@Model.Event.Id"/>
                         <div id="selected-seats-list">
                             <p>Inga platser valda.</p>
                         </div>

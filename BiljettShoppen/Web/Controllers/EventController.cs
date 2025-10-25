@@ -27,13 +27,26 @@ public class EventController : Controller
     public async Task<IActionResult> Browse(
         [FromQuery] string? searchWord, 
         [FromQuery] EventType? type,
+        [FromQuery] bool? isFamilyFriendly,
         [FromQuery] DateOnly? FromDate,
         [FromQuery] DateOnly? ToDate,
+        [FromQuery] string? sortBy,
+        [FromQuery] bool ascending = true,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 24
     )
     {
-        var query = new BrowseEventsQuery(searchWord, type, FromDate, ToDate, pageNumber, pageSize);
+        var query = new BrowseEventsQuery(
+            searchWord, 
+            type, 
+            isFamilyFriendly, 
+            FromDate, 
+            ToDate, 
+            sortBy, 
+            ascending, 
+            pageNumber, 
+            pageSize
+        );
         var events = await _mediator.Send(query);
 
         return View(events);
@@ -51,7 +64,9 @@ public class EventController : Controller
         var seats = ev.SeatLayoutNavigation.SeatsNavigation;
         var seatIds = seats.Select(s => s.Id).ToArray();
         
-        var tickets = await _mediator.Send(new GetSelectedSeatTicketsQuery(seatIds));
+        var tickets = await _mediator.Send(new GetSelectedSeatTicketsQuery(seatIds, eventId));
+        tickets = tickets.Where(t => t.EventId == ev.Id).ToList(); // TODO: TA BORT?
+
         var ticketBySpace = tickets.ToDictionary(t => t.BookableSpaceId, t => t.Price);
 
         foreach (var seat in seats)
@@ -76,15 +91,16 @@ public class EventController : Controller
         return View(viewModel);
     }
     
-    [HttpGet("[controller]/Pay")]
+    [HttpGet("[controller]/Pay/{eventId:int}")]
     public async Task<IActionResult> Pay(
-        [FromQuery] int[]? selectedSeats
+        [FromQuery] int[]? selectedSeats,
+        [FromRoute] int eventId
     )
     {
         if (selectedSeats == null)
             return BadRequest();
 
-        var tickets = await _mediator.Send(new GetSelectedSeatTicketsQuery(selectedSeats));
+        var tickets = await _mediator.Send(new GetSelectedSeatTicketsQuery(selectedSeats, eventId));
         var totalPrice = tickets.Sum(s => s.Price);
         var booking = await _mediator.Send(new CreateBookingCommand(totalPrice, tickets));
         

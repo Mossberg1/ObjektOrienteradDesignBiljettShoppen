@@ -6,8 +6,16 @@
 
 @{
     ViewData["Title"] = "Alla Evenemang";
-    var currentEventType = ViewData["CurrentEventType"]?.ToString();
+
     var events = Model;
+
+    var currentEventType = ViewContext.HttpContext.Request.Query["type"].ToString();
+    var currentFilter = ViewContext.HttpContext.Request.Query["searchWord"].ToString();
+    var currentFromDate = ViewContext.HttpContext.Request.Query["fromDate"].ToString();
+    var currentToDate = ViewContext.HttpContext.Request.Query["toDate"].ToString();
+    var currentSortBy = ViewContext.HttpContext.Request.Query["sortBy"].ToString();
+    var currentAscending = ViewContext.HttpContext.Request.Query["ascending"].ToString();
+    var currentIsFamily = ViewContext.HttpContext.Request.Query["isFamilyFriendly"].ToString();
 }
 
 <div class="container mt-4">
@@ -23,7 +31,7 @@
                     <!-- Search Input -->
                     <div class="col-12">
                         <label for="searchWord" class="form-label">Sök på evenemang eller arena</label>
-                        <input type="text" id="searchWord" name="searchWord" class="form-control" placeholder="T.ex. Rockkonsert eller Globen..." value="@ViewData["CurrentFilter"]" />
+                        <input type="text" id="searchWord" name="searchWord" class="form-control" placeholder="T.ex. Rockkonsert eller Globen..." value="@currentFilter" />
                     </div>
 
                     <!-- Event Type Dropdown -->
@@ -37,13 +45,40 @@
                     <!-- Date Filters -->
                     <div class="col-md-4">
                         <label for="fromDate" class="form-label">Från datum</label>
-                        <input type="date" id="fromDate" name="fromDate" class="form-control" value="@ViewData["FromDate"]" />
+                        <input type="date" id="fromDate" name="fromDate" class="form-control" value="@currentFromDate" />
                     </div>
                     <div class="col-md-4">
                         <label for="toDate" class="form-label">Till datum</label>
-                        <input type="date" id="toDate" name="toDate" class="form-control" value="@ViewData["ToDate"]" />
+                        <input type="date" id="toDate" name="toDate" class="form-control" value="@currentToDate" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="isFamilyFriendly" class="form-label">Familjevänligt</label>
+                        <select id="isFamilyFriendly" name="isFamilyFriendly" class="form-select">
+                            <option value="">Alla</option>
+                            <option value="true">Endast familjevänliga</option>
+                            <option value="false">Endast ej familjevänliga</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="sortBy" class="form-label">Sortera efter</label>
+                        <select id="sortBy" name="sortBy" class="form-select">
+                            <option value="">Ingen vald</option>
+                            <option value="name">Namn</option>
+                            <option value="startdate">Startdatum</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="ascending" class="form-label">Sorteringsordning</label>
+                        <select id="ascending" name="ascending" class="form-select">
+                            <option value="true">Stigande</option>
+                            <option value="false">Fallande</option>
+                        </select>
                     </div>
                 </div>
+
                 <div class="mt-3">
                     <button class="btn btn-primary" type="submit">Filtrera</button>
                     <a asp-action="Browse" class="btn btn-secondary">Rensa filter</a>
@@ -62,18 +97,188 @@
                         <h6 class="card-subtitle mb-2 text-muted">
                             @ev.ArenaNavigation.Name - @ev.Date.ToString("d MMMM yyyy")
                         </h6>
-                        <p class="card-text flex-grow-1">Hejsan</p>
+
+                        <div class="mb-2 small text-muted">
+                            <span>Start: <strong>@ev.StartTime.ToString("HH:mm")</strong></span>
+                            <span class="mx-2">·</span>
+                            <span>
+                                Längd:
+                                @{
+                                    var len = ev.CalculateEventLength();
+                                    if (len.TotalMinutes >= 60)
+                                    {
+                                        <text>@len.TotalHours h @len.Minutes m</text>
+                                        ;
+                                    }
+                                    else
+                                    {
+                                        <text>@len.Minutes m</text>
+                                        ;
+                                    }
+                                }
+                            </span>
+                            <span class="mx-2">·</span>
+                            <span>
+                                Familjevänligt:
+                                @if (ev.IsFamilyFriendly)
+                                {
+                                    <strong class="text-success">Ja</strong>
+                                }
+                                else
+                                {
+                                    <strong class="text-danger">Nej</strong>
+                                }
+                            </span>
+                        </div>
+
+                        <p class="card-text flex-grow-1">
+                            @{
+                                var availableSeats = ev.TicketsNavigation != null
+                                    ? ev.TicketsNavigation.Count(t => !t.IsBooked())
+                                    : 0;
+                            }
+                            <small class="text-muted">Tillgängliga platser att boka: <strong>@availableSeats</strong></small>
+                        </p>
+
                         <a asp-controller="Event" asp-action="Booking" asp-route-eventId="@ev.Id" class="btn btn-primary mt-auto">Boka biljetter</a>
                     </div>
                 </div>
             </div>
         }
     </div>
+
+    <!-- Pagination -->
+    @if (events != null)
+    {
+        <p class="text-center mb-2">
+            Sida @events.PageNumber av @events.TotalPages &middot; Visar @events.Items.Count event(s) &middot; Totalt @events.TotalCount event(s)
+        </p>
+    }
+
+    @if (events != null && events.TotalPages > 1)
+    {
+        IEnumerable<object> BuildPageItems(int totalPages, int currentPage)
+        {
+            var list = new List<object>();
+            if (totalPages <= 9)
+            {
+                for (int i = 1; i <= totalPages; i++)
+                    list.Add(i);
+                return list;
+            }
+
+            list.Add(1);
+
+            int left = Math.Max(2, currentPage - 2);
+            int right = Math.Min(totalPages - 1, currentPage + 2);
+
+            if (left > 2)
+            {
+                list.Add("...");
+            }
+            else
+            {
+                for (int i = 2; i < left; i++) list.Add(i);
+            }
+
+            for (int i = left; i <= right; i++)
+                list.Add(i);
+
+            if (right < totalPages - 1)
+            {
+                list.Add("...");
+            }
+            else
+            {
+                for (int i = right + 1; i <= totalPages - 1; i++) list.Add(i);
+            }
+
+            list.Add(totalPages);
+            return list;
+        }
+
+        var pageItems = BuildPageItems(events.TotalPages, events.PageNumber).ToList();
+
+        <nav class="d-flex justify-content-center" aria-label="Page navigation">
+            <ul class="pagination">
+                @if (events.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link"
+                           asp-controller="Event"
+                           asp-action="Browse"
+                           asp-route-pageNumber="@(events.PageNumber - 1)"
+                           asp-route-searchWord="@(ViewData["CurrentFilter"])"
+                           asp-route-type="@(currentEventType)"
+                           asp-route-fromDate="@(ViewData["FromDate"])"
+                           asp-route-toDate="@(ViewData["ToDate"])">
+                            Previous
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                }
+
+                @foreach (var item in pageItems)
+                {
+                    if (item is string s && s == "...")
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                    else if (item is int i)
+                    {
+                        if (i == events.PageNumber)
+                        {
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">@i <span class="visually-hidden">(current)</span></span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link"
+                                   asp-controller="Event"
+                                   asp-action="Browse"
+                                   asp-route-pageNumber="@i"
+                                   asp-route-searchWord="@(ViewData["CurrentFilter"])"
+                                   asp-route-type="@(currentEventType)"
+                                   asp-route-fromDate="@(ViewData["FromDate"])"
+                                   asp-route-toDate="@(ViewData["ToDate"])">
+                                    @i
+                                </a>
+                            </li>
+                        }
+                    }
+                }
+
+                @if (events.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link"
+                           asp-controller="Event"
+                           asp-action="Browse"
+                           asp-route-pageNumber="@(events.PageNumber + 1)"
+                           asp-route-searchWord="@(ViewData["CurrentFilter"])"
+                           asp-route-type="@(currentEventType)"
+                           asp-route-fromDate="@(ViewData["FromDate"])"
+                           asp-route-toDate="@(ViewData["ToDate"])">
+                            Next
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                }
+            </ul>
+        </nav>
+    }
 </div>
 
 @section Scripts {
     <script>
-        // Set the selected value for the eventType dropdown on page load
         document.addEventListener('DOMContentLoaded', function () {
             const eventType = '@currentEventType';
             if (eventType) {

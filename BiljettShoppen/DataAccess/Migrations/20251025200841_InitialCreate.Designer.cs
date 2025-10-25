@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251024165948_InitialCreate")]
+    [Migration("20251025200841_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -283,9 +283,6 @@ namespace DataAccess.Migrations
 
                     b.Property<int>("EntranceId")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("IsBooked")
-                        .HasColumnType("boolean");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
