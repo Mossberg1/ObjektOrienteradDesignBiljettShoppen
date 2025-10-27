@@ -1,3 +1,4 @@
+using Application.Features.Arenas;
 using Application.Features.Booking.Create;
 using Application.Features.Events.Browse;
 using Application.Features.Events.Create;
@@ -102,17 +103,9 @@ public class EventController : Controller
     [Authorize]
     public async Task<IActionResult> Create() 
     {
-        // TODO: Gör till Handler
-        var arenas = await _dbContext.Arenas
-            .AsNoTracking()
-            .OrderBy(a => a.Name)
-            .Select(a => new SelectListItem
-            {
-                Value = a.Id.ToString(),
-                Text = a.Name
-            })
-            .ToListAsync();
-        ViewBag.Arenas = arenas;
+        var query = new ListArenasQuery();
+        var arenas = await _mediator.Send(query);
+        ViewBag.Arenas = arenas.Select(a => new SelectListItem(a.Name, a.Id.ToString()));
 
         // Listan ska vara tom förts, denna fylls på senare beroende på vald arena.
         ViewBag.SeatLayouts = new List<SelectListItem>();
