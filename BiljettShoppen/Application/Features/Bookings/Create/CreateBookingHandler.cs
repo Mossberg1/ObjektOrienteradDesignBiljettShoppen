@@ -8,6 +8,7 @@ using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using Models.Exceptions;
 
 namespace Application.Features.Booking.Create
 {
@@ -24,6 +25,19 @@ namespace Application.Features.Booking.Create
 
         public async Task<Models.Entities.Booking> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
         {
+            var eventId = request.TicketsNavigation.FirstOrDefault()?.EventId;
+            if (eventId.HasValue)
+            {
+                var ev = await _dbContext.Events
+                    .FirstOrDefaultAsync(e => e.Id == eventId.Value, cancellationToken);
+                
+                int ticketCount = request.TicketsNavigation.Count;
+                if (!ev.IsFamilyFriendly && ticketCount > 5)
+                {
+                    throw new BookingLimitExceededException("Du kan bara boka max 5 biljetter för detta evenemang.");
+                }
+            }
+            
             var booking = new Models.Entities.Booking
             {
                 TotalPrice = request.TotalPrice,

@@ -47,9 +47,9 @@ namespace Application.Features.Payments.PayBooking
 
             foreach (var ticket in booking.TicketsNavigation)
             {
-                //_dbContext.Entry(ticket).State = EntityState.Unchanged;
                 _dbContext.Entry(ticket.BookableSpaceNavigation).State = EntityState.Unchanged;
-
+                _dbContext.Entry(ticket.EventNavigation).State = EntityState.Unchanged;
+                
                 ticket.BookingNavigation = booking;
                 _dbContext.Tickets.Update(ticket);
             }
