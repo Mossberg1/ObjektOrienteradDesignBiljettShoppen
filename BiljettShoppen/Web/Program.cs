@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json.Serialization;
 using Application;
 using Application.BackgroundServices;
 using Application.Interfaces;
@@ -20,7 +21,11 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 
 builder.Services.AddApplicationLayer();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(o => 
+    {
+        o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
