@@ -5,6 +5,7 @@ namespace Models.Entities;
 
 public class SeatLayout : BaseEntity
 {
+    public string Name { get; set; } = string.Empty;
     public int NumberOfRows { get; set; }
     public int NumberOfCols { get; set; }   
     

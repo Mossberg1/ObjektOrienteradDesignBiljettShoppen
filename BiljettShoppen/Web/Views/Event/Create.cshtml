@@ -1,0 +1,163 @@
+﻿@using Models.Enums
+@{
+    ViewData["Title"] = "Skapa evenemang";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Skapa evenemang</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @* Server-side validation summary *@
+            <form asp-controller="Event" asp-action="Create" method="post" class="row g-3">
+                @Html.AntiForgeryToken()
+                <div class="col-12">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="Name" class="form-label">Namn</label>
+                    <input type="text" id="Name" name="Name" class="form-control" placeholder="T.ex. Rockkonsert 2026" required />
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="Type" class="form-label">Typ</label>
+                    <select id="Type" name="Type" class="form-select">
+                        <option value="">Välj typ</option>
+                        @foreach (var opt in Html.GetEnumSelectList<EventType>())
+                        {
+                            <option value="@opt.Value">@opt.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="Date" class="form-label">Datum</label>
+                    <input type="date" id="Date" name="Date" class="form-control" required />
+                </div>
+
+                <div class="col-6 col-md-4">
+                    <label for="StartTime" class="form-label">Starttid</label>
+                    <input type="time" id="StartTime" name="StartTime" class="form-control" />
+                </div>
+
+                <div class="col-6 col-md-4">
+                    <label for="EndTime" class="form-label">Sluttid</label>
+                    <input type="time" id="EndTime" name="EndTime" class="form-control" />
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="ReleaseTicketsDate" class="form-label">Biljettsläpp (datum & tid)</label>
+                    <input type="datetime-local" id="ReleaseTicketsDate" name="ReleaseTicketsDate" class="form-control" />
+                    <div class="form-text">Lämna tomt om biljetter ska vara tillgängliga omedelbart.</div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label for="NumberOfSeatsToSell" class="form-label">Antal stolar</label>
+                    <input type="number" id="NumberOfSeatsToSell" name="NumberOfSeatsToSell" class="form-control" min="0" />
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label for="NumberOfLogesToSell" class="form-label">Antal loger</label>
+                    <input type="number" id="NumberOfLogesToSell" name="NumberOfLogesToSell" class="form-control" min="0" />
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label for="Price" class="form-label">Pris (kr)</label>
+                    <input type="number" step="0.01" id="Price" name="Price" class="form-control" min="0" />
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label for="Cost" class="form-label">Kostnad (kr)</label>
+                    <input type="number" step="0.01" id="Cost" name="Cost" class="form-control" min="0" />
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="ArenaId" class="form-label">Arena</label>
+                    <select id="ArenaId" name="ArenaId" class="form-select">
+                        <option value="">Välj arena</option>
+                        @* Controller: supply ViewBag.Arenas as IEnumerable<SelectListItem> *@
+                        @if (ViewBag.Arenas != null)
+                        {
+                            @foreach (var a in (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Arenas)
+                            {
+                                <option value="@a.Value">@a.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="SeatLayoutId" class="form-label">Sitskonfiguration</label>
+                    <select id="SeatLayoutId" name="SeatLayoutId" class="form-select" disabled>
+                        <option value="">Välj en arena först</option>
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="IsFamilyFriendly" name="IsFamilyFriendly" value="true" />
+                        <label class="form-check-label" for="IsFamilyFriendly">Familjevänligt</label>
+                    </div>
+                </div>
+
+                <div class="col-12 d-flex justify-content-start mt-3">
+                    <button type="submit" class="btn btn-primary">Skapa evenemang</button>
+                    <a asp-controller="Event" asp-action="Browse" class="btn btn-secondary ms-2">Avbryt</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const arenaSelect = document.getElementById('ArenaId');
+            const seatLayoutSelect = document.getElementById('SeatLayoutId');
+
+            async function updateSeatLayouts() {
+                const selectedArenaId = arenaSelect.value;
+
+                // Clear previous options and set default state
+                seatLayoutSelect.innerHTML = '';
+
+                if (!selectedArenaId) {
+                    seatLayoutSelect.disabled = true;
+                    const defaultOption = new Option('Välj en arena först', '');
+                    seatLayoutSelect.appendChild(defaultOption);
+                    return;
+                }
+
+                try {
+                    // Fetch seat layouts from the API
+                    const response = await fetch(`/api/SeatLayout/ForArena/${selectedArenaId}`);
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+                    const layouts = await response.json();
+
+                    // Enable dropdown and add a default option
+                    seatLayoutSelect.disabled = false;
+                    const defaultOption = new Option('Välj platslayout (valfritt)', '');
+                    seatLayoutSelect.appendChild(defaultOption);
+
+                    // Populate with new options from the API response
+                    layouts.forEach(layout => {
+                        const option = new Option(layout.name, layout.id);
+                        seatLayoutSelect.appendChild(option);
+                    });
+
+                } catch (error) {
+                    console.error('Failed to fetch seat layouts:', error);
+                    seatLayoutSelect.disabled = true;
+                    const errorOption = new Option('Kunde inte ladda layouter', '');
+                    seatLayoutSelect.appendChild(errorOption);
+                }
+            }
+
+            // Add event listener to the arena dropdown
+            arenaSelect.addEventListener('change', updateSeatLayouts);
+        });
+    </script>
+}

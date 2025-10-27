@@ -32,10 +32,6 @@ public class CreateEventHandler : IRequestHandler<CreateEventCommand, Event>
             SeatLayoutId = request.SeatLayoutId,
         };
 
-        var arenaExists = await _dbContext.Arenas.AnyAsync(a => a.Id == request.ArenaId, cancellationToken); // Kollar så att den valda ArenaId existerar innan ett nytt event skapas
-        if (!arenaExists)
-            throw new KeyNotFoundException($"Arena with ID {request.ArenaId} not found.");
-
         _dbContext.Events.Add(eventEntity);
         await _dbContext.SaveChangesAsync(cancellationToken);
 

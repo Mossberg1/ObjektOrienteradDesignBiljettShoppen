@@ -42,7 +42,13 @@ namespace Models.Entities
 
         public decimal CalculateEarnings()
         {
-           return Price - Cost;
+            if (TicketsNavigation.Count == 0)
+                return 0 - Cost;
+
+            var soldTickets = TicketsNavigation.Where(t => t.IsBooked()).ToList();
+            var totalEarnings = soldTickets.Sum(t => t.Price);
+
+            return totalEarnings - Cost;
         }
 
         public string TypeToString() => Type.ToString();

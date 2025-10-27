@@ -1,11 +1,15 @@
 using Application.Features.Booking.Create;
 using Application.Features.Events.Browse;
+using Application.Features.Events.Create;
 using Application.Features.Events.ViewSeats;
 using Application.Features.Payments.PayBooking;
 using Application.Features.Seats.GetSelectedSeats;
+using DataAccess;
 using DataAccess.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Entities.Base;
@@ -18,9 +22,12 @@ public class EventController : Controller
 {
     private readonly IMediator _mediator;
 
-    public EventController(IMediator mediator)
+    private readonly ApplicationDbContext _dbContext; // TODO: Ta bort bara för testning.
+
+    public EventController(IMediator mediator, ApplicationDbContext dbContext)
     {
         _mediator = mediator;
+        _dbContext = dbContext;
     }
     
     [HttpGet]
@@ -90,6 +97,30 @@ public class EventController : Controller
 
         return View(viewModel);
     }
+
+    [HttpGet("[controller]/Create")]
+    [Authorize]
+    public async Task<IActionResult> Create() 
+    {
+        // TODO: Gör till Handler
+        var arenas = await _dbContext.Arenas
+            .AsNoTracking()
+            .OrderBy(a => a.Name)
+            .Select(a => new SelectListItem
+            {
+                Value = a.Id.ToString(),
+                Text = a.Name
+            })
+            .ToListAsync();
+        ViewBag.Arenas = arenas;
+
+        // Listan ska vara tom förts, denna fylls på senare beroende på vald arena.
+        ViewBag.SeatLayouts = new List<SelectListItem>();
+
+        // TODO: Använd inte ViewBag skapa en ViewModel klass istället?
+
+        return View();
+    }
     
     [HttpGet("[controller]/Pay/{eventId:int}")]
     public async Task<IActionResult> Pay(
@@ -107,6 +138,15 @@ public class EventController : Controller
         var viewModel = new PayViewModel(booking.ReferenceNumber, booking.ReferenceNumber, booking.TotalPrice);
         
         return View(viewModel);
+    }
+
+    [HttpPost("[controller]/Create")]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreateEventCommand command) 
+    {
+        var created = await _mediator.Send(command);
+        return RedirectToAction("Browse");
     }
 
     [HttpPost("[controller]/ProcessPayment")]
