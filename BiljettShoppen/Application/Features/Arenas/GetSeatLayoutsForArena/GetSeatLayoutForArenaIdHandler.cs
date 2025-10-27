@@ -8,24 +8,24 @@ using MediatR;
 using Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Arenas
+namespace Application.Features.Arenas.GetSeatLayoutsForArena
 
 {
 
-    public class GetSeatLayoutForArenaIdQueryHandler : IRequestHandler<GetSeatLayoutForArenaIdQuery, SeatLayoutDto>
+    public class GetSeatLayoutForArenaIdQueryHandler : IRequestHandler<GetSeatLayoutForArenaIdQuery, List<SeatLayout>>
     {
         private readonly IApplicationDbContext _dbContext;
+
         public GetSeatLayoutForArenaIdQueryHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<SeatLayoutDto> Handle(GetSeatLayoutForArenaIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<SeatLayout>> Handle(GetSeatLayoutForArenaIdQuery request, CancellationToken cancellationToken)
         {
             var arena = await _dbContext.Arenas
                 .AsNoTracking()
                 .Include(a => a.SeatLayoutsNavigation)
-                .ThenInclude(sl => sl.SeatsNavigation)
                 .FirstOrDefaultAsync(a => a.Id == request.ArenaId, cancellationToken);
 
             if (arena == null)
@@ -40,14 +40,7 @@ namespace Application.Features.Arenas
                 throw new Exception($"No Seat Layout found for Arena {arena.Name}.");
             }
 
-            return new SeatLayoutDto
-            {
-                Id = seatLayout.Id,
-                ArenaId = seatLayout.ArenaId,
-                NumberOfRows = seatLayout.NumberOfRows,
-                NumberOfCols = seatLayout.NumberOfCols,
-                TotalCapacity = seatLayout.SeatsNavigation.Count
-            };
+            return arena.SeatLayoutsNavigation;
         }
     }
 }

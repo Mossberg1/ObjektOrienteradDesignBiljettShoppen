@@ -1,4 +1,5 @@
-﻿using DataAccess;
+﻿using Application.Features.Arenas.GetSeatLayoutsForArena;
+using DataAccess;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,10 +25,8 @@ namespace Web.Controllers.Api
         [HttpGet("ForArena/{arenaId:int}")]
         public async Task<IActionResult> ListSeatLayoutsForArena([FromRoute] int arenaId) 
         {
-            // TODO: Byt ut mot handler.
-            var layouts = await _dbContext.SeatLayouts.AsNoTracking()
-                .Where(sl => sl.ArenaId == arenaId)
-                .ToListAsync();
+            var query = new GetSeatLayoutForArenaIdQuery(arenaId);
+            var layouts = await _mediator.Send(query);
 
             return Ok(layouts);
         }
