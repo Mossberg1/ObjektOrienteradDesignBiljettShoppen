@@ -391,12 +391,6 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("NumberOfLogesToSell")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("NumberOfSeatsToSell")
-                        .HasColumnType("integer");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
@@ -428,12 +422,6 @@ namespace DataAccess.Migrations
                             t.HasCheckConstraint("CHK_Event_Date_InFuture", "\"Date\" > CURRENT_TIMESTAMP");
 
                             t.HasCheckConstraint("CHK_Event_EndTime_AfterStartTime", "\"EndTime\" > \"StartTime\"");
-
-                            t.HasCheckConstraint("CHK_Event_HasSomethingToSell", "\"NumberOfSeatsToSell\" > 0 OR \"NumberOfLogesToSell\" > 0");
-
-                            t.HasCheckConstraint("CHK_Event_NumberOfLogesToSell_NotNegative", "\"NumberOfLogesToSell\" >= 0");
-
-                            t.HasCheckConstraint("CHK_Event_NumberOfSeatsToSell_NotNegative", "\"NumberOfSeatsToSell\" >= 0");
 
                             t.HasCheckConstraint("CHK_Event_Price_NotNegative", "\"Price\" >= 0");
 

@@ -1,7 +1,112 @@
-﻿
+﻿@model List<Models.Entities.Arena>
+
 @{
-    ViewData["Title"] = "BrowseArena";
+    ViewData["Title"] = "Hantera Arenor";
 }
 
-<h1>BrowseArena</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Hantera Arenor</h1>
+        <a asp-controller="Admin" asp-action="CreateArena" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Skapa ny arena
+        </a>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Inga arenor hittades. <a asp-controller="Admin" asp-action="CreateArena" class="alert-link">Skapa en ny arena</a> för att komma igång.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var arena in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@arena.Name</h5>
+                            <h6 class="card-subtitle mb-3 text-muted">
+                                <i class="bi bi-geo-alt"></i> @arena.Address
+                            </h6>
+
+                            <ul class="list-unstyled mb-3 small">
+                                <li class="mb-1">
+                                    <strong>Platser:</strong> @arena.NumberOfSeats
+                                </li>
+                                <li class="mb-1">
+                                    <strong>Loger:</strong> @arena.NumberOfLoges
+                                </li>
+                                <li class="mb-1">
+                                    <strong>Inomhus:</strong>
+                                    @if (arena.Indoors)
+                                    {
+                                        <span class="badge bg-success">Ja</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Nej</span>
+                                    }
+                                </li>
+                                <li class="mb-1">
+                                    <strong>Entréer:</strong> @arena.NumberOfEntrances
+                                </li>
+                                @if (arena.SeatLayoutsNavigation != null && arena.SeatLayoutsNavigation.Any())
+                                {
+                                    <li class="mb-1">
+                                        <strong>Platskonfigurationer:</strong> @arena.SeatLayoutsNavigation.Count
+                                    </li>
+                                }
+                            </ul>
+
+                            <div class="mt-auto d-flex gap-2">
+                                <a asp-controller="Admin" asp-action="UpdateArena" asp-route-arenaId="@arena.Id" class="btn btn-sm btn-outline-primary flex-fill">
+                                    <i class="bi bi-pencil"></i> Redigera
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete(@arena.Id, '@arena.Name')">
+                                    <i class="bi bi-trash"></i> Ta bort
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="mt-4">
+        <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Tillbaka till Dashboard
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(arenaId, arenaName) {
+            if (confirm(`Är du säker på att du vill ta bort arenan "${arenaName}"? Detta kan inte ångras.`)) {
+                // TODO: Implement delete action
+                fetch(`/Admin/DeleteArena/${arenaId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Ett fel uppstod vid borttagning av arenan.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ett fel uppstod vid borttagning av arenan.');
+                });
+            }
+        }
+    </script>
+}
 

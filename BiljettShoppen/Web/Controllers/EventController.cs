@@ -1,5 +1,5 @@
 using Application.Features.Arenas;
-using Application.Features.Booking.Create;
+using Application.Features.Bookings.Create;
 using Application.Features.Events.Browse;
 using Application.Features.Events.Create;
 using Application.Features.Events.ViewSeats;
@@ -98,22 +98,6 @@ public class EventController : Controller
 
         return View(viewModel);
     }
-
-    [HttpGet("[controller]/Create")]
-    [Authorize]
-    public async Task<IActionResult> Create() 
-    {
-        var query = new ListArenasQuery();
-        var arenas = await _mediator.Send(query);
-        ViewBag.Arenas = arenas.Select(a => new SelectListItem(a.Name, a.Id.ToString()));
-
-        // Listan ska vara tom förts, denna fylls på senare beroende på vald arena.
-        ViewBag.SeatLayouts = new List<SelectListItem>();
-
-        // TODO: Använd inte ViewBag skapa en ViewModel klass istället?
-
-        return View();
-    }
     
     [HttpGet("[controller]/Pay/{eventId:int}")]
     public async Task<IActionResult> Pay(
@@ -131,15 +115,6 @@ public class EventController : Controller
         var viewModel = new PayViewModel(booking.ReferenceNumber, booking.ReferenceNumber, booking.TotalPrice);
         
         return View(viewModel);
-    }
-
-    [HttpPost("[controller]/Create")]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateEventCommand command) 
-    {
-        var created = await _mediator.Send(command);
-        return RedirectToAction("Browse");
     }
 
     [HttpPost("[controller]/ProcessPayment")]

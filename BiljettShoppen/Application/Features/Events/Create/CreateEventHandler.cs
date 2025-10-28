@@ -1,3 +1,4 @@
+using Application.Utils;
 using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,8 +23,6 @@ public class CreateEventHandler : IRequestHandler<CreateEventCommand, Event>
             StartTime = request.StartTime,
             EndTime = request.EndTime,
             ReleaseTicketsDate = request.ReleaseTicketsDate,
-            NumberOfSeatsToSell = request.NumberOfSeatsToSell,
-            NumberOfLogesToSell = request.NumberOfLogesToSell,
             Price = request.Price,
             Cost = request.Cost,
             Type = request.Type,
@@ -31,6 +30,8 @@ public class CreateEventHandler : IRequestHandler<CreateEventCommand, Event>
             ArenaId = request.ArenaId,
             SeatLayoutId = request.SeatLayoutId,
         };
+
+        eventEntity.ReleaseTicketsDate = DateTimeUtils.ToUtc(request.ReleaseTicketsDate);
 
         _dbContext.Events.Add(eventEntity);
         await _dbContext.SaveChangesAsync(cancellationToken);

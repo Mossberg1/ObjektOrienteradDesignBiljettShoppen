@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Models.Entities;
 
-namespace Application.Features.Booking.Create
+namespace Application.Features.Bookings.Create
 {
     public record CreateBookingCommand(
         decimal TotalPrice,

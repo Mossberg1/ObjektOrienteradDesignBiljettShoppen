@@ -119,6 +119,7 @@ namespace DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     NumberOfRows = table.Column<int>(type: "integer", nullable: false),
                     NumberOfCols = table.Column<int>(type: "integer", nullable: false),
                     ArenaId = table.Column<int>(type: "integer", nullable: false),
@@ -315,8 +316,6 @@ namespace DataAccess.Migrations
                     StartTime = table.Column<TimeOnly>(type: "time without time zone", nullable: false),
                     EndTime = table.Column<TimeOnly>(type: "time without time zone", nullable: false),
                     ReleaseTicketsDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    NumberOfSeatsToSell = table.Column<int>(type: "integer", nullable: false),
-                    NumberOfLogesToSell = table.Column<int>(type: "integer", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
                     Cost = table.Column<decimal>(type: "numeric", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
@@ -332,9 +331,6 @@ namespace DataAccess.Migrations
                     table.CheckConstraint("CHK_Event_Cost_NotNegative", "\"Cost\" >= 0");
                     table.CheckConstraint("CHK_Event_Date_InFuture", "\"Date\" > CURRENT_TIMESTAMP");
                     table.CheckConstraint("CHK_Event_EndTime_AfterStartTime", "\"EndTime\" > \"StartTime\"");
-                    table.CheckConstraint("CHK_Event_HasSomethingToSell", "\"NumberOfSeatsToSell\" > 0 OR \"NumberOfLogesToSell\" > 0");
-                    table.CheckConstraint("CHK_Event_NumberOfLogesToSell_NotNegative", "\"NumberOfLogesToSell\" >= 0");
-                    table.CheckConstraint("CHK_Event_NumberOfSeatsToSell_NotNegative", "\"NumberOfSeatsToSell\" >= 0");
                     table.CheckConstraint("CHK_Event_Price_NotNegative", "\"Price\" >= 0");
                     table.CheckConstraint("CHK_Event_ReleaseTicketsDate_BeforeEventDate", "\"ReleaseTicketsDate\" < \"Date\"");
                     table.ForeignKey(
