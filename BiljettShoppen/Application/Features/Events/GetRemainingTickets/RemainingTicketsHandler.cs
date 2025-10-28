@@ -20,14 +20,17 @@ namespace Application.Features.Events.GetRemainingTickets
 
         public async Task<RemainingTickets> Handle(GetRemainingTicketsQuery request, CancellationToken cancellationToken)
         {
-            var theEvent = await _dbContext.Events.AsNoTracking().FirstOrDefaultAsync(e => e.Id == request.EventId, cancellationToken);
+            var theEvent = await _dbContext.Events.AsNoTracking()
+                .Include(e => e.SeatLayoutNavigation)
+                    .ThenInclude(sl => sl.SeatsNavigation)
+                .FirstOrDefaultAsync(e => e.Id == request.EventId, cancellationToken);
 
             if (theEvent == null)
             {
                 throw new Exception($"Event with Id {request.EventId} not found.");
             }
 
-            var totalCapacity = theEvent.NumberOfSeatsToSell + theEvent.NumberOfLogesToSell;
+            var totalCapacity = theEvent.SeatLayoutNavigation.SeatsNavigation.Count();
 
             var soldTickets = await _dbContext.Tickets.CountAsync(t => t.EventId == request.EventId && t.BookingId != null, cancellationToken);
 

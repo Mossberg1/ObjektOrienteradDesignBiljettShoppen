@@ -9,7 +9,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             @* Server-side validation summary *@
-            <form asp-controller="Event" asp-action="Create" method="post" class="row g-3">
+            <form asp-controller="Admin" asp-action="CreateEvent" method="post" class="row g-3">
                 @Html.AntiForgeryToken()
                 <div class="col-12">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -50,16 +50,6 @@
                     <label for="ReleaseTicketsDate" class="form-label">Biljettsläpp (datum & tid)</label>
                     <input type="datetime-local" id="ReleaseTicketsDate" name="ReleaseTicketsDate" class="form-control" />
                     <div class="form-text">Lämna tomt om biljetter ska vara tillgängliga omedelbart.</div>
-                </div>
-
-                <div class="col-6 col-md-3">
-                    <label for="NumberOfSeatsToSell" class="form-label">Antal stolar</label>
-                    <input type="number" id="NumberOfSeatsToSell" name="NumberOfSeatsToSell" class="form-control" min="0" />
-                </div>
-
-                <div class="col-6 col-md-3">
-                    <label for="NumberOfLogesToSell" class="form-label">Antal loger</label>
-                    <input type="number" id="NumberOfLogesToSell" name="NumberOfLogesToSell" class="form-control" min="0" />
                 </div>
 
                 <div class="col-6 col-md-3">

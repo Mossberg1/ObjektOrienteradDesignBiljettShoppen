@@ -1,13 +1,16 @@
-using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json.Serialization;
 using Application;
 using Application.BackgroundServices;
+using Application.Features.Payments.TransactionConfirmation;
 using Application.Interfaces;
 using DataAccess;
 using DataAccess.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json.Serialization;
+
+// TODO: Skapa entreer
 
 var builder = WebApplication.CreateBuilder(args);
 

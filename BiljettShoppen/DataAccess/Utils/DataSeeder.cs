@@ -117,7 +117,6 @@ public class DataSeeder
             {
                 Name = "Konsert med lokala band", Date = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(2)),
                 StartTime = new TimeOnly(19, 0, 0), EndTime = new TimeOnly(22, 0, 0),
-                ReleaseTicketsDate = DateTime.UtcNow.AddDays(10), NumberOfSeatsToSell = 50, NumberOfLogesToSell = 4,
                 Price = 300, Cost = 5000, Type = EventType.Concert, IsFamilyFriendly = true, ArenaId = arenas[0].Id,
                 SeatLayoutId = seatLayouts[0].Id
             },
@@ -125,7 +124,6 @@ public class DataSeeder
             {
                 Name = "Stand-up kväll", Date = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(3)),
                 StartTime = new TimeOnly(20, 0, 0), EndTime = new TimeOnly(21, 30, 0),
-                ReleaseTicketsDate = DateTime.UtcNow.AddDays(20), NumberOfSeatsToSell = 77, NumberOfLogesToSell = 0,
                 Price = 450, Cost = 8000, Type = EventType.ComedyShow, IsFamilyFriendly = false, ArenaId = arenas[1].Id,
                 SeatLayoutId = seatLayouts[1].Id
             }
@@ -171,8 +169,6 @@ public class DataSeeder
                 StartTime = start,
                 EndTime = end,
                 ReleaseTicketsDate = releaseDate,
-                NumberOfSeatsToSell = seatsToSell,
-                NumberOfLogesToSell = logesToSell,
                 Price = price,
                 Cost = cost,
                 Type = type,
