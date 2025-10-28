@@ -104,7 +104,7 @@ namespace Web.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateArena() 
         {
-            // TODO: Sida för att uppdatera Arena.
+            // TODO: Sida för att uppdatera Arena handler måste implementeras.
             return View();
         }
 
@@ -112,7 +112,7 @@ namespace Web.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateEvent() 
         {
-            // TODO: Sida för att uppdatera Event.
+            // TODO: Lägg till handler.
             return View();
         }
 

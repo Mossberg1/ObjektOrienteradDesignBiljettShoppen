@@ -11,8 +11,6 @@ public record UpdateEventCommand(
     TimeOnly StartTime,
     TimeOnly EndTime,
     DateTime ReleaseTicketsDate,
-    int NumberOfSeatsToSell,
-    int NumberOfLogesToSell,
     decimal Price,
     decimal Cost,
     EventType Type,

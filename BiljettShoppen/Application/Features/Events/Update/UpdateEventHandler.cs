@@ -27,8 +27,6 @@ public class UpdateEventHandler : IRequestHandler<UpdateEventCommand, Event?>
         eventEntity.StartTime = request.StartTime;
         eventEntity.EndTime = request.EndTime;
         eventEntity.ReleaseTicketsDate = request.ReleaseTicketsDate;
-        eventEntity.NumberOfSeatsToSell = request.NumberOfSeatsToSell;
-        eventEntity.NumberOfLogesToSell = request.NumberOfLogesToSell;
         eventEntity.Price = request.Price;
         eventEntity.Cost = request.Cost;
         eventEntity.Type = request.Type;
