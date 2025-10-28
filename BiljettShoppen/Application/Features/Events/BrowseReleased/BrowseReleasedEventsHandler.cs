@@ -6,16 +6,16 @@ using Models.Entities;
 
 namespace Application.Features.Events.Browse;
 
-public class BrowseEventsHandler : IRequestHandler<BrowseEventsQuery, PaginatedList<Event>>
+public class BrowseReleasedEventsHandler : IRequestHandler<BrowseReleasedEventsQuery, PaginatedList<Event>>
 {
     private readonly IApplicationDbContext _dbContext;
 
-    public BrowseEventsHandler(IApplicationDbContext dbContext)
+    public BrowseReleasedEventsHandler(IApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
     
-    public async Task<PaginatedList<Event>> Handle(BrowseEventsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<Event>> Handle(BrowseReleasedEventsQuery request, CancellationToken cancellationToken)
     {
         var queryable = _dbContext.Events
             .Include(e => e.ArenaNavigation)

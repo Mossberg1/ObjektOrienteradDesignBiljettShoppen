@@ -1,3 +1,4 @@
+﻿@page
 @using Models.Enums
 @using Models.Entities
 @using DataAccess.Utils
@@ -5,7 +6,7 @@
 @model PaginatedList<Event>
 
 @{
-    ViewData["Title"] = "Evenemang";
+    ViewData["Title"] = "Alla Evenemang";
 
     var events = Model;
 
@@ -20,7 +21,7 @@
 
 <div class="container mt-4">
     <h1 class="mb-4">Alla Evenemang</h1>
-    
+
     <div class="card mb-4">
         <div class="card-header">
             Filtrera Evenemang
@@ -134,13 +135,13 @@
                         <p class="card-text flex-grow-1">
                             @{
                                 var availableSeats = ev.TicketsNavigation != null
-                                    ? ev.TicketsNavigation.Count(t => !t.IsBooked())
-                                    : 0;
+                                ? ev.TicketsNavigation.Count(t => !t.IsBooked())
+                                : 0;
                             }
                             <small class="text-muted">Tillgängliga platser att boka: <strong>@availableSeats</strong></small>
                         </p>
 
-                        <a asp-controller="Event" asp-action="Booking" asp-route-eventId="@ev.Id" class="btn btn-primary mt-auto">Boka biljetter</a>
+                        <a asp-controller="Admin" asp-action="UpdateEvent" asp-route-eventId="@ev.Id" class="btn btn-primary mt-auto">Redigera</a>
                     </div>
                 </div>
             </div>
@@ -178,7 +179,8 @@
             }
             else
             {
-                for (int i = 2; i < left; i++) list.Add(i);
+                for (int i = 2; i < left; i++)
+                    list.Add(i);
             }
 
             for (int i = left; i <= right; i++)
@@ -190,7 +192,8 @@
             }
             else
             {
-                for (int i = right + 1; i <= totalPages - 1; i++) list.Add(i);
+                for (int i = right + 1; i <= totalPages - 1; i++)
+                    list.Add(i);
             }
 
             list.Add(totalPages);
