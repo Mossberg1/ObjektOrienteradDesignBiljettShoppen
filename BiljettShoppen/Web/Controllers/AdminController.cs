@@ -1,10 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers
 {
     [Route("[controller]/[action]")]
     public class AdminController : Controller
     {
+        private readonly IMediator _mediator;
+
+        public AdminController(IMediator mediator)
+        {
+            _mediator = mediator; 
+        }
         public async Task<IActionResult> Browse()
         {
             
