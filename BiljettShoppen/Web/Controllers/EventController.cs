@@ -98,22 +98,6 @@ public class EventController : Controller
 
         return View(viewModel);
     }
-
-    [HttpGet("[controller]/Create")]
-    [Authorize]
-    public async Task<IActionResult> Create() 
-    {
-        var query = new ListArenasQuery();
-        var arenas = await _mediator.Send(query);
-        ViewBag.Arenas = arenas.Select(a => new SelectListItem(a.Name, a.Id.ToString()));
-
-        // Listan ska vara tom förts, denna fylls på senare beroende på vald arena.
-        ViewBag.SeatLayouts = new List<SelectListItem>();
-
-        // TODO: Använd inte ViewBag skapa en ViewModel klass istället?
-
-        return View();
-    }
     
     [HttpGet("[controller]/Pay/{eventId:int}")]
     public async Task<IActionResult> Pay(
