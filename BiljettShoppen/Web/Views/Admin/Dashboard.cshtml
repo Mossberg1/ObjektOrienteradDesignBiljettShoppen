@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+    <p class="lead text-muted">Välkommen till administrationspanelen. Välj en åtgärd nedan.</p>
+
+    <div class="row g-4 mt-3">
+        <!-- Browse Events -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="bi bi-calendar-event"></i> Hantera Evenemang
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Visa, redigera och ta bort befintliga evenemang.
+                    </p>
+                    <a asp-controller="Admin" asp-action="Browse" class="btn btn-primary mt-auto">
+                        Visa alla evenemang
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Arena -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="bi bi-building"></i> Skapa Arena
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Lägg till en ny arena i systemet.
+                    </p>
+                    <a asp-controller="Admin" asp-action="CreateArena" class="btn btn-primary mt-auto">
+                        Skapa ny arena
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Seat Layout -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="bi bi-grid-3x3"></i> Skapa Stolskonfiguration
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Skapa en ny sitskonfiguration för en arena.
+                    </p>
+                    <a asp-controller="Admin" asp-action="CreateSeatLayout" class="btn btn-primary mt-auto">
+                        Skapa sitskonfiguration
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Event (link to existing Event/Create) -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="bi bi-plus-circle"></i> Skapa Evenemang
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Lägg till ett nytt evenemang i systemet.
+                    </p>
+                    <a asp-controller="Event" asp-action="Create" class="btn btn-primary mt-auto">
+                        Skapa nytt evenemang
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -44,7 +44,7 @@ public class EventController : Controller
         [FromQuery] int pageSize = 24
     )
     {
-        var query = new BrowseEventsQuery(
+        var query = new BrowseReleasedEventsQuery(
             searchWord, 
             type, 
             isFamilyFriendly, 

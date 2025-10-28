@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
-// TODO: Skapa uträkning för totalpris sålt för ett evenemang.
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -26,7 +24,6 @@ builder.Services.AddControllersWithViews()
     {
         o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
-builder.Services.AddRazorPages();
 
 var app = builder.Build();
 

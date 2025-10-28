@@ -5,7 +5,7 @@ using Models.Enums;
 
 namespace Application.Features.Events.Browse;
 
-public record BrowseEventsQuery(
+public record BrowseReleasedEventsQuery(
     string? SearchWord,
     EventType? Type,
     bool? IsFamilyFriendly,
