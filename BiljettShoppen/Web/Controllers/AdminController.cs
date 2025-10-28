@@ -102,17 +102,17 @@ namespace Web.Controllers
 
         [HttpGet("Arena/{arenaId:int}")]
         [Authorize]
-        public async Task<IActionResult> UpdateArena() 
+        public async Task<IActionResult> UpdateArena(int arenaId) 
         {
-            // TODO: Sida för att uppdatera Arena handler måste implementeras.
+            // TODO: Skriv ut befintlig data om arenan.
             return View();
         }
 
         [HttpGet("Event/{eventId:int}")]
         [Authorize]
-        public async Task<IActionResult> UpdateEvent() 
+        public async Task<IActionResult> UpdateEvent(int eventId) 
         {
-            // TODO: Lägg till handler.
+            // TODO: Skriv ut befintlig data om eventet.
             return View();
         }
 
@@ -131,6 +131,25 @@ namespace Web.Controllers
         public async Task<IActionResult> Create(CreateArenaCommand command)
         {
             var created = await _mediator.Send(command);
+            return RedirectToAction("Browse");
+        }
+
+        [HttpPut("Update/Arena")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateArena() 
+        {
+            // TODO: Lägg till handler.
+            return RedirectToAction("Browse");
+        }
+
+
+        [HttpPut("Update/Event")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateEvent() 
+        {
+            // TODO: Lägg till handler.
             return RedirectToAction("Browse");
         }
     }

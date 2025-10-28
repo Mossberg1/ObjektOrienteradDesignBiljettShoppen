@@ -10,7 +10,25 @@ using Models.Entities;
 using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json.Serialization;
 
+// TODO: Fixa bugg som Oskar hittade.
 // TODO: Skapa entreer
+// TODO: När en Arena skapas ska en Huvudentree automatiskt skapas.
+// TODO: Gör klart sidorna som påbörjades Tisdags.
+// TODO: Få klart skapande av ny SeatLayout.
+// TODO: Skapa sida för att skapa SeatLayout.
+// TODO: Medelande när 10 minuters bokningstimer är slut.
+// TODO: Medelande när betalning lyckas.
+// TODO: Bättre felmedelanden.
+// TODO: Fortsätt på beräkna pris decorator, ska beräkna pris på evenamngstyp och tidpunkt.
+// TODO: Sida för att se uppkommande evenemang. 
+// TODO: Optimera BookingTimer.
+// TODO: Möjlighet att ladda ner boknings PDF.
+// TODO: Söka på bokningsnummer.
+// TODO: Lägg till stubbar för kort och faktura betalning.
+// TODO: Email stubb.
+// TODO: Skapa egna specifika exceptions.
+
+// TODO: Prata med Hans x2 angående loger på hemsidan, desginen finns för det men inte på hemsidan?. 
 
 var builder = WebApplication.CreateBuilder(args);
 
