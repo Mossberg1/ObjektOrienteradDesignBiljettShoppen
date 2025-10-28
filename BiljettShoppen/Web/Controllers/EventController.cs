@@ -1,5 +1,5 @@
 using Application.Features.Arenas;
-using Application.Features.Booking.Create;
+using Application.Features.Bookings.Create;
 using Application.Features.Events.Browse;
 using Application.Features.Events.Create;
 using Application.Features.Events.ViewSeats;
@@ -115,15 +115,6 @@ public class EventController : Controller
         var viewModel = new PayViewModel(booking.ReferenceNumber, booking.ReferenceNumber, booking.TotalPrice);
         
         return View(viewModel);
-    }
-
-    [HttpPost("[controller]/Create")]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateEventCommand command) 
-    {
-        var created = await _mediator.Send(command);
-        return RedirectToAction("Browse");
     }
 
     [HttpPost("[controller]/ProcessPayment")]

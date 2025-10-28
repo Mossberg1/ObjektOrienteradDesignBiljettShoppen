@@ -16,8 +16,6 @@ namespace Models.Entities
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }
         public DateTime ReleaseTicketsDate { get; set; }
-        public int NumberOfSeatsToSell { get; set; }
-        public int NumberOfLogesToSell { get; set; }
         public decimal Price { get; set; }
         public decimal Cost { get; set; }
         public EventType Type { get; set; } 

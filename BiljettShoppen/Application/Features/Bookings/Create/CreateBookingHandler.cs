@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Exceptions;
 
-namespace Application.Features.Booking.Create
+namespace Application.Features.Bookings.Create
 {
     public class CreateBookingHandler : IRequestHandler<CreateBookingCommand, Models.Entities.Booking>
     {

@@ -1,6 +1,8 @@
 ﻿using Application.Features.Arenas;
+using Application.Features.Arenas.Create;
 using Application.Features.Events.Browse;
 using Application.Features.Events.BrowseAll;
+using Application.Features.Events.Create;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +11,7 @@ using Models.Enums;
 
 namespace Web.Controllers
 {
-    [Route("[controller]/[action]")]
+    [Route("[controller]")]
     [Authorize]
     public class AdminController : Controller
     {
@@ -55,7 +57,11 @@ namespace Web.Controllers
         [Authorize]
         public async Task<IActionResult> BrowseArena() 
         {
-            return View();
+            var query = new ListArenasQuery();
+            var arenas = await _mediator.Send(query);
+            ViewBag.Arenas = arenas.Select(a => new SelectListItem(a.Name, a.Id.ToString()));
+
+            return View(arenas);
         }
 
         [HttpGet("Create/Arena")]
@@ -75,8 +81,6 @@ namespace Web.Controllers
 
             // Listan ska vara tom förts, denna fylls på senare beroende på vald arena.
             ViewBag.SeatLayouts = new List<SelectListItem>();
-
-            // TODO: Använd inte ViewBag skapa en ViewModel klass istället?
 
             return View();
         }
@@ -110,6 +114,24 @@ namespace Web.Controllers
         {
             // TODO: Sida för att uppdatera Event.
             return View();
+        }
+
+        [HttpPost("Create/Event")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateEvent(CreateEventCommand command)
+        {
+            var created = await _mediator.Send(command);
+            return RedirectToAction("Browse");
+        }
+
+        [HttpPost("Create/Arena")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateArenaCommand command)
+        {
+            var created = await _mediator.Send(command);
+            return RedirectToAction("Browse");
         }
     }
 }
