@@ -19,14 +19,14 @@ public static class DependencyInjection
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        services.AddDbContext<ApplicationDbContext>(options => 
+        services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString)
         );
-        
-        services.AddScoped<IApplicationDbContext>(provider => 
+
+        services.AddScoped<IApplicationDbContext>(provider =>
             provider.GetRequiredService<ApplicationDbContext>()
         );
-        
+
         services.AddTransient<DataSeeder>();
 
         return services;

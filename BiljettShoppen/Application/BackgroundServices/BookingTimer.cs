@@ -1,8 +1,9 @@
 using Application.Interfaces;
-using DataAccess.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Models.Entities;
+using Microsoft.AspNetCore.SignalR;
+using Application.Hubs;
 
 namespace Application.BackgroundServices;
 
@@ -17,22 +18,24 @@ namespace Application.BackgroundServices;
 // En ConcurrentDictionary behöver inte skapa en ny array när max capacity nås?
 public class BookingTimer : BackgroundService, IBookingTimer
 {
-    private readonly ILogger<BookingTimer> _logger; 
+    private readonly ILogger<BookingTimer> _logger;
+    private readonly IHubContext<BookingHub> _hubContext;
     private List<Booking> _bookings;
 
     private const int _removeIntervalInMinutes = 10;
-    private const int _checkIntervalInSeconds = 10;
+    private const int _checkIntervalInSeconds = 1;
 
-    public BookingTimer(ILogger<BookingTimer> logger)
+    public BookingTimer(ILogger<BookingTimer> logger, IHubContext<BookingHub> hubContext)
     {
         _logger = logger;
+        _hubContext = hubContext;
         _bookings = [];
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Boknings timern har startat.");
-        
+
         while (!stoppingToken.IsCancellationRequested)
         {
             if (_bookings.Count != 0)
@@ -42,6 +45,9 @@ public class BookingTimer : BackgroundService, IBookingTimer
                 {
                     _bookings.RemoveAt(0);
                     _logger.LogInformation($"Boknings tid har gått ut: {firstBooking.ReferenceNumber}");
+
+                    await _hubContext.Clients.Group(firstBooking.ReferenceNumber)
+                        .SendAsync("BookingExpired", firstBooking.ReferenceNumber, stoppingToken);
 
                     if (_bookings.Count != 0)
                     {
@@ -56,7 +62,7 @@ public class BookingTimer : BackgroundService, IBookingTimer
 
             await Task.Delay(TimeSpan.FromSeconds(_checkIntervalInSeconds), stoppingToken);
         }
-        
+
         _logger.LogInformation("Boknings timern har stoppats.");
     }
 
@@ -65,7 +71,7 @@ public class BookingTimer : BackgroundService, IBookingTimer
         _logger.LogInformation($"Bokning tillagd i timern: {booking.ReferenceNumber}");
         _bookings.Add(booking);
     }
-    
+
     public bool RemoveBooking(Booking booking)
     {
         _logger.LogInformation($"Bokning borttagen från timern: {booking.ReferenceNumber}");

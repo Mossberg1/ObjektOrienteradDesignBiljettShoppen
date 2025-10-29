@@ -11,7 +11,7 @@ namespace DataAccess.Factories;
 internal class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 {
     private const string _connectionString = "Host=localhost;Port=5432;Username=admin;Password=admin;Database=ticketshop_db";
-    
+
     public ApplicationDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();

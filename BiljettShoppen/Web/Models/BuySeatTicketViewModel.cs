@@ -1,5 +1,4 @@
 using Models.Entities;
-using Models.Entities.Base;
 
 namespace Web.Models;
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Utils
+﻿namespace Application.Utils
 {
     internal static class DateTimeUtils
     {
@@ -14,7 +8,7 @@ namespace Application.Utils
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static DateTime ToUtc(DateTime value) 
+        public static DateTime ToUtc(DateTime value)
         {
             if (value.Kind == DateTimeKind.Utc)
                 return value;

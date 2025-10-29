@@ -18,7 +18,7 @@ public class DataSeeder
     {
         if (await _dbContext.Arenas.AnyAsync())
         {
-            return; 
+            return;
         }
 
         var arenas = await SeedArenasAsync();
@@ -96,9 +96,12 @@ public class DataSeeder
                 {
                     seats.Add(new Seat
                     {
-                        RowNumber = row, ColNumber = col,
+                        RowNumber = row,
+                        ColNumber = col,
                         Type = isBenchRow ? SeatType.Bench : SeatType.Chair,
-                        Price = isBenchRow ? 200 : 250, SeatLayoutId = layout.Id, EntranceId = regularEntrance.Id
+                        Price = isBenchRow ? 200 : 250,
+                        SeatLayoutId = layout.Id,
+                        EntranceId = regularEntrance.Id
                     });
                 }
             }
@@ -159,8 +162,8 @@ public class DataSeeder
             var seatsToSell = layout.NumberOfRows * layout.NumberOfCols;
             var logesToSell = 0;
 
-            var price = 150 + (i % 5) * 50; 
-            var cost = 500 + i * 10; 
+            var price = 150 + (i % 5) * 50;
+            var cost = 500 + i * 10;
 
             events.Add(new Event
             {

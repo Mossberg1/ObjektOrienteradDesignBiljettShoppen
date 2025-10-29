@@ -11,14 +11,14 @@ namespace Web.Controllers.Api
     {
         private readonly IMediator _mediator;
 
-        public ArenaController(IMediator mediator) 
+        public ArenaController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpDelete("{arenaId:int}")]
         [Authorize]
-        public async Task<IActionResult> DeleteArena([FromRoute] int arenaId) 
+        public async Task<IActionResult> DeleteArena([FromRoute] int arenaId)
         {
             var command = new DeleteArenaCommand(arenaId);
             var result = await _mediator.Send(command);

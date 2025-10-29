@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Models.Entities;
+﻿using Models.Entities;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -17,7 +12,7 @@ namespace Application.Features.Payments.TransactionConfirmation
             QuestPDF.Settings.License = LicenseType.Community;
         }
 
-        public static byte[] GeneratePdf(Booking booking, string? transactionId = null) 
+        public static byte[] GeneratePdf(Booking booking, string? transactionId = null)
         {
             var tickets = booking.TicketsNavigation ?? new List<Ticket>();
 
@@ -45,7 +40,7 @@ namespace Application.Features.Payments.TransactionConfirmation
 
                             column.Item().PaddingTop(5, Unit.Millimetre).Text("Biljetter:").FontSize(14).SemiBold();
 
-                            foreach (var t in tickets) 
+                            foreach (var t in tickets)
                             {
 
                                 var eventName = t.EventNavigation?.Name ?? "N/A";
@@ -93,7 +88,7 @@ namespace Application.Features.Payments.TransactionConfirmation
                             if (tickets.Count == 0)
                                 column.Item().Text("Inga biljetter hittades för denna bokning.");
                         });
-                    
+
 
                 });
             }).GeneratePdf();

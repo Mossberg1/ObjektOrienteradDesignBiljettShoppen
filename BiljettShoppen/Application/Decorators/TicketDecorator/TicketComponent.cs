@@ -10,12 +10,12 @@ public class TicketComponent : ITicketComponent
     {
         _event = ev;
     }
-    
+
     public decimal GetPrice()
     {
         return _event.Price;
     }
-    
+
     public string GetDescription()
     {
         return $"Event: {_event.Name}";

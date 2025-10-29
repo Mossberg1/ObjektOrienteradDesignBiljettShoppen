@@ -14,7 +14,7 @@ public class CreateTicketsHandler : IRequestHandler<CreateTicketsCommand, bool>
     {
         _dbContext = dbContext;
     }
-    
+
     public async Task<bool> Handle(CreateTicketsCommand request, CancellationToken cancellationToken)
     {
         var ev = await _dbContext.Events
@@ -32,7 +32,7 @@ public class CreateTicketsHandler : IRequestHandler<CreateTicketsCommand, bool>
         {
             ITicketComponent ticketComponent = new TicketComponent(ev);
             ticketComponent = new BookableSpaceDecorator(ticketComponent, seat);
-            
+
             var ticket = new Ticket
             {
                 Price = ticketComponent.GetPrice(),

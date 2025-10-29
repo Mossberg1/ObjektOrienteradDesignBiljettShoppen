@@ -5,7 +5,7 @@ using Models.Entities;
 
 namespace Application.Features.Events.GetById;
 
-public class GetEventByIdHandler:IRequestHandler<GetEventByIdQuery, Event?>
+public class GetEventByIdHandler : IRequestHandler<GetEventByIdQuery, Event?>
 {
     private readonly IApplicationDbContext _dbContext;
 
