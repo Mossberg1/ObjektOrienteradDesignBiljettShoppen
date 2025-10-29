@@ -30,9 +30,9 @@ namespace Application.Features.Arenas.Delete
             
             _dbContext.Arenas.Remove(arena);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            var result = await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return true;
+            return result > 0;
         }
     }
 }

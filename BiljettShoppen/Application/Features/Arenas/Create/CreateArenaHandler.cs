@@ -24,8 +24,8 @@ namespace Application.Features.Arenas.Create
         {
             var arena = new Arena // Skapar upp en arena med följande data.
             {
-                Name = request.Address,
-                Address = request.Name,
+                Name = request.Name,
+                Address = request.Address,
                 NumberOfSeats = request.NumberOfSeats,
                 NumberOfLoges = request.NumberOfLoges,
                 Indoors = request.Indoors

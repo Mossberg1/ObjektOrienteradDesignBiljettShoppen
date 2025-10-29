@@ -87,7 +87,7 @@
         function confirmDelete(arenaId, arenaName) {
             if (confirm(`Är du säker på att du vill ta bort arenan "${arenaName}"? Detta kan inte ångras.`)) {
                 // TODO: Implement delete action
-                fetch(`/Admin/DeleteArena/${arenaId}`, {
+                fetch(`/api/arena/${arenaId}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',

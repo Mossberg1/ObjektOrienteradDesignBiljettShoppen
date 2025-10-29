@@ -12,8 +12,5 @@ public record UpdateArenaCommand(
     int Id,
     string Name,
     string Address,
-    int NumberOfSeats,
-    int NumberOfLoges,
-    bool Indoors,
-    int NumberOfEntrances
+    bool Indoors
     ) : IRequest<Arena?>;

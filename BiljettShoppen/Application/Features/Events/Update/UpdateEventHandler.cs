@@ -1,4 +1,5 @@
-﻿using DataAccess.Interfaces;
+﻿using Application.Utils;
+using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -26,15 +27,12 @@ public class UpdateEventHandler : IRequestHandler<UpdateEventCommand, Event?>
         eventEntity.Date = request.Date;
         eventEntity.StartTime = request.StartTime;
         eventEntity.EndTime = request.EndTime;
-        eventEntity.ReleaseTicketsDate = request.ReleaseTicketsDate;
+        eventEntity.ReleaseTicketsDate = DateTimeUtils.ToUtc(request.ReleaseTicketsDate);
         eventEntity.Price = request.Price;
         eventEntity.Cost = request.Cost;
-        eventEntity.Type = request.Type;
-        eventEntity.IsFamilyFriendly = request.IsFamilyFriendly;
-        eventEntity.ArenaId = request.ArenaId;
-        eventEntity.SeatLayoutId = request.SeatLayoutId;
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        if (await _dbContext.SaveChangesAsync(cancellationToken) == 0)
+            return null;
 
         return eventEntity;
     }
