@@ -9,7 +9,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
-namespace Application.Features.Arenas.Entrances
+namespace Application.Features.Arenas.Entrances.Set
 {
     public class SetEntrancesHandler : IRequestHandler<SetEntrancesCommand, Arena>
     {
