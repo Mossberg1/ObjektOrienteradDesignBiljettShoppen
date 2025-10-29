@@ -11,14 +11,14 @@ namespace Web.Controllers.Api
     {
         private readonly IMediator _mediator;
 
-        public EventController(IMediator mediator) 
+        public EventController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [Authorize]
         [HttpDelete("{eventId:int}")]
-        public async Task<IActionResult> DeleteEvent([FromRoute] int eventId) 
+        public async Task<IActionResult> DeleteEvent([FromRoute] int eventId)
         {
             var command = new DeleteEventCommand(eventId);
             var result = await _mediator.Send(command);

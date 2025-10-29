@@ -1,7 +1,7 @@
-using System.Reflection;
 using Application.BackgroundServices;
 using Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Application;
 
@@ -15,7 +15,7 @@ public static class DependencyInjection
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         services.AddSingleton<IBookingTimer, BookingTimer>();
-        
+
         // Lägg till background services
         services.AddHostedService(provider => (BookingTimer)provider.GetRequiredService<IBookingTimer>());
 

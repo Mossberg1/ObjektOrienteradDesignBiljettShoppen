@@ -1,11 +1,6 @@
 ﻿using DataAccess;
 using MediatR;
 using Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.Arenas.GetArenaById
 {
@@ -13,7 +8,7 @@ namespace Application.Features.Arenas.GetArenaById
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public GetArenaByIdHandler(ApplicationDbContext dbContext) 
+        public GetArenaByIdHandler(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Features.Events.Browse;
-using DataAccess.Interfaces;
+﻿using DataAccess.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Arenas.Create

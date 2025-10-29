@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccess.Interfaces;
+﻿using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -35,6 +30,6 @@ public class UpdateArenaHandler : IRequestHandler<UpdateArenaCommand, Arena?>
             return null;
 
         return arena;
-            
+
     }
 }

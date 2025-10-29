@@ -1,14 +1,8 @@
-﻿using Application.Features.Events.Browse;
-using DataAccess.Interfaces;
+﻿using DataAccess.Interfaces;
 using DataAccess.Utils;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.Events.BrowseAll
 {

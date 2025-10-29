@@ -9,7 +9,7 @@ public record BrowseReleasedEventsQuery(
     string? SearchWord,
     EventType? Type,
     bool? IsFamilyFriendly,
-    DateOnly? FromDate, 
+    DateOnly? FromDate,
     DateOnly? ToDate,
     string? SortBy,
     bool Ascending = true,

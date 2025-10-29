@@ -2,7 +2,6 @@
 using Application.Features.Arenas.Create;
 using Application.Features.Arenas.GetArenaById;
 using Application.Features.Arenas.Update;
-using Application.Features.Events.Browse;
 using Application.Features.Events.BrowseAll;
 using Application.Features.Events.Create;
 using Application.Features.Events.GetById;
@@ -59,7 +58,7 @@ namespace Web.Controllers
 
         [HttpGet("Arena")]
         [Authorize]
-        public async Task<IActionResult> BrowseArena() 
+        public async Task<IActionResult> BrowseArena()
         {
             var query = new ListArenasQuery();
             var arenas = await _mediator.Send(query);
@@ -70,7 +69,7 @@ namespace Web.Controllers
 
         [HttpGet("Create/Arena")]
         [Authorize]
-        public async Task<IActionResult> CreateArena() 
+        public async Task<IActionResult> CreateArena()
         {
             return View();
         }
@@ -91,7 +90,7 @@ namespace Web.Controllers
 
         [HttpGet("Create/SeatLayout")]
         [Authorize]
-        public async Task<IActionResult> CreateSeatLayout() 
+        public async Task<IActionResult> CreateSeatLayout()
         {
             // TODO: Sida för att skapa sittplatser för arena.
             return View();
@@ -99,14 +98,14 @@ namespace Web.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Dashboard() 
+        public async Task<IActionResult> Dashboard()
         {
             return View();
         }
 
         [HttpGet("Update/Arena/{arenaId:int}")]
         [Authorize]
-        public async Task<IActionResult> UpdateArena(int arenaId) 
+        public async Task<IActionResult> UpdateArena(int arenaId)
         {
             var query = new GetArenaByIdQuery(arenaId);
             var arena = await _mediator.Send(query);
@@ -119,7 +118,7 @@ namespace Web.Controllers
 
         [HttpGet("Update/Event/{eventId:int}")]
         [Authorize]
-        public async Task<IActionResult> UpdateEvent(int eventId) 
+        public async Task<IActionResult> UpdateEvent(int eventId)
         {
             var query = new GetEventByIdQuery(eventId);
             var eventEntity = await _mediator.Send(query);
@@ -150,7 +149,7 @@ namespace Web.Controllers
         [HttpPost("Update/Arena/{arenaId:int}")]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateArena([FromRoute] int arenaId, [FromForm] UpdateArenaCommand command) 
+        public async Task<IActionResult> UpdateArena([FromRoute] int arenaId, [FromForm] UpdateArenaCommand command)
         {
             if (arenaId != command.Id)
                 return BadRequest();
@@ -166,7 +165,7 @@ namespace Web.Controllers
         [HttpPost("Update/Event/{eventId:int}")]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateEvent([FromRoute] int eventId, [FromForm] UpdateEventCommand command) 
+        public async Task<IActionResult> UpdateEvent([FromRoute] int eventId, [FromForm] UpdateEventCommand command)
         {
             if (eventId != command.Id)
                 return BadRequest();

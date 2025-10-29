@@ -9,12 +9,12 @@ public class Arena : BaseEntity
     public string Name { get; set; }
     public int NumberOfSeats { get; set; }
     public int NumberOfLoges { get; set; }
-    public bool Indoors  { get; set; }
+    public bool Indoors { get; set; }
     public int NumberOfEntrances { get; set; }
-    
+
     public List<Entrance> EntrancesNavigation { get; set; } = new List<Entrance>();
-    
+
     public List<SeatLayout> SeatLayoutsNavigation { get; set; } = [];
-    
+
     public List<Event> EventsNavigation { get; set; } = new List<Event>();
 }

@@ -1,32 +1,25 @@
 using Application;
-using Application.BackgroundServices;
-using Application.Features.Payments.TransactionConfirmation;
-using Application.Interfaces;
 using DataAccess;
 using DataAccess.Utils;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Models.Entities;
-using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json.Serialization;
+using Application.Hubs;
 
-// TODO: Skapa entreer
-// TODO: När en Arena skapas ska en Huvudentree automatiskt skapas.
-// TODO: Få klart skapande av ny SeatLayout.
+// TODO: Fixa bugg på betalningsidan, går ej att betala med faktura.
+// TODO: Få klart skapande av ny SeatLayout (camilla håller på).
 // TODO: Skapa sida för att skapa SeatLayout.
-// TODO: Medelande när 10 minuters bokningstimer är slut.
 // TODO: Medelande när betalning lyckas.
 // TODO: Bättre felmedelanden.
-// TODO: Fortsätt på beräkna pris decorator, ska beräkna pris på evenamngstyp och tidpunkt.
-// TODO: Sida för att se uppkommande evenemang. 
-// TODO: Optimera BookingTimer.
+// TODO: Fortsätt på beräkna pris decorator, ska beräkna pris på tidpunkt (alex håller på).
+// TODO: Sida för att se uppkommande evenemang (handler finns). 
+// TODO: Optimera BookingTimer (william).
 // TODO: Möjlighet att ladda ner boknings PDF.
-// TODO: Söka på bokningsnummer.
+// TODO: Söka på bokningsnummer (tom håller på).
 // TODO: Lägg till stubbar för kort och faktura betalning.
 // TODO: Email stubb.
 // TODO: Skapa egna specifika exceptions.
-
-// TODO: Prata med Hans x2 angående loger på hemsidan, desginen finns för det men inte på hemsidan?. 
+// TODO: Spara faktura/bokings (pdfer) i databasen.
+// TODO: Skapa faktura i databasen (pdf?).
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,10 +32,12 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddApplicationLayer();
 
 builder.Services.AddControllersWithViews()
-    .AddJsonOptions(o => 
+    .AddJsonOptions(o =>
     {
         o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -50,7 +45,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
-    
+
     // Generera fake data under utveckling om databasen är tom.
     using var scope = app.Services.CreateScope();
     var dataSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
@@ -77,5 +72,7 @@ app.MapControllerRoute(
 
 app.MapRazorPages()
    .WithStaticAssets();
+
+app.MapHub<BookingHub>("/bookinghub");
 
 app.Run();

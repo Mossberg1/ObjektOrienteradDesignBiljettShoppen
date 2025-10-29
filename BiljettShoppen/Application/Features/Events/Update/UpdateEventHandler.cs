@@ -9,7 +9,7 @@ namespace Application.Features.Events.Update;
 public class UpdateEventHandler : IRequestHandler<UpdateEventCommand, Event?>
 {
     private readonly IApplicationDbContext _dbContext;
-    
+
     public UpdateEventHandler(IApplicationDbContext dbContext)
     {
         _dbContext = dbContext;

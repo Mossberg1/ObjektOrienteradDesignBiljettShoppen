@@ -1,7 +1,6 @@
 using Application.Utils;
 using DataAccess.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Events.Create;

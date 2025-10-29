@@ -7,20 +7,20 @@ public class CardValidator
     {
         if (string.IsNullOrWhiteSpace(cardNumber))
             return false;
-        
+
         var cleaned = new string(cardNumber.Where(char.IsDigit).ToArray());
-        
+
         if (cleaned.Length < 13 || cleaned.Length > 19)
             return false;
 
         return CheckCard(cleaned);
     }
-    
+
     private static bool CheckCard(string cardNumber)
     {
         int sum = 0;
         bool isEven = false;
-        
+
         for (int i = cardNumber.Length - 1; i >= 0; i--)
         {
             int digit = cardNumber[i] - '0';
@@ -62,14 +62,14 @@ public class CardValidator
 
         return "Okänd";
     }
-    
+
     public static bool ValidateExpiryDate(string expiryDate)
     {
         if (string.IsNullOrWhiteSpace(expiryDate))
             return false;
 
         var cleaned = expiryDate.Replace("/", "").Replace(" ", "");
-        
+
         if (cleaned.Length != 4)
             return false;
 

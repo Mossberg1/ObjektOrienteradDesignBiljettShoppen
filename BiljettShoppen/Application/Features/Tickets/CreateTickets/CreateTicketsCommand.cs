@@ -1,5 +1,4 @@
 using MediatR;
-using Models.Entities;
 
 namespace Application.Features.Tickets.CreateTickets;
 

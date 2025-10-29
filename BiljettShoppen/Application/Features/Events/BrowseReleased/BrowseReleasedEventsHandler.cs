@@ -14,7 +14,7 @@ public class BrowseReleasedEventsHandler : IRequestHandler<BrowseReleasedEventsQ
     {
         _dbContext = dbContext;
     }
-    
+
     public async Task<PaginatedList<Event>> Handle(BrowseReleasedEventsQuery request, CancellationToken cancellationToken)
     {
         var queryable = _dbContext.Events
@@ -22,7 +22,7 @@ public class BrowseReleasedEventsHandler : IRequestHandler<BrowseReleasedEventsQ
             .Include(e => e.TicketsNavigation)
             .Where(e => e.ReleaseTicketsDate <= DateTime.UtcNow)
             .AsNoTracking();
-        
+
         if (request.ToDate.HasValue)
         {
             queryable = queryable.Where(e => e.Date <= request.ToDate.Value);
@@ -45,7 +45,7 @@ public class BrowseReleasedEventsHandler : IRequestHandler<BrowseReleasedEventsQ
 
         if (!string.IsNullOrWhiteSpace(request.SearchWord))
         {
-            queryable = queryable.Where(e => 
+            queryable = queryable.Where(e =>
                 EF.Functions.ILike(e.Name, $"%{request.SearchWord}%") ||
                 EF.Functions.ILike(e.ArenaNavigation.Name, $"%{request.SearchWord}%") ||
                 EF.Functions.ILike(e.ArenaNavigation.Address, $"%{request.SearchWord}%")
@@ -57,15 +57,15 @@ public class BrowseReleasedEventsHandler : IRequestHandler<BrowseReleasedEventsQ
             switch (request.SortBy.ToLower())
             {
                 case ("name"):
-                { 
-                    queryable = request.Ascending 
-                        ? queryable.OrderBy(e => e.Name) 
+                {
+                    queryable = request.Ascending
+                        ? queryable.OrderBy(e => e.Name)
                         : queryable.OrderByDescending(e => e.Name);
                     break;
                 }
                 case ("startdate"):
                 {
-                    queryable = request.Ascending 
+                    queryable = request.Ascending
                         ? queryable.OrderBy(e => e.Date).ThenBy(e => e.StartTime)
                         : queryable.OrderByDescending(e => e.Date).ThenBy(e => e.StartTime);
                     break;
