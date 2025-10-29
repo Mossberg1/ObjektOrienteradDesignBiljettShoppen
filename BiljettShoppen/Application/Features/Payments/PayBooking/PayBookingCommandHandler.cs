@@ -44,6 +44,8 @@ namespace Application.Features.Payments.PayBooking
                 _dbContext.Entry(ticket.EventNavigation).State = EntityState.Unchanged;
 
                 ticket.BookingNavigation = booking;
+                ticket.PendingBookingReference = null;
+
                 _dbContext.Tickets.Update(ticket);
             }
 

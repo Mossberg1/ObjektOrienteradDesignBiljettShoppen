@@ -17,6 +17,6 @@ public abstract class BookableSpace : BaseEntity
 
     public bool IsBookableForEvent(int eventId)
     {
-        return TicketsNavigation.Any(t => t.EventId == eventId && !t.IsBooked());
+        return TicketsNavigation.Any(t => t.EventId == eventId && !t.IsBooked() && !t.IsPending());
     }
 }

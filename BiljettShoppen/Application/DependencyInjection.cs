@@ -14,10 +14,10 @@ public static class DependencyInjection
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
-        services.AddSingleton<IBookingTimer, BookingTimer>();
+        services.AddSingleton<IBookingTimer, ThreadSafeBookingTimer>();
 
         // Lägg till background services
-        services.AddHostedService(provider => (BookingTimer)provider.GetRequiredService<IBookingTimer>());
+        services.AddHostedService(provider => (ThreadSafeBookingTimer)provider.GetRequiredService<IBookingTimer>());
 
         return services;
     }

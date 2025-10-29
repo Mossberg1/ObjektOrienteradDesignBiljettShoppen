@@ -16,6 +16,7 @@ namespace Application.BackgroundServices;
 // Med ConcurrentDictionary blir borttagning o(1) och hitta bokning o(1).'
 // En ConcurrentDictionary undviker att elements behöver flyttas i minnet vid borttagning?
 // En ConcurrentDictionary behöver inte skapa en ny array när max capacity nås?
+[Obsolete]
 public class BookingTimer : BackgroundService, IBookingTimer
 {
     private readonly ILogger<BookingTimer> _logger;

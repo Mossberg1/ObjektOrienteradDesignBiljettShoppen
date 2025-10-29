@@ -25,5 +25,11 @@ public class Ticket : BaseEntity
     [ForeignKey(nameof(BookableSpaceId))]
     public BookableSpace BookableSpaceNavigation { get; set; }
 
+    // Håller reda på om biljetten är bokad men inte betald än.
+    public string? PendingBookingReference { get; set; }
+
+    public bool IsPending() => !string.IsNullOrEmpty(PendingBookingReference);
+
     public bool IsBooked() => BookingId.HasValue;
+
 }
