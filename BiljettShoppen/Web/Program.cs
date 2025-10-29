@@ -5,14 +5,12 @@ using Microsoft.AspNetCore.Identity;
 using System.Text.Json.Serialization;
 using Application.Hubs;
 
-// TODO: Fixa bugg på betalningsidan, går ej att betala med faktura.
 // TODO: Få klart skapande av ny SeatLayout (camilla håller på).
 // TODO: Skapa sida för att skapa SeatLayout.
 // TODO: Medelande när betalning lyckas.
 // TODO: Bättre felmedelanden.
 // TODO: Fortsätt på beräkna pris decorator, ska beräkna pris på tidpunkt (alex håller på).
 // TODO: Sida för att se uppkommande evenemang (handler finns). 
-// TODO: Optimera BookingTimer (william).
 // TODO: Möjlighet att ladda ner boknings PDF.
 // TODO: Söka på bokningsnummer (tom håller på).
 // TODO: Lägg till stubbar för kort och faktura betalning.
@@ -20,6 +18,7 @@ using Application.Hubs;
 // TODO: Skapa egna specifika exceptions.
 // TODO: Spara faktura/bokings (pdfer) i databasen.
 // TODO: Skapa faktura i databasen (pdf?).
+// TODO: Ta bort bokning från timern om användaren lämnar betalningssidan.
 
 var builder = WebApplication.CreateBuilder(args);
 

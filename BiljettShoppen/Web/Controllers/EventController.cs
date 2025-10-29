@@ -79,6 +79,7 @@ public class EventController : Controller
             }
         }
 
+
         var maxRows = ev.SeatLayoutNavigation.NumberOfRows;
         var maxSeatsInRow = ev.SeatLayoutNavigation.NumberOfCols;
 

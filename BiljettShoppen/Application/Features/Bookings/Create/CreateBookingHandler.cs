@@ -26,6 +26,7 @@ namespace Application.Features.Bookings.Create
                     .FirstOrDefaultAsync(e => e.Id == eventId.Value, cancellationToken);
 
                 int ticketCount = request.TicketsNavigation.Count;
+
                 if (!ev.IsFamilyFriendly && ticketCount > 5)
                 {
                     throw new BookingLimitExceededException("Du kan bara boka max 5 biljetter för detta evenemang.");
@@ -38,10 +39,14 @@ namespace Application.Features.Bookings.Create
                 TicketsNavigation = request.TicketsNavigation,
             };
 
-            _bookingTimer.AddBooking(booking);
+             _bookingTimer.AddBooking(booking);
 
-            //await _dbContext.Bookings.AddAsync(booking, cancellationToken);
-            //await _dbContext.SaveChangesAsync(cancellationToken);
+            foreach (var ticket in booking.TicketsNavigation)
+            {
+                ticket.PendingBookingReference = booking.ReferenceNumber;
+            }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return booking;
         }
