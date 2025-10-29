@@ -10,7 +10,7 @@ using Models.Entities;
 
 namespace Application.Features.Arenas.Update;
 
-    public class UpdateArenaHandler : IRequestHandler<UpdateArenaCommand, Arena?>
+public class UpdateArenaHandler : IRequestHandler<UpdateArenaCommand, Arena?>
 {
     private readonly IApplicationDbContext _dbContext;
 
@@ -19,23 +19,22 @@ namespace Application.Features.Arenas.Update;
         _dbContext = dbContext;
     }
 
-public async Task<Arena?> Handle(UpdateArenaCommand request, CancellationToken cancellationToken)
-{
-    var arena = await _dbContext.Arenas
-        .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
+    public async Task<Arena?> Handle(UpdateArenaCommand request, CancellationToken cancellationToken)
+    {
+        var arena = await _dbContext.Arenas
+            .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
 
-    if (arena == null)
-        return null;
+        if (arena == null)
+            return null;
 
-    arena.Name = request.Name;
-    arena.Address = request.Address;
-    arena.NumberOfSeats = request.NumberOfSeats;
-    arena.NumberOfLoges = request.NumberOfLoges;
-    arena.Indoors = request.Indoors;
-    arena.NumberOfEntrances = request.NumberOfEntrances;
+        arena.Name = request.Name;
+        arena.Address = request.Address;
+        arena.Indoors = request.Indoors;
 
-    await _dbContext.SaveChangesAsync(cancellationToken);
+        if (await _dbContext.SaveChangesAsync(cancellationToken) == 0)
+            return null;
 
-    return arena;
+        return arena;
+            
     }
 }

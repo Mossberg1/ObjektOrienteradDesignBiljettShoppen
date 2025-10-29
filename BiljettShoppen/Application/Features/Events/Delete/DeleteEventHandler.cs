@@ -22,8 +22,8 @@ public class DeleteEventHandler:IRequestHandler<DeleteEventCommand, bool>
             return false;
 
         _dbContext.Events.Remove(eventEntity);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        var result = await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return true;
+        return result > 0;
     }
 }

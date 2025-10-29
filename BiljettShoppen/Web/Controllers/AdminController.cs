@@ -1,8 +1,12 @@
 ﻿using Application.Features.Arenas;
 using Application.Features.Arenas.Create;
+using Application.Features.Arenas.GetArenaById;
+using Application.Features.Arenas.Update;
 using Application.Features.Events.Browse;
 using Application.Features.Events.BrowseAll;
 using Application.Features.Events.Create;
+using Application.Features.Events.GetById;
+using Application.Features.Events.Update;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -100,20 +104,38 @@ namespace Web.Controllers
             return View();
         }
 
-        [HttpGet("Arena/{arenaId:int}")]
+        [HttpGet("Update/Arena/{arenaId:int}")]
         [Authorize]
         public async Task<IActionResult> UpdateArena(int arenaId) 
         {
-            // TODO: Skriv ut befintlig data om arenan.
-            return View();
+            var query = new GetArenaByIdQuery(arenaId);
+            var arena = await _mediator.Send(query);
+
+            if (arena == null)
+                return NotFound();
+
+            return View(arena);
         }
 
-        [HttpGet("Event/{eventId:int}")]
+        [HttpGet("Update/Event/{eventId:int}")]
         [Authorize]
         public async Task<IActionResult> UpdateEvent(int eventId) 
         {
-            // TODO: Skriv ut befintlig data om eventet.
-            return View();
+            var query = new GetEventByIdQuery(eventId);
+            var eventEntity = await _mediator.Send(query);
+            if (eventEntity == null)
+                return NotFound();
+
+            return View(eventEntity);
+        }
+
+        [HttpPost("Create/Arena")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateArena(CreateArenaCommand command)
+        {
+            var created = await _mediator.Send(command);
+            return RedirectToAction("Browse");
         }
 
         [HttpPost("Create/Event")]
@@ -125,31 +147,34 @@ namespace Web.Controllers
             return RedirectToAction("Browse");
         }
 
-        [HttpPost("Create/Arena")]
+        [HttpPost("Update/Arena/{arenaId:int}")]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateArenaCommand command)
+        public async Task<IActionResult> UpdateArena([FromRoute] int arenaId, [FromForm] UpdateArenaCommand command) 
         {
-            var created = await _mediator.Send(command);
-            return RedirectToAction("Browse");
-        }
+            if (arenaId != command.Id)
+                return BadRequest();
 
-        [HttpPut("Update/Arena")]
-        [Authorize]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateArena() 
-        {
-            // TODO: Lägg till handler.
-            return RedirectToAction("Browse");
+            var result = await _mediator.Send(command);
+            if (result == null)
+                return NotFound();
+
+            return RedirectToAction("BrowseArena");
         }
 
 
-        [HttpPut("Update/Event")]
+        [HttpPost("Update/Event/{eventId:int}")]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateEvent() 
+        public async Task<IActionResult> UpdateEvent([FromRoute] int eventId, [FromForm] UpdateEventCommand command) 
         {
-            // TODO: Lägg till handler.
+            if (eventId != command.Id)
+                return BadRequest();
+
+            var result = await _mediator.Send(command);
+            if (result == null)
+                return NotFound();
+
             return RedirectToAction("Browse");
         }
     }

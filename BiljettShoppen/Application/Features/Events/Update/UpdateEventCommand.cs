@@ -12,9 +12,5 @@ public record UpdateEventCommand(
     TimeOnly EndTime,
     DateTime ReleaseTicketsDate,
     decimal Price,
-    decimal Cost,
-    EventType Type,
-    bool IsFamilyFriendly,
-    int ArenaId,
-    int SeatLayoutId
+    decimal Cost
 ) : IRequest<Event?>;

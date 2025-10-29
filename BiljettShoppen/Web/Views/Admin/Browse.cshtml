@@ -302,7 +302,7 @@
             const token = tokenEl ? tokenEl.value : null;
 
             try {
-                const url = `/Admin/Event/${eventId}`;
+                const url = `/api/event/${eventId}`;
                 const res = await fetch(url, {
                     method: 'DELETE',
                     headers: {

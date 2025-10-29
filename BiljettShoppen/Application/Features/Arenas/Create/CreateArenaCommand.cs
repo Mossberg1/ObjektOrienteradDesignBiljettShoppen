@@ -9,8 +9,8 @@ using Models.Entities;
 
 namespace Application.Features.Arenas.Create;
 public record CreateArenaCommand( // Data container för att skapa en ny arena.
-    string Address,
     string Name,
+    string Address,
     int NumberOfSeats,
     int NumberOfLoges,
     bool Indoors

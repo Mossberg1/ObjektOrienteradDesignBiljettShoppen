@@ -10,10 +10,8 @@ using Models.Entities;
 using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json.Serialization;
 
-// TODO: Fixa bugg som Oskar hittade.
 // TODO: Skapa entreer
 // TODO: När en Arena skapas ska en Huvudentree automatiskt skapas.
-// TODO: Gör klart sidorna som påbörjades Tisdags.
 // TODO: Få klart skapande av ny SeatLayout.
 // TODO: Skapa sida för att skapa SeatLayout.
 // TODO: Medelande när 10 minuters bokningstimer är slut.
