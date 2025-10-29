@@ -15,7 +15,7 @@ internal sealed class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 
         // En bokningsbar plats kan bara ha en biljett per evenemang
         builder.HasIndex(t => new { t.EventId, t.BookableSpaceId }).IsUnique();
-        
+
         // Constraints
         builder.ToTable(tb => tb.HasCheckConstraint("CHK_Ticket_Price_NotNegative", "\"Price\" >= 0"));
     }

@@ -5,17 +5,17 @@ namespace Models.Entities.Base;
 public abstract class BookableSpace : BaseEntity
 {
     public decimal Price { get; set; }
-    
+
     public int EntranceId { get; set; }
-    
+
     [ForeignKey(nameof(EntranceId))]
     public Entrance EntranceNavigation { get; set; }
-    
+
     public List<Ticket> TicketsNavigation { get; set; } = [];
 
     public abstract string GetDescription();
 
-    public bool IsBookableForEvent(int eventId) 
+    public bool IsBookableForEvent(int eventId)
     {
         return TicketsNavigation.Any(t => t.EventId == eventId && !t.IsBooked());
     }

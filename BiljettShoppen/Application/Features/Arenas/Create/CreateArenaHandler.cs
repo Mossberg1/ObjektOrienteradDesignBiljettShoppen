@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Features.Events.Browse;
-using DataAccess.Interfaces;
+﻿using DataAccess.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Arenas.Create
@@ -28,10 +21,21 @@ namespace Application.Features.Arenas.Create
                 Address = request.Address,
                 NumberOfSeats = request.NumberOfSeats,
                 NumberOfLoges = request.NumberOfLoges,
-                Indoors = request.Indoors
+                Indoors = request.Indoors,
+                NumberOfEntrances = 1
             };
 
             _dbContext.Arenas.Add(arena); // Lägger till arenan i databasen.
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            var mainEntrance = new Entrance
+            {
+                Name = "Huvudentré",
+                VipEntrance = false,
+                ArenaId = arena.Id
+            };
+
+            _dbContext.Entrances.Add(mainEntrance);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return arena;

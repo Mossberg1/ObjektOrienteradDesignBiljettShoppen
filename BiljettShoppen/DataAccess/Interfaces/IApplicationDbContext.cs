@@ -8,7 +8,7 @@ public interface IApplicationDbContext
 {
     DbSet<Arena> Arenas { get; set; }
     DbSet<Booking> Bookings { get; set; }
-    DbSet<BookableSpace> BookableSpaces { get; set; } 
+    DbSet<BookableSpace> BookableSpaces { get; set; }
     DbSet<Entrance> Entrances { get; set; }
     DbSet<Event> Events { get; set; }
     DbSet<Loge> Loges { get; set; }
@@ -16,6 +16,6 @@ public interface IApplicationDbContext
     DbSet<Seat> Seats { get; set; }
     DbSet<SeatLayout> SeatLayouts { get; set; }
     DbSet<Ticket> Tickets { get; set; }
-    
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

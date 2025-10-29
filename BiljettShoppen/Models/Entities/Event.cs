@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Models.Entities.Base;
+﻿using Models.Entities.Base;
 using Models.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models.Entities
 {
@@ -18,21 +13,21 @@ namespace Models.Entities
         public DateTime ReleaseTicketsDate { get; set; }
         public decimal Price { get; set; }
         public decimal Cost { get; set; }
-        public EventType Type { get; set; } 
+        public EventType Type { get; set; }
         public bool IsFamilyFriendly { get; set; }
 
         public List<Ticket> TicketsNavigation { get; set; } = new List<Ticket>();
-        
+
         public int ArenaId { get; set; }
-        
+
         [ForeignKey(nameof(ArenaId))]
         public Arena ArenaNavigation { get; set; }
-        
+
         public int SeatLayoutId { get; set; }
-        
+
         [ForeignKey(nameof(SeatLayoutId))]
-        public SeatLayout SeatLayoutNavigation { get; set; }  
-        
+        public SeatLayout SeatLayoutNavigation { get; set; }
+
         public TimeSpan CalculateEventLength()
         {
             return EndTime.ToTimeSpan() - StartTime.ToTimeSpan();

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using DataAccess;
-using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -42,14 +35,14 @@ namespace Application.Features.Payments.PayBooking
             }
 
             booking.IsPaid = true;
-            
+
             await _dbContext.Bookings.AddAsync(booking, cancellationToken);
 
             foreach (var ticket in booking.TicketsNavigation)
             {
                 _dbContext.Entry(ticket.BookableSpaceNavigation).State = EntityState.Unchanged;
                 _dbContext.Entry(ticket.EventNavigation).State = EntityState.Unchanged;
-                
+
                 ticket.BookingNavigation = booking;
                 _dbContext.Tickets.Update(ticket);
             }
@@ -75,7 +68,7 @@ namespace Application.Features.Payments.PayBooking
     {
         public string BookingReferenceNumber { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
-    
+
         public PayBookingCommand(string bookingReferenceNumber, PaymentMethod paymentMethod)
         {
             BookingReferenceNumber = bookingReferenceNumber;

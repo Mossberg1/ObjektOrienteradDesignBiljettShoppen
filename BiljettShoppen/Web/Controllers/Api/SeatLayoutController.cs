@@ -1,10 +1,7 @@
 ﻿using Application.Features.Arenas.GetSeatLayoutsForArena;
 using DataAccess;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Models.Entities;
 
 namespace Web.Controllers.Api
 {
@@ -16,14 +13,14 @@ namespace Web.Controllers.Api
 
         private readonly ApplicationDbContext _dbContext; // TODO: Byt ut mot handlers sen bara för testning.
 
-        public SeatLayoutController(IMediator mediator, ApplicationDbContext dbContext) 
+        public SeatLayoutController(IMediator mediator, ApplicationDbContext dbContext)
         {
             _mediator = mediator;
             _dbContext = dbContext;
         }
 
         [HttpGet("ForArena/{arenaId:int}")]
-        public async Task<IActionResult> ListSeatLayoutsForArena([FromRoute] int arenaId) 
+        public async Task<IActionResult> ListSeatLayoutsForArena([FromRoute] int arenaId)
         {
             var query = new GetSeatLayoutForArenaIdQuery(arenaId);
             var layouts = await _mediator.Send(query);

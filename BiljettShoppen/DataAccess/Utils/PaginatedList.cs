@@ -28,7 +28,7 @@ public class PaginatedList<T>
     public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> queryable, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         var count = await queryable.CountAsync(cancellationToken);
-        
+
         var items = await queryable
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)

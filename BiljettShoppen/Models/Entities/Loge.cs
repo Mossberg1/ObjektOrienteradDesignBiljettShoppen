@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Models.Entities.Base;
+﻿using Models.Entities.Base;
 
 namespace Models.Entities
 {

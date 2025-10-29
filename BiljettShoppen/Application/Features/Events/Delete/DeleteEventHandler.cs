@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Events.Delete;
 
-public class DeleteEventHandler:IRequestHandler<DeleteEventCommand, bool>
+public class DeleteEventHandler : IRequestHandler<DeleteEventCommand, bool>
 {
     private readonly IApplicationDbContext _dbContext;
-    
+
     public DeleteEventHandler(IApplicationDbContext dbContext)
     {
         _dbContext = dbContext;

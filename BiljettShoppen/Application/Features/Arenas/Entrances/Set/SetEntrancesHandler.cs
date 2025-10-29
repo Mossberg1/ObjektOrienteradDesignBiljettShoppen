@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Interfaces;
-using DataAccess.Interfaces;
+﻿using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -25,13 +19,13 @@ namespace Application.Features.Arenas.Entrances.Set
             var arena = await _dbContext.Arenas
                 .FirstOrDefaultAsync(a => a.Id == request.ArenaId, cancellationToken);
 
-            if (arena == null) 
+            if (arena == null)
                 throw new KeyNotFoundException($"Arena with ID {request.ArenaId} not found.");
 
             arena.NumberOfEntrances = request.NumberOfEntrances;
-                await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-                return arena;
+            return arena;
         }
     }
 }

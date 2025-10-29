@@ -12,7 +12,7 @@ internal sealed class EventConfiguration : IEntityTypeConfiguration<Event>
             .WithOne(t => t.EventNavigation)
             .HasForeignKey(t => t.EventId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         // Constraints
         builder.ToTable(tb =>
         {

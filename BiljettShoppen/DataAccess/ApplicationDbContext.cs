@@ -1,10 +1,10 @@
-using System.Reflection;
 using DataAccess.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Entities.Base;
+using System.Reflection;
 
 namespace DataAccess;
 
@@ -21,8 +21,8 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IApplicatio
     public DbSet<Seat> Seats { get; set; }
     public DbSet<SeatLayout> SeatLayouts { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
-    
-    
+
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

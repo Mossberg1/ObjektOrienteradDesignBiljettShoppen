@@ -1,11 +1,11 @@
-using DataAccess.Utils;
+﻿using DataAccess.Utils;
 using MediatR;
 using Models.Entities;
 using Models.Enums;
 
 namespace Application.Features.Events.Browse;
 
-public record BrowseReleasedEventsQuery(
+public record BrowseCommingEventsQuery(
     string? SearchWord,
     EventType? Type,
     bool? IsFamilyFriendly,

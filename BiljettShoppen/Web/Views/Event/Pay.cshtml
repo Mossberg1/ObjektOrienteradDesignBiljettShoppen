@@ -26,6 +26,7 @@
 
             <!-- Payment Form -->
             <form asp-action="ProcessPayment" method="post">
+                @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="BookingReference" />
 
                 <h4>Välj betalningsmetod</h4>
@@ -41,21 +42,25 @@
                         <div id="collapseCard" class="accordion-collapse collapse show" aria-labelledby="headingCard" data-bs-parent="#paymentAccordion">
                             <div class="accordion-body">
                                 <div class="mb-3">
-                                    <label for="cardName" class="form-label">Namn på kortet</label>
-                                    <input type="text" id="cardName" class="form-control" placeholder="John Doe">
+                                    <label for="creditCardForm.Email" class="form-label">E-post</label>
+                                    <input type="email" id="creditCardForm.Email" name="creditCardForm.Email" class="form-control" placeholder="din.epost@exempel.com" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="cardNumber" class="form-label">Kortnummer</label>
-                                    <input type="text" id="cardNumber" class="form-control" placeholder="0000 0000 0000 0000">
+                                    <label for="creditCardForm.Name" class="form-label">Namn på kortet</label>
+                                    <input type="text" id="creditCardForm.Name" name="creditCardForm.Name" class="form-control" placeholder="John Doe" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="creditCardForm.CardNumber" class="form-label">Kortnummer</label>
+                                    <input type="text" id="creditCardForm.CardNumber" name="creditCardForm.CardNumber" class="form-control" placeholder="0000 0000 0000 0000" required>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="expiryDate" class="form-label">Giltig till</label>
-                                        <input type="text" id="expiryDate" class="form-control" placeholder="MM/ÅÅ">
+                                        <label for="creditCardForm.ExpiryDate" class="form-label">Giltig till</label>
+                                        <input type="text" id="creditCardForm.ExpiryDate" name="creditCardForm.ExpiryDate" class="form-control" placeholder="MM/ÅÅ" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="cvc" class="form-label">CVC</label>
-                                        <input type="text" id="cvc" class="form-control" placeholder="123">
+                                        <label for="creditCardForm.Cvc" class="form-label">CVC</label>
+                                        <input type="text" id="creditCardForm.Cvc" name="creditCardForm.Cvc" class="form-control" placeholder="123" required>
                                     </div>
                                 </div>
                                 <button type="submit" name="paymentMethod" value="CreditCard" class="btn btn-primary w-100">Betala @Model.TotalPrice.ToString("C")</button>
@@ -74,8 +79,8 @@
                             <div class="accordion-body">
                                 <p>En faktura kommer att skickas till den angivna e-postadressen. Betalningsvillkor 14 dagar.</p>
                                 <div class="mb-3">
-                                    <label asp-for="Email" class="form-label">E-post för faktura</label>
-                                    <input asp-for="Email" type="email" class="form-control" placeholder="din.epost@exempel.com">
+                                    <label for="invoiceForm.Email" class="form-label">E-post för faktura</label>
+                                    <input type="email" id="invoiceForm.Email" name="invoiceForm.Email" class="form-control" placeholder="din.epost@exempel.com" required>
                                 </div>
                                 <button type="submit" name="paymentMethod" value="Invoice" class="btn btn-primary w-100">Bekräfta och få faktura</button>
                             </div>
@@ -87,3 +92,101 @@
         </div>
     </div>
 </div>
+
+<!-- Modal for booking expiration -->
+<div class="modal fade" id="bookingExpiredModal" tabindex="-1" aria-labelledby="bookingExpiredLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="bookingExpiredLabel">Bokning utgången</h5>
+            </div>
+            <div class="modal-body">
+                Din bokningstid har gått ut. Du kommer att omdirigeras tillbaka till händelselistan.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="redirectBtn">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form[asp-action="ProcessPayment"]') || document.querySelector('form');
+            if (!form) return;
+
+            const cardInputs = Array.from(document.querySelectorAll('[name^="creditCardForm."]'));
+            const invoiceInputs = Array.from(document.querySelectorAll('[name^="invoiceForm."]'));
+            const cardPanel = document.getElementById('collapseCard');
+            const invoicePanel = document.getElementById('collapseInvoice');
+            const accordion = document.getElementById('paymentAccordion');
+
+            function updateRequired() {
+                const cardShown = cardPanel && cardPanel.classList.contains('show');
+                const invoiceShown = invoicePanel && invoicePanel.classList.contains('show');
+
+                cardInputs.forEach(i => i.required = !!cardShown);
+                invoiceInputs.forEach(i => i.required = !!invoiceShown);
+            }
+
+            updateRequired();
+
+            try {
+                if (accordion) {
+                    accordion.addEventListener('shown.bs.collapse', updateRequired);
+                    accordion.addEventListener('hidden.bs.collapse', updateRequired);
+                }
+            } catch (e) {
+                // ignore if events aren't available
+            }
+
+            form.addEventListener('submit', function () {
+                updateRequired();
+            });
+
+            // SignalR connection setup
+            const bookingReference = '@Model.BookingReference';
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/bookinghub")
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("BookingExpired", function (referenceNumber) {
+                console.log("Booking expired:", referenceNumber);
+
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('bookingExpiredModal'));
+                modal.show();
+
+                // Disable form submission
+                form.querySelectorAll('button[type="submit"]').forEach(btn => {
+                    btn.disabled = true;
+                });
+            });
+
+            // Redirect when OK button is clicked
+            document.getElementById('redirectBtn').addEventListener('click', function() {
+                window.location.href = '@Url.Action("Browse", "Event")';
+            });
+
+            connection.start()
+                .then(function () {
+                    console.log("SignalR Connected");
+                    return connection.invoke("JoinBookingGroup", bookingReference);
+                })
+                .then(function () {
+                    console.log("Joined booking group:", bookingReference);
+                })
+                .catch(function (err) {
+                    console.error("SignalR Connection Error:", err);
+                });
+
+            // Leave group when page unloads
+            window.addEventListener('beforeunload', function() {
+                connection.invoke("LeaveBookingGroup", bookingReference);
+            });
+        });
+    </script>
+}

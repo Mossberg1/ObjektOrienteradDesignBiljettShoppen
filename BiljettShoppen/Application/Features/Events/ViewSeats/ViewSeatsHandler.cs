@@ -1,5 +1,4 @@
 using DataAccess.Interfaces;
-using DataAccess.Utils;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -14,7 +13,7 @@ public class ViewSeatsHandler : IRequestHandler<ViewSeatsQuery, Event?>
     {
         _dbContext = dbContext;
     }
-    
+
     public async Task<Event?> Handle(ViewSeatsQuery request, CancellationToken cancellationToken)
     {
         return await _dbContext.Events

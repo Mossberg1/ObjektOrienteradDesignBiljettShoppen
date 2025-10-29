@@ -13,14 +13,14 @@ public class GetSelectedSeatTicketsHandler : IRequestHandler<GetSelectedSeatTick
     {
         _dbContext = dbContext;
     }
-    
+
     public async Task<List<Ticket>> Handle(GetSelectedSeatTicketsQuery request, CancellationToken cancellationToken)
     {
         var tickets = await _dbContext.Tickets
             .Where(t => request.SelectedSeatsIds.Contains(t.BookableSpaceId) && t.EventId == request.EventId)
             .Include(t => t.BookableSpaceNavigation)
             .ToListAsync(cancellationToken);
-        
+
         return tickets;
     }
 }

@@ -1,26 +1,29 @@
-﻿using DataAccess.Interfaces;
+﻿using Application.Features.Events.Browse;
+using DataAccess.Interfaces;
 using DataAccess.Utils;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
-namespace Application.Features.Events.BrowseAll
+
+namespace Application.Features.Events.BrowseComming
 {
-    public class BrowseAllEventsHandler : IRequestHandler<BrowseAllEventsQuery, PaginatedList<Event>>
+    public class BrowseCommingEventsHandler : IRequestHandler<BrowseCommingEventsQuery, PaginatedList<Event>>
     {
         private readonly IApplicationDbContext _dbContext;
 
-        public BrowseAllEventsHandler(IApplicationDbContext dbContext)
+        public BrowseCommingEventsHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<PaginatedList<Event>> Handle(BrowseAllEventsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<Event>> Handle(BrowseCommingEventsQuery request, CancellationToken cancellationToken)
         {
             var queryable = _dbContext.Events
-                .Include(e => e.ArenaNavigation)
-                .Include(e => e.TicketsNavigation)
-                .AsNoTracking();
+            .Include(e => e.ArenaNavigation)
+            .Include(e => e.TicketsNavigation)
+            .Where(e => e.ReleaseTicketsDate > DateTime.UtcNow)
+            .AsNoTracking();
 
             if (request.ToDate.HasValue)
             {
@@ -41,7 +44,6 @@ namespace Application.Features.Events.BrowseAll
             {
                 queryable = queryable.Where(e => e.IsFamilyFriendly == request.IsFamilyFriendly.Value);
             }
-
             if (!string.IsNullOrWhiteSpace(request.SearchWord))
             {
                 queryable = queryable.Where(e =>
@@ -56,23 +58,23 @@ namespace Application.Features.Events.BrowseAll
                 switch (request.SortBy.ToLower())
                 {
                     case ("name"):
-                    {
-                        queryable = request.Ascending
-                            ? queryable.OrderBy(e => e.Name)
-                            : queryable.OrderByDescending(e => e.Name);
-                        break;
-                    }
+                        {
+                            queryable = request.Ascending
+                                ? queryable.OrderBy(e => e.Name)
+                                : queryable.OrderByDescending(e => e.Name);
+                            break;
+                        }
                     case ("startdate"):
-                    {
-                        queryable = request.Ascending
-                            ? queryable.OrderBy(e => e.Date).ThenBy(e => e.StartTime)
-                            : queryable.OrderByDescending(e => e.Date).ThenBy(e => e.StartTime);
-                        break;
-                    }
+                        {
+                            queryable = request.Ascending
+                                ? queryable.OrderBy(e => e.Date).ThenBy(e => e.StartTime)
+                                : queryable.OrderByDescending(e => e.Date).ThenBy(e => e.StartTime);
+                            break;
+                        }
                     default:
-                    {
-                        break;
-                    }
+                        {
+                            break;
+                        }
                 }
             }
 

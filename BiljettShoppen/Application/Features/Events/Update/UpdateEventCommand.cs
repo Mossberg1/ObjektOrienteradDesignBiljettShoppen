@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Models.Entities;
-using Models.Enums;
 
 namespace Application.Features.Events.Update;
 

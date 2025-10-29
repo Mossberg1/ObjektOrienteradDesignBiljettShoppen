@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities;
 using Models.Exceptions;
 
 namespace Application.Features.Bookings.Create
@@ -30,14 +24,14 @@ namespace Application.Features.Bookings.Create
             {
                 var ev = await _dbContext.Events
                     .FirstOrDefaultAsync(e => e.Id == eventId.Value, cancellationToken);
-                
+
                 int ticketCount = request.TicketsNavigation.Count;
                 if (!ev.IsFamilyFriendly && ticketCount > 5)
                 {
                     throw new BookingLimitExceededException("Du kan bara boka max 5 biljetter för detta evenemang.");
                 }
             }
-            
+
             var booking = new Models.Entities.Booking
             {
                 TotalPrice = request.TotalPrice,
