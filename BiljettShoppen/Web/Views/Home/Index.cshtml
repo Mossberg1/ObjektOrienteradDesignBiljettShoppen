@@ -2,7 +2,131 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section -->
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center justify-content-center min-vh-75">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-3 fw-bold mb-4">Biljettshoppen</h1>
+                <p class="lead mb-4">
+                    Vi hjälper dig att boka biljetter till den konserten, 
+                    sporteventet, <br/> teatern eller just det eventet du vill gå på!
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="#services" class="btn btn-primary btn-lg">Läs mer om vad vi gör</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="services" class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Våra löften</h2>
+            <p class="lead text-muted">Vad vi kan erbjuda just dig</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3 mx-auto" 
+                             style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-lightning-charge fs-3"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Smidiget</h3>
+                        <p class="text-muted">Vi levererar en användarvänlig och stilren sida för att du enkelt ska kunna boka dina nästa biljetter.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-success bg-gradient text-white rounded-circle mb-3 mx-auto" 
+                             style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-shield-check fs-3"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Säkerhet</h3>
+                        <p class="text-muted">Din säkerhet och integritet är vår högsta prioritet.<br/>
+                            Därför följer vi GDPR och har din persondatas säkerhet i fokus.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-info bg-gradient text-white rounded-circle mb-3 mx-auto" 
+                             style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-people fs-3"></i>
+                        </div>
+                        <h3 class="h4 mb-3">Support</h3>
+                        <p class="text-muted">För din trygghet så har vi kundsupport 24 timmar om dygnet årets alla 365 dagar.<br/>
+                            Vår support mejl: <br/>
+                            hjo@du.se eller hje@du.se
+                            
+                            </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section id="contact" class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-3 fw-bold mb-4">Boka din nästa biljett hos oss på BiljettShoppen</h1>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="/Event/Browse" class="btn btn-primary btn-lg">Boka din biljett</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero-section {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .hero-section .btn-primary {
+        background-color: white;
+        color: #667eea;
+        border: none;
+    }
+    
+    .hero-section .btn-primary:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+    
+    .hero-section .btn-outline-secondary {
+        border-color: white;
+        color: white;
+    }
+    
+    .hero-section .btn-outline-secondary:hover {
+        background-color: white;
+        color: #667eea;
+    }
+    
+    .min-vh-75 {
+        min-height: 75vh;
+    }
+    
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
+</style>
