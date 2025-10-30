@@ -7,6 +7,7 @@ using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using Models.Exceptions;
 
 namespace Application.Features.Arenas.Entrances.Create
 {
@@ -25,7 +26,7 @@ public class CreateEntranceHandler : IRequestHandler<CreateEntranceCommand, Entr
                 .AnyAsync(a => a.Id == request.ArenaId, cancellationToken);
 
             if (arenaExists)
-                throw new KeyNotFoundException($"Arena with ID {request.ArenaId}); not found");
+                throw new IdNotFoundException($"Arena med ID {request.ArenaId} hittades inte.");
 
             var entrance = new Entrance
             {

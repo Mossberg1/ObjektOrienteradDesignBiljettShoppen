@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models.Entities;
 using Models.Enums;
+using Models.Exceptions;
 
 namespace Application.Features.Payments.PayBooking
 {
@@ -26,12 +27,12 @@ namespace Application.Features.Payments.PayBooking
             var booking = _bookingTimer.GetBooking(request.BookingReferenceNumber);
             if (booking == null)
             {
-                throw new Exception("Booking not found.");
+                throw new ReferenceNumberNotFoundException("Bokningen hittades inte.");
             }
 
             if (!_bookingTimer.RemoveBooking(booking))
             {
-                throw new Exception("Booking not found in timer.");
+                throw new ReferenceNumberNotFoundException("Bokningen hittades inte i timern.");
             }
 
             booking.IsPaid = true;

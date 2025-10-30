@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using Models.Exceptions;
 
 namespace Application.Features.Arenas.GetSeatLayoutsForArena
 
@@ -25,14 +26,14 @@ namespace Application.Features.Arenas.GetSeatLayoutsForArena
 
             if (arena == null)
             {
-                throw new Exception($"Arena with Id {request.ArenaId} not found.");
+                throw new IdNotFoundException($"Arena med Id {request.ArenaId} hittades inte.");
             }
 
             var seatLayout = arena.SeatLayoutsNavigation.FirstOrDefault();
 
             if (seatLayout == null)
             {
-                throw new Exception($"No Seat Layout found for Arena {arena.Name}.");
+                throw new IdNotFoundException($"Ingen stol för arenan ({arena.Name}) hittades.");
             }
 
             return arena.SeatLayoutsNavigation;
