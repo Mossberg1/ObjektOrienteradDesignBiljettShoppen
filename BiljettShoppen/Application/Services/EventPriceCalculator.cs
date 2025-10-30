@@ -6,7 +6,11 @@ namespace Application.Services
     {
         private const decimal BasePrice = 400m;
 
-        public decimal CalculatePrice(EventType type, bool isFamilyFriendly = false)
+        public decimal CalculatePrice(
+            EventType type,
+            DateTime EventDateTime,
+            DateTime ReleaseTicketsDate,
+            bool isFamilyFriendly = false)
         {
             decimal multiplier = type switch
             {
@@ -22,6 +26,18 @@ namespace Application.Services
             if (isFamilyFriendly)
                 price *= 0.9m; // 10% rabatt på familjeevent
 
+            DateTime now = DateTime.UtcNow;
+
+            if (now > ReleaseTicketsDate && now < EventDateTime)
+            {
+                TimeSpan totalSalePeriod = EventDateTime - ReleaseTicketsDate;
+                TimeSpan elapsed = now - ReleaseTicketsDate;
+
+                if (elapsed.TotalSeconds >= totalSalePeriod.TotalSeconds / 2)
+                {
+                    price *= 1.3m; // Ökar priset med 30% efter halva försäljningstiden
+                }
+            }
             return price;
         }
     }
