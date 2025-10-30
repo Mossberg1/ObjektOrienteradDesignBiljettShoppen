@@ -1,13 +1,21 @@
 using Application.Features.Bookings.Create;
+using Application.Features.Bookings.SetBookingEmail;
+using Application.Features.Bookings.UpdateConfirmationPath;
+using Application.Features.Bookings.UpdateInvoicePath;
 using Application.Features.Events.Browse;
 using Application.Features.Events.ViewSeats;
+using Application.Features.Payments.GenerateInvoice;
 using Application.Features.Payments.PayBooking;
+using Application.Features.Payments.TransactionConfirmation;
 using Application.Features.Seats.GetSelectedSeats;
+using Application.Interfaces;
 using Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.Enums;
+using System.Runtime.InteropServices;
+using Web.Files;
 using Web.Forms;
 using Web.Models;
 
@@ -17,12 +25,24 @@ public class EventController : Controller
 {
     private readonly IMediator _mediator;
     private readonly ILogger<EventController> _logger;
+    private readonly IWebHostEnvironment _env;
+    private readonly IEmailService _emailService;
+    private readonly ICreditCardPaymentService _creditCardPaymentService;
 
 
-    public EventController(IMediator mediator, ILogger<EventController> logger)
+    public EventController(
+        IMediator mediator, 
+        ILogger<EventController> logger, 
+        IWebHostEnvironment env, 
+        IEmailService emailService, 
+        ICreditCardPaymentService creditCardPaymentService
+    )
     {
         _mediator = mediator;
         _logger = logger;
+        _env = env;
+        _emailService = emailService;
+        _creditCardPaymentService = creditCardPaymentService;
     }
 
     [HttpGet]
@@ -135,30 +155,33 @@ public class EventController : Controller
             return BadRequest();
         }
 
+        if (creditCardForm == null && invoiceForm == null)
+        {
+            return BadRequest();
+        }
+
+        var bookingEmail = string.Empty;
+
         if (paymentMethod == PaymentMethod.CreditCard && creditCardForm != null)
         {
-            var numberResult = CardValidator.ValidateCardNumber(creditCardForm.CardNumber);
-            var expiryDateResult = CardValidator.ValidateExpiryDate(creditCardForm.ExpiryDate);
-            var cvcResult = CardValidator.ValidateCvc(creditCardForm.Cvc, creditCardForm.CardNumber);
-            string type = CardValidator.GetCardType(creditCardForm.CardNumber);
+            var result = await _creditCardPaymentService.PayAsync(
+                creditCardForm.CardNumber,
+                creditCardForm.ExpiryDate,
+                creditCardForm.Cvc,
+                creditCardForm.Name
+            );
 
-            if (!numberResult || !expiryDateResult || !cvcResult)
-            {
-                _logger.LogWarning("Ogiltig kortinformation.");
+            if (!result)
                 return BadRequest();
-            }
 
-            // TODO: Betala (stubb)
-
-            // TODO: Bekräfta med epost (stubb)
+            bookingEmail = creditCardForm.Email;
 
             _logger.LogInformation("Kort betalning lyckades!");
         }
         else if (paymentMethod == PaymentMethod.Invoice && invoiceForm != null)
         {
-            // TODO: Skicka faktura (stubb)
-
-            _logger.LogInformation("Faktura skickad!");
+            bookingEmail = invoiceForm.Email;
+            _logger.LogInformation("Faktura vald!");
         }
         else
         {
@@ -169,9 +192,27 @@ public class EventController : Controller
         var command = new PayBookingCommand(bookingReference, paymentMethod);
         var booking = await _mediator.Send(command);
 
-        // TODO: Söka bokning med referensnummer handler.
-        // TODO: Generera PDF.
+        var setEmailCommand = new SetBookingEmailCommand(booking, bookingEmail);
+        await _mediator.Send(setEmailCommand);
 
-        return RedirectToAction("Browse");
+        var pdfBytes = CreatePdfConfirmation.GeneratePdf(booking);
+        var confirmationPath = await FileSaver.SaveConfirmationAsync(pdfBytes, $"{booking.ReferenceNumber}_confirmation.pdf");
+
+        var updatePdfPathCommand = new UpdateConfirmationPathCommand(booking, confirmationPath);
+        await _mediator.Send(updatePdfPathCommand);
+
+        if (paymentMethod == PaymentMethod.Invoice)
+        {
+            var invoiceBytes = CreateInvoice.GenerateInvoice(booking);
+            var invoicePath = await FileSaver.SaveInvoiceAsync(invoiceBytes, $"{booking.ReferenceNumber}_invoice.pdf");
+            var updateInvoicePathCommand = new UpdateInvoicePathCommand(booking, invoicePath);
+            await _mediator.Send(updateInvoicePathCommand);
+            await _emailService.SendBookingEmailWithFileAsync(booking.Email, bookingReference, invoiceBytes);
+            _logger.LogInformation("Genererat faktura för bokning: " + booking.ReferenceNumber);
+        }
+
+        await _emailService.SendBookingEmailWithFileAsync(booking.Email, bookingReference, pdfBytes);
+
+        return File(pdfBytes, "application/pdf", confirmationPath);
     }
 }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251030074429_InitialCreate")]
+    [Migration("20251030101719_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -312,8 +312,19 @@ namespace DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ConfirmationPdfPath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("InvoicePdfPath")
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("boolean");

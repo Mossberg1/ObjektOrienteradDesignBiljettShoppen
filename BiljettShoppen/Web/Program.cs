@@ -7,15 +7,7 @@ using Application.Hubs;
 
 // TODO: Få klart skapande av ny SeatLayout (camilla håller på).
 // TODO: Skapa sida för att skapa SeatLayout.
-// TODO: Medelande när betalning lyckas.
 // TODO: Bättre felmedelanden.
-// TODO: Sida för att se uppkommande evenemang (handler finns). 
-// TODO: Möjlighet att ladda ner boknings PDF.
-// TODO: Lägg till stubbar för kort och faktura betalning.
-// TODO: Email stubb.
-// TODO: Skapa egna specifika exceptions.
-// TODO: Spara faktura/bokings (pdfer) i databasen.
-// TODO: Skapa faktura i databasen (pdf?).
 // TODO: Ta bort bokning från timern om användaren lämnar betalningssidan.
 
 var builder = WebApplication.CreateBuilder(args);

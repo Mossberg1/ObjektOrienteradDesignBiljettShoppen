@@ -28,6 +28,7 @@
             <form asp-action="ProcessPayment" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="BookingReference" />
+                <input type="hidden" name="paymentMethod" id="paymentMethod" value="" />
 
                 <h4>Välj betalningsmetod</h4>
                 <div class="accordion" id="paymentAccordion">
@@ -110,6 +111,25 @@
     </div>
 </div>
 
+<!-- Success Modal shown after automatic download -->
+<div class="modal fade" id="paymentSuccessModal" tabindex="-1" aria-labelledby="paymentSuccessLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="paymentSuccessLabel">Betalning lyckades</h5>
+            </div>
+            <div class="modal-body">
+                Din betalning har genomförts och bekräftelsen har laddats ner automatiskt.<br />
+                Om du har valt faktura skickas den via epost. Även bekräftelsen skickas via epost.
+            </div>
+            <div class="modal-footer">
+                <a href="@Url.Action("Browse", "Event")" class="btn btn-outline-primary">Tillbaka till evenemang</a>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script>
@@ -122,6 +142,7 @@
             const cardPanel = document.getElementById('collapseCard');
             const invoicePanel = document.getElementById('collapseInvoice');
             const accordion = document.getElementById('paymentAccordion');
+            const paymentMethodHidden = document.getElementById('paymentMethod')
 
             function updateRequired() {
                 const cardShown = cardPanel && cardPanel.classList.contains('show');
@@ -142,8 +163,88 @@
                 // ignore if events aren't available
             }
 
-            form.addEventListener('submit', function () {
+            form.querySelectorAll('button[type="submit"][name="paymentMethod"]').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    if (paymentMethodHidden) paymentMethodHidden.value = this.value;
+                });
+            });
+
+            // Intercept submit and send with fetch so we can automatically download the returned PDF
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
                 updateRequired();
+
+                // Validate client-side required fields
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const submitButton = form.querySelector('button[type="submit"]');
+                if (submitButton) submitButton.disabled = true;
+
+                try {
+                    const action = form.getAttribute('action') || window.location.href;
+                    const method = (form.getAttribute('method') || 'POST').toUpperCase();
+                    const formData = new FormData(form);
+
+                    const response = await fetch(action, {
+                        method,
+                        body: formData,
+                        credentials: 'same-origin'
+                    });
+
+                    if (!response.ok) {
+                        // Try to read text error, otherwise show generic
+                        let txt = '';
+                        try { txt = await response.text(); } catch {}
+                        alert('Betalning misslyckades. Server svarade: ' + (txt || response.statusText));
+                        return;
+                    }
+
+                    const contentType = response.headers.get('content-type') || '';
+                    if (contentType.indexOf('application/pdf') === -1) {
+                        // Not a PDF - attempt to show text response (could be error)
+                        const text = await response.text();
+                        alert('Server response: ' + text);
+                        return;
+                    }
+
+                    const blob = await response.blob();
+
+                    // Try to get filename from content-disposition header
+                    function getFileNameFromContentDisposition(header) {
+                        if (!header) return null;
+                        const match = /filename\*=UTF-8''([^;]+)|filename="([^"]+)"|filename=([^;]+)/i.exec(header);
+                        if (!match) return null;
+                        return decodeURIComponent(match[1] || match[2] || match[3]).trim();
+                    }
+
+                    const cdHeader = response.headers.get('content-disposition');
+                    let filename = getFileNameFromContentDisposition(cdHeader) || `${form.querySelector('input[name="bookingReference"]')?.value || '@Model.BookingReference'}_confirmation.pdf`;
+
+                    // Create temporary link to download
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+
+                    // Show success modal
+                    const successModalEl = document.getElementById('paymentSuccessModal');
+                    if (successModalEl) {
+                        const modal = new bootstrap.Modal(successModalEl);
+                        modal.show();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Ett fel uppstod vid kommunikationen med servern.');
+                } finally {
+                    if (submitButton) submitButton.disabled = false;
+                }
             });
 
             // SignalR connection setup

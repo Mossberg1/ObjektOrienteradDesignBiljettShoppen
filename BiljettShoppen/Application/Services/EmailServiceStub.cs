@@ -12,8 +12,9 @@ public class EmailServiceStub : IEmailService
         _logger = logger;
     }
 
-    public async Task<bool> SendBookingConfirmationEmail(string toEmail, string bookingReference)
+    public async Task<bool> SendBookingEmailWithFileAsync(string toEmail, string bookingReference, byte[] pdfBytes)
     {
+        _logger.LogInformation($"Email skickat för bokning {bookingReference}");
         return true;
     }
 }

@@ -1,5 +1,6 @@
 using Application.BackgroundServices;
 using Application.Interfaces;
+using Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -18,6 +19,9 @@ public static class DependencyInjection
 
         // Lägg till background services
         services.AddHostedService(provider => (ThreadSafeBookingTimer)provider.GetRequiredService<IBookingTimer>());
+
+        services.AddScoped<IEmailService, EmailServiceStub>();
+        services.AddScoped<ICreditCardPaymentService, CreditCardPaymentStubService>();
 
         return services;
     }
