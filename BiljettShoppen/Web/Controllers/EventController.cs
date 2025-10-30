@@ -54,6 +54,14 @@ public class EventController : Controller
         return View(events);
     }
 
+    [HttpGet("[controller]/Upcoming")]
+    public async Task<IActionResult> Upcoming([FromQuery] BrowseCommingEventsQuery query) 
+    {
+        var result = await _mediator.Send(query);
+        return View(result);
+    }
+
+
     [HttpGet("[controller]/Booking/{eventId:int}")]
     public async Task<IActionResult> Booking([FromRoute] int eventId)
     {

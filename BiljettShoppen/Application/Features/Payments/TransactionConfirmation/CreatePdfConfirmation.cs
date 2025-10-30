@@ -44,7 +44,6 @@ namespace Application.Features.Payments.TransactionConfirmation
                             {
 
                                 var eventName = t.EventNavigation?.Name ?? "N/A";
-                                var holder = $"{t.FirstName} {t.LastName}".Trim();
                                 string place;
                                 if (t.BookableSpaceNavigation is Models.Entities.Seat seat)
                                     place = $"Row {seat.RowNumber}, Col {seat.ColNumber}";
@@ -61,12 +60,6 @@ namespace Application.Features.Payments.TransactionConfirmation
                                         {
                                             x.Span("Evenemang: ").SemiBold();
                                             x.Span(eventName);
-                                        });
-
-                                        tc.Item().Text(x =>
-                                        {
-                                            x.Span("Namn: ").SemiBold();
-                                            x.Span(string.IsNullOrWhiteSpace(holder) ? "N/A" : holder);
                                         });
 
                                         tc.Item().Text(x =>

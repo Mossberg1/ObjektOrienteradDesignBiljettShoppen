@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -353,12 +354,11 @@ namespace DataAccess.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: false),
                     BookingId = table.Column<int>(type: "integer", nullable: true),
                     EventId = table.Column<int>(type: "integer", nullable: false),
                     BookableSpaceId = table.Column<int>(type: "integer", nullable: false),
+                    PendingBookingReference = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -432,6 +432,12 @@ namespace DataAccess.Migrations
                 name: "IX_BookableSpaces_SeatLayoutId",
                 table: "BookableSpaces",
                 column: "SeatLayoutId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_ReferenceNumber",
+                table: "Bookings",
+                column: "ReferenceNumber",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Entrances_ArenaId",
