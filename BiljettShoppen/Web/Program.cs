@@ -9,10 +9,8 @@ using Application.Hubs;
 // TODO: Skapa sida för att skapa SeatLayout.
 // TODO: Medelande när betalning lyckas.
 // TODO: Bättre felmedelanden.
-// TODO: Fortsätt på beräkna pris decorator, ska beräkna pris på tidpunkt (alex håller på).
 // TODO: Sida för att se uppkommande evenemang (handler finns). 
 // TODO: Möjlighet att ladda ner boknings PDF.
-// TODO: Söka på bokningsnummer (tom håller på).
 // TODO: Lägg till stubbar för kort och faktura betalning.
 // TODO: Email stubb.
 // TODO: Skapa egna specifika exceptions.

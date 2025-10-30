@@ -244,8 +244,6 @@ public class DataSeeder
             {
                 var ticket = concertTickets[i];
                 ticket.BookingId = booking1.Id;
-                ticket.FirstName ??= i == 0 ? "Anna" : "Erik";
-                ticket.LastName ??= "Andersson";
                 _dbContext.Tickets.Update(ticket);
             }
 

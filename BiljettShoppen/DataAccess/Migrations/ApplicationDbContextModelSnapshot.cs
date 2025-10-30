@@ -518,12 +518,6 @@ namespace DataAccess.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
                     b.Property<string>("PendingBookingReference")
                         .HasColumnType("text");
 

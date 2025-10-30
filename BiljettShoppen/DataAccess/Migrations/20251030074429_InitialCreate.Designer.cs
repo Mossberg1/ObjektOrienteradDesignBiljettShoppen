@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251028100113_InitialCreate")]
+    [Migration("20251030074429_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -330,6 +330,9 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ReferenceNumber")
+                        .IsUnique();
+
                     b.ToTable("Bookings");
                 });
 
@@ -518,10 +521,7 @@ namespace DataAccess.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("PendingBookingReference")
                         .HasColumnType("text");
 
                     b.Property<decimal>("Price")
