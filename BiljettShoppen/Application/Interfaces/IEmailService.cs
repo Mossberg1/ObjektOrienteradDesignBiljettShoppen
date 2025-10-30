@@ -2,5 +2,5 @@
 
 public interface IEmailService
 {
-    Task<bool> SendBookingConfirmationEmail(string toEmail, string bookingReference);
+    Task<bool> SendBookingEmailWithFileAsync(string toEmail, string bookingReference, byte[] fileBytes);
 }

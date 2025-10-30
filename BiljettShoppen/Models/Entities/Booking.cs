@@ -5,11 +5,11 @@ namespace Models.Entities;
 public class Booking : BaseEntity
 {
     public string ReferenceNumber { get; set; } = Guid.NewGuid().ToString();
-
+    public string Email { get; set; } = string.Empty;
     public decimal TotalPrice { get; set; }
     public bool IsPaid { get; set; }
-
+    public string ConfirmationPdfPath { get; set; } = string.Empty;
+    public string? InvoicePdfPath { get; set; }
     public Payment? PaymentNavigation { get; set; }
-
     public List<Ticket> TicketsNavigation { get; set; } = new List<Ticket>();
 }
