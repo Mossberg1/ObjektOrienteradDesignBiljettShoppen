@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using Models.Exceptions;
 
 namespace Application.Features.Arenas.Entrances.Set
 {
@@ -20,7 +21,7 @@ namespace Application.Features.Arenas.Entrances.Set
                 .FirstOrDefaultAsync(a => a.Id == request.ArenaId, cancellationToken);
 
             if (arena == null)
-                throw new KeyNotFoundException($"Arena with ID {request.ArenaId} not found.");
+                throw new IdNotFoundException($"Arena med ID {request.ArenaId} hittades inte.");
 
             arena.NumberOfEntrances = request.NumberOfEntrances;
             await _dbContext.SaveChangesAsync(cancellationToken);

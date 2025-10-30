@@ -1,6 +1,7 @@
 ﻿using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Models.Exceptions;
 
 namespace Application.Features.Events.GetRemainingTickets
 {
@@ -22,7 +23,7 @@ namespace Application.Features.Events.GetRemainingTickets
 
             if (theEvent == null)
             {
-                throw new Exception($"Event with Id {request.EventId} not found.");
+                throw new IdNotFoundException($"Event med Id {request.EventId} hittades inte.");
             }
 
             var totalCapacity = theEvent.SeatLayoutNavigation.SeatsNavigation.Count();

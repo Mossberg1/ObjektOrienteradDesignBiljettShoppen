@@ -1,6 +1,7 @@
 ﻿using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Models.Exceptions;
 
 namespace Application.Features.Arenas.Delete
 {
@@ -20,7 +21,7 @@ namespace Application.Features.Arenas.Delete
                 .FirstOrDefaultAsync(a => a.Id == request.ArenaId, cancellationToken);
 
             if (arena == null)
-                throw new KeyNotFoundException($"Arena with ID {request.ArenaId} not found.");
+                throw new IdNotFoundException($"Arena med ID {request.ArenaId} hittades inte.");
 
             _dbContext.Arenas.Remove(arena);
 
