@@ -284,10 +284,37 @@
                     console.error("SignalR Connection Error:", err);
                 });
 
-            // Leave group when page unloads
+            // Lämna signalR gruppen när användaren går ifrån sidan.
             window.addEventListener('beforeunload', function() {
-                connection.invoke("LeaveBookingGroup", bookingReference);
+                connection.invoke("LeaveBookingGroup", bookingReference).catch(err => console.error(err));
+
+                // Avbryt bokningen
+                const cancelUrl = `/api/booking/cancle/${bookingReference}`;
+
+                if (navigator.sendBeacon) {
+                    fetch(cancelUrl, {
+                        method: 'DELETE',
+                        keepalive: true,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).catch(err => console.error('Failed to cancel booking:', err));
+                }
             });
-        });
+
+            // Ska tydligen vara bättre på mobil? 
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'hidden') {
+                    const cancelUrl = `/api/booking/${bookingReference}`;
+                    fetch(cancelUrl, {
+                        method: 'DELETE',
+                        keepalive: true,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).catch(err => console.error('Failed to cancel booking:', err));
+                }
+            });
+            });
     </script>
 }

@@ -7,5 +7,5 @@ using MediatR;
 
 namespace Application.Features.Bookings.Delete
 {
-    public record DeleteBookingCommand(string ReferenceNumber) : IRequest<bool>;
+    public record CancleBookingCommand(string ReferenceNumber) : IRequest<bool>;
 }
