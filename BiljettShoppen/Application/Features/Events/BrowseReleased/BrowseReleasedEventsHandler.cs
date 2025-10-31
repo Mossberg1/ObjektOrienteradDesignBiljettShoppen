@@ -5,7 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Events.Browse;
-
+/// <summary>
+/// Handler för <see cref="BrowseReleasedEventsQuery"/>.
+/// <para>
+/// Hämtar en lista av events med släppta biljetter (ReleaseTicketsDate <= DateTime.UtcNow) <br/>
+/// från databasen med filtrering.
+/// </para>
+/// </summary>
 public class BrowseReleasedEventsHandler : IRequestHandler<BrowseReleasedEventsQuery, PaginatedList<Event>>
 {
     private readonly IApplicationDbContext _dbContext;

@@ -4,7 +4,12 @@ using MediatR;
 using Models.Entities;
 
 namespace Application.Features.Events.Create;
-
+/// <summary>
+/// Handler som tar emot <see cref="CreateEventCommand"/> och skapar ett nytt <see cref="Event"/> i databasen.
+/// <para>
+/// Hanterar instansiering av <see cref="Event"/> med parametrar från CreateEventCommand, konverterar ReleaseTicketsDate till UTC tidszon och sparar sedan eventet.
+/// </para>
+/// </summary>
 public class CreateEventHandler : IRequestHandler<CreateEventCommand, Event>
 {
     private readonly IApplicationDbContext _dbContext;

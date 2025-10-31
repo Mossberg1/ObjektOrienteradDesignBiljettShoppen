@@ -5,8 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Features.Bookings.SetBookingEmail;
 
 namespace Application.Features.Bookings.SetBookingEmail
+/// <summary>
+/// Hanterar uppdatering av e-postadressen för en befintlig <see cref="Models.Entities.Booking"/>.
+/// <para>
+/// Tar emot <see cref="SetBookingEmailCommand"/> via MediatR, validerar e-postadressen <br/>
+/// och uppdaterar bokningen i databasen.
+/// </para>
+/// </summary>
 {
     public class SetBookingEmailHandler : IRequestHandler<SetBookingEmailCommand, bool>
     {

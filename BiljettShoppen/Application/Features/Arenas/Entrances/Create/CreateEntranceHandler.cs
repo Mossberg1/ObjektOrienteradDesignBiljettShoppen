@@ -8,10 +8,18 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Exceptions;
+using Application.Features.Arenas.Entrances.Create;
 
 namespace Application.Features.Arenas.Entrances.Create
+/// <summary>
+/// Hanterar skapandet av en ny <see cref="Entrance"/> för en specifik arena.
+/// <para>
+/// Tar emot <see cref="CreateEntranceCommand"/> via MediatR, kontrollerar att arenan finns <br/>
+/// och skapar entrén för att spara den i databasen.
+/// </para>
+/// </summary>
 {
-public class CreateEntranceHandler : IRequestHandler<CreateEntranceCommand, Entrance>
+    public class CreateEntranceHandler : IRequestHandler<CreateEntranceCommand, Entrance>
     {
         private readonly IApplicationDbContext _dbContext;
 

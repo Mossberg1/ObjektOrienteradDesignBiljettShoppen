@@ -5,6 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Tickets.CreateTickets;
+/// <summary>
+/// Hanterar skapandet av biljetter för ett specifikt evenemang.
+/// <para>
+/// Tar emot <see cref="CreateTicketsCommand"/> via MediatR och genererar biljetter <br/>
+/// baserat på evenemangets seat-layout.
+/// </para>
+/// </summary>
 
 public class CreateTicketsHandler : IRequestHandler<CreateTicketsCommand, bool>
 {

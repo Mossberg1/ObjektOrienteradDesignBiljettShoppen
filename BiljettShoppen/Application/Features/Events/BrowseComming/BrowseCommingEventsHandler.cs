@@ -7,6 +7,13 @@ using Models.Entities;
 
 
 namespace Application.Features.Events.BrowseComming
+/// <summary>
+/// Handler för <see cref="BrowseCommingEventsQuery"/>.
+/// <para>
+/// Hämtar en lista av kommande <see cref="Event"/> från databasen med olika filtreringsalternativ. <br/>
+/// Endast events med framtida <c>ReleaseTicketsDate</c> inkluderas.
+/// </para>
+/// </summary>
 {
     public class BrowseCommingEventsHandler : IRequestHandler<BrowseCommingEventsQuery, PaginatedList<Event>>
     {

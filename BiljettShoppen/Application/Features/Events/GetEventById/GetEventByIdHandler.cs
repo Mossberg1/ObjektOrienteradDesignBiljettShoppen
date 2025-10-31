@@ -4,7 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Events.GetById;
-
+/// <summary>
+/// Hanterar <see cref="GetEventByIdQuery"/> och ansvarar för att hämta ett <see cref="Event"/> baserat på Id.
+/// </summary>
+/// <remarks>
+/// <para>
+/// Hämtar eventet från databasen samt <see cref="ArenaNavigation"/> och <see cref="SeatLayoutNavigation"/>.
+/// Resultatet spåras inte i Entity Framework (.AsNoTracking()).
+/// </para>
+/// </remarks>
 public class GetEventByIdHandler : IRequestHandler<GetEventByIdQuery, Event?>
 {
     private readonly IApplicationDbContext _dbContext;

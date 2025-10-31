@@ -2,8 +2,16 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Exceptions;
+using Application.Features.Events.GetRemainingTickets;
 
 namespace Application.Features.Events.GetRemainingTickets
+/// <summary>
+/// Hanterar logiken för att hämta information om kvarvarande biljetter för ett evenemang.
+/// </summary>
+/// <remarks>
+/// Hämtar evenemanget från databasen, beräknar kapaciteten baserat på antalet seats i seatlayouten, <br/>
+/// och räknar sedan antalet sålda biljetter. Resultatet returneras som <see cref="RemainingTickets"/>.
+/// </remarks>
 {
     public class RemainingTicketsHandler : IRequestHandler<GetRemainingTicketsQuery, RemainingTickets>
     {

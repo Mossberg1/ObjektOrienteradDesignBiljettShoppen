@@ -4,6 +4,12 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
 namespace Application.Features.Payments.GenerateInvoice
+/// <summary>
+/// Skapar en PDF-faktura för en bokning.
+/// <para>
+/// PDF:en innehåller bokningsinformation, biljetter och förfallodag.
+/// </para>
+/// </summary>
 {
     public class CreateInvoice
     {

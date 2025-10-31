@@ -3,8 +3,16 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Exceptions;
+using Application.Features.Arenas.GetSeatLayoutsForArena;
 
 namespace Application.Features.Arenas.GetSeatLayoutsForArena
+/// <summary>
+/// Hanterar hämtning av alla <see cref="SeatLayout"/> för en specifik <see cref="Arena"/>.
+/// <para>
+/// Tar emot <see cref="GetSeatLayoutForArenaIdQuery"/> via MediatR, kontrollerar att arenan och stolslayouten finns <br/>
+/// och returnerar en lista med alla stolslayouter för arenan.
+/// </para>
+/// </summary>
 
 {
 

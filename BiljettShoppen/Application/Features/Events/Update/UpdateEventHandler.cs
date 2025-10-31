@@ -5,7 +5,17 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Events.Update;
-
+/// <summary>
+/// Handler som tar emot <see cref="UpdateEventCommand"/> via MediatR <br/>
+/// och uppdaterar ett befintligt evenemang i databasen.
+/// </summary>
+/// <remarks>
+/// Om evenemanget med ID:t inte finns så returneras null.<br/>
+/// Efter uppdateringen så sparas ändringarna i databasen.
+/// </remarks>
+/// <param name="request">Kommandot som innehåller de nya värdena för evenemanget.</param>
+/// <param name="cancellationToken">En token för att avbryta operationen.</param>
+/// <returns>Det uppdaterade <see cref="Event"/>-objektet, eller null om evenemanget inte finns eller ändringarna inte kunde sparas.</returns>
 public class UpdateEventHandler : IRequestHandler<UpdateEventCommand, Event?>
 {
     private readonly IApplicationDbContext _dbContext;

@@ -5,8 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Features.Bookings.UpdateInvoicePath;
 
 namespace Application.Features.Bookings.UpdateInvoicePath
+/// <summary>
+/// Hanterar uppdatering av fakturans filväg för en befintlig <see cref="Models.Entities.Booking"/>.
+/// <para>
+/// Tar emot <see cref="UpdateInvoicePathCommand"/> via MediatR, validerar filvägen och uppdaterar bokningen i databasen.
+/// </para>
+/// </summary>
 {
     public class UpdateInvoicePathHandler : IRequestHandler<UpdateInvoicePathCommand, bool>
     {
