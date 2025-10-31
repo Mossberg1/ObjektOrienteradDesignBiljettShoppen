@@ -5,10 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using System.Text.Json.Serialization;
 using Application.Hubs;
 
-// TODO: Få klart skapande av ny SeatLayout (camilla håller på).
-// TODO: Skapa sida för att skapa SeatLayout.
 // TODO: Bättre felmedelanden.
-// TODO: Ta bort bokning från timern om användaren lämnar betalningssidan.
+// TODO: Lägg till sida för att söka på bokningsnummer och ta bort bokning.
+// TODO: Lägg till prisuträkning i decorator (eventtyp och tidsbaserad).
 
 var builder = WebApplication.CreateBuilder(args);
 

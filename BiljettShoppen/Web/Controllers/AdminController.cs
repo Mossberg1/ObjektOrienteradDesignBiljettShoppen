@@ -6,6 +6,7 @@ using Application.Features.Events.BrowseAll;
 using Application.Features.Events.Create;
 using Application.Features.Events.GetById;
 using Application.Features.Events.Update;
+using Application.Features.SeatLayouts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -90,9 +91,25 @@ namespace Web.Controllers
 
         [HttpGet("Create/SeatLayout")]
         [Authorize]
-        public async Task<IActionResult> CreateSeatLayout()
+        public async Task<IActionResult> CreateSeatLayout([FromQuery] int? arenaId)
         {
-            // TODO: Sida för att skapa sittplatser för arena.
+            var query = new ListArenasQuery();
+            var arenas = await _mediator.Send(query);
+
+            ViewBag.Arenas = arenas.Select(a => new SelectListItem(a.Name, a.Id.ToString())).ToList();
+
+            if (arenaId.HasValue)
+            {
+                var arena = arenas.FirstOrDefault(a => a.Id == arenaId.Value);
+                if (arena != null)
+                {
+                    ViewBag.SelectedArena = arena;
+                    ViewBag.Entrances = arena.EntrancesNavigation
+                        .Select(e => new SelectListItem(e.Name, e.Id.ToString()))
+                        .ToList();
+                }
+            }
+
             return View();
         }
 
@@ -144,6 +161,15 @@ namespace Web.Controllers
         {
             var created = await _mediator.Send(command);
             return RedirectToAction("Browse");
+        }
+
+        [HttpPost("Create/SeatLayout")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateSeatLayout([FromBody] CreateSeatLayoutCommand command)
+        {
+            var layoutId = await _mediator.Send(command);
+            return Ok(new { success = true, layoutId });
         }
 
         [HttpPost("Update/Arena/{arenaId:int}")]

@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Application.Features.Arenas.GetArenaById;
 
@@ -22,7 +23,9 @@ namespace Application.Features.Arenas.GetArenaById
 
         public async Task<Arena?> Handle(GetArenaByIdQuery request, CancellationToken cancellationToken)
         {
-            return await _dbContext.Arenas.FindAsync(request.ArenaId);
+            return await _dbContext.Arenas
+                .Include(a => a.EntrancesNavigation)
+                .FirstOrDefaultAsync(a => a.Id == request.ArenaId);
         }
     }
 }

@@ -15,5 +15,5 @@ namespace Application.Features.Bookings.Delete
 /// <param name="ReferenceNumber">Referensnumret för bokningen som ska tas bort (<see cref="Models.Entities.Booking"/>).</param>
 
 {
-    public record DeleteBookingCommand(string ReferenceNumber) : IRequest<bool>;
+    public record CancleBookingCommand(string ReferenceNumber) : IRequest<bool>;
 }

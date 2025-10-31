@@ -1,7 +1,259 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Skapa Stolskonfiguration";
 }
 
-<h1>Create SeatLayout</h1>
+<div class="container mt-4">
+    <h1>Skapa Stolskonfiguration</h1>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            @* Add anti-forgery token for AJAX *@
+            <form id="layout-form">
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="arenaSelect" class="form-label">Välj Arena *</label>
+                        <select id="arenaSelect" class="form-select" required>
+                            <option value="">-- Välj arena --</option>
+                            @foreach (var arena in ViewBag.Arenas)
+                            {
+                                <option value="@arena.Value">@arena.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="layoutName" class="form-label">Layoutnamn *</label>
+                        <input type="text" id="layoutName" class="form-control" required placeholder="T.ex. Standard 50 platser">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="numRows" class="form-label">Antal Rader *</label>
+                        <input type="number" id="numRows" class="form-control" min="1" max="20" value="5" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="numCols" class="form-label">Antal Kolumner *</label>
+                        <input type="number" id="numCols" class="form-control" min="1" max="30" value="10" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="chairPrice" class="form-label">Stolpris (kr) *</label>
+                        <input type="number" id="chairPrice" class="form-control" min="0" step="10" value="250" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="benchPrice" class="form-label">Bänkpris (kr) *</label>
+                        <input type="number" id="benchPrice" class="form-control" min="0" step="10" value="200" required>
+                    </div>
+                </div>
+
+                <div id="entrance-section" class="row mb-3" style="display: none;">
+                    <div class="col-md-6">
+                        <label for="entranceSelect" class="form-label">Välj Entré *</label>
+                        <select id="entranceSelect" class="form-select" required></select>
+                    </div>
+                </div>
+
+                <button type="button" id="generateGrid" class="btn btn-primary mb-3">Generera Rutnät</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="grid-container" class="card mt-4" style="display: none;">
+        <div class="card-body">
+            <h5>Klicka på platserna för att växla mellan Stol och Bänk</h5>
+            <div class="mb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center">
+                        <div class="seat-preview chair me-2"></div>
+                        <span>Stol</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="seat-preview bench me-2"></div>
+                        <span>Bänk</span>
+                    </div>
+                </div>
+            </div>
+            <div class="screen mb-3">SCEN</div>
+            <div id="seat-grid"></div>
+            <div class="mt-4">
+                <button type="button" id="saveLayout" class="btn btn-success btn-lg">
+                    <i class="bi bi-check-circle"></i> Spara Konfiguration
+                </button>
+                <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-secondary btn-lg">Avbryt</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .screen {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        background-color: #343a40;
+        color: white;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    #seat-grid {
+        display: grid;
+        gap: 5px;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        justify-content: center;
+    }
+
+    .seat-cell, .seat-preview {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        border: 2px solid #ccc;
+        user-select: none;
+        transition: all 0.2s;
+    }
+
+        .seat-cell.chair, .seat-preview.chair {
+            background-color: #a7d7f9;
+        }
+
+        .seat-cell.bench, .seat-preview.bench {
+            background-color: #f9d4a7;
+        }
+
+        .seat-cell:hover {
+            transform: scale(1.1);
+            border-color: #007bff;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        document.getElementById('arenaSelect').addEventListener('change', async function() {
+            const arenaId = this.value;
+            if (!arenaId) {
+                document.getElementById('entrance-section').style.display = 'none';
+                return;
+            }
+
+            const response = await fetch(`/api/arena/${arenaId}/entrances`);
+            const entrances = await response.json();
+
+            const entranceSelect = document.getElementById('entranceSelect');
+            entranceSelect.innerHTML = '<option value="">-- Välj entré --</option>';
+            entrances.forEach(e => {
+                entranceSelect.innerHTML += `<option value="${e.id}">${e.name}</option>`;
+            });
+
+            document.getElementById('entrance-section').style.display = 'block';
+        });
+
+        document.getElementById('generateGrid').addEventListener('click', function() {
+            const rows = parseInt(document.getElementById('numRows').value);
+            const cols = parseInt(document.getElementById('numCols').value);
+            const arenaId = document.getElementById('arenaSelect').value;
+            const entranceId = document.getElementById('entranceSelect').value;
+
+            if (!arenaId || !entranceId) {
+                alert('Välj både arena och entré först!');
+                return;
+            }
+
+            const grid = document.getElementById('seat-grid');
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(${cols}, 40px)`;
+
+            for (let row = 1; row <= rows; row++) {
+                for (let col = 1; col <= cols; col++) {
+                    const seatDiv = document.createElement('div');
+                    seatDiv.className = 'seat-cell chair';
+                    seatDiv.textContent = col;
+                    seatDiv.dataset.row = row;
+                    seatDiv.dataset.col = col;
+                    seatDiv.dataset.type = 'Chair';
+
+                    seatDiv.addEventListener('click', function() {
+                        if (this.dataset.type === 'Chair') {
+                            this.dataset.type = 'Bench';
+                            this.className = 'seat-cell bench';
+                        } else {
+                            this.dataset.type = 'Chair';
+                            this.className = 'seat-cell chair';
+                        }
+                    });
+
+                    grid.appendChild(seatDiv);
+                }
+            }
+
+            document.getElementById('grid-container').style.display = 'block';
+        });
+
+        document.getElementById('saveLayout').addEventListener('click', async function() {
+            const arenaId = parseInt(document.getElementById('arenaSelect').value);
+            const layoutName = document.getElementById('layoutName').value;
+            const numRows = parseInt(document.getElementById('numRows').value);
+            const numCols = parseInt(document.getElementById('numCols').value);
+            const chairPrice = parseFloat(document.getElementById('chairPrice').value);
+            const benchPrice = parseFloat(document.getElementById('benchPrice').value);
+            const entranceId = parseInt(document.getElementById('entranceSelect').value);
+
+            if (!layoutName) {
+                alert('Ange ett layoutnamn!');
+                return;
+            }
+
+            const seats = [];
+            document.querySelectorAll('.seat-cell').forEach(cell => {
+                seats.push({
+                    row: parseInt(cell.dataset.row),
+                    col: parseInt(cell.dataset.col),
+                    type: cell.dataset.type === 'Chair' ? 0 : 1
+                });
+            });
+
+            const payload = {
+                arenaId,
+                layoutName,
+                numberOfRows: numRows,
+                numberOfCols: numCols,
+                chairBasePrice: chairPrice,  // Changed from chairPrice
+                benchBasePrice: benchPrice,  // Changed from benchPrice
+                entranceId,
+                seats
+            };
+
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                const response = await fetch('/Admin/Create/SeatLayout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert('Stolskonfiguration skapad!');
+                    window.location.href = '/Admin/BrowseArena';
+                } else {
+                    const error = await response.text();
+                    console.error('Error response:', error);
+                    alert('Ett fel uppstod: ' + error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ett fel uppstod vid sparandet!');
+            }
+        });
+    </script>
+}
