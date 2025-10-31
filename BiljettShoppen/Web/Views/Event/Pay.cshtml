@@ -94,7 +94,7 @@
     </div>
 </div>
 
-<!-- Modal for booking expiration -->
+<!-- Modal för bokning som har utgått -->
 <div class="modal fade" id="bookingExpiredModal" tabindex="-1" aria-labelledby="bookingExpiredLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -111,8 +111,8 @@
     </div>
 </div>
 
-<!-- Success Modal shown after automatic download -->
-<div class="modal fade" id="paymentSuccessModal" tabindex="-1" aria-labelledby="paymentSuccessLabel" aria-hidden="true">
+<!-- Modal för lyckad betalning. -->
+<div class="modal fade" id="paymentSuccessModal" tabindex="-1" aria-labelledby="paymentSuccessLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
@@ -123,8 +123,7 @@
                 Om du har valt faktura skickas den via epost. Även bekräftelsen skickas via epost.
             </div>
             <div class="modal-footer">
-                <a href="@Url.Action("Browse", "Event")" class="btn btn-outline-primary">Tillbaka till evenemang</a>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                <button type="button" id="successRedirectBtn" class="btn btn-primary">Tillbaka till evenemang</button>
             </div>
         </div>
     </div>
@@ -161,7 +160,7 @@
                     accordion.addEventListener('shown.bs.collapse', updateRequired);
                     accordion.addEventListener('hidden.bs.collapse', updateRequired);
                 }
-            } catch (e) { } 
+            } catch (e) { }
 
             form.querySelectorAll('button[type="submit"][name="paymentMethod"]').forEach(btn => {
                 btn.addEventListener('click', function () {
@@ -249,7 +248,28 @@
 
                     const successModalEl = document.getElementById('paymentSuccessModal');
                     if (successModalEl) {
-                        const modal = new bootstrap.Modal(successModalEl);
+                        const modal = new bootstrap.Modal(successModalEl, { backdrop: 'static', keyboard: false });
+
+                        try {
+                            const controls = Array.from(form.querySelectorAll('input,select,textarea,button'));
+                            controls.forEach(el => {
+                                if (el.id === 'successRedirectBtn') return;
+                                try { el.disabled = true; } catch (_) { /* ignore */ }
+                            });
+
+                            const anchors = Array.from(document.querySelectorAll('a'));
+                            anchors.forEach(a => {
+                                a.style.pointerEvents = 'none';
+                                a.setAttribute('aria-hidden', 'true');
+                                a.tabIndex = -1;
+                            });
+
+                            document.body.style.pointerEvents = 'none';
+                            successModalEl.style.pointerEvents = 'auto';
+                        } catch (e) {
+                            console.debug('Could not fully disable page controls', e);
+                        }
+
                         modal.show();
                     }
                 } catch (err) {
@@ -281,6 +301,15 @@
                 window.location.href = '@Url.Action("Browse", "Event")';
             });
 
+            const successRedirectBtn = document.getElementById('successRedirectBtn');
+            if (successRedirectBtn) {
+                successRedirectBtn.addEventListener('click', function () {
+                    try { connection.invoke("LeaveBookingGroup", bookingReference); } catch (_) { }
+                    paymentSubmitted = true;
+                    window.location.href = '@Url.Action("Browse", "Event")';
+                });
+            }
+
             connection.start()
                 .then(function () {
                     console.log("SignalR Connected");
@@ -298,7 +327,7 @@
 
                 if (paymentSubmitted) return;
 
-                const url = `/api/booking/cancle/${encodeURIComponent(bookingReference)}`; 
+                const url = `/api/booking/cancle/${encodeURIComponent(bookingReference)}`;
 
                 try {
                     fetch(url, {
