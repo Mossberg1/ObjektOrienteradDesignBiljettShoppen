@@ -137,6 +137,8 @@
             const form = document.querySelector('form[asp-action="ProcessPayment"]') || document.querySelector('form');
             if (!form) return;
 
+            let paymentSubmitted = false;
+
             const cardInputs = Array.from(document.querySelectorAll('[name^="creditCardForm."]'));
             const invoiceInputs = Array.from(document.querySelectorAll('[name^="invoiceForm."]'));
             const cardPanel = document.getElementById('collapseCard');
@@ -159,9 +161,7 @@
                     accordion.addEventListener('shown.bs.collapse', updateRequired);
                     accordion.addEventListener('hidden.bs.collapse', updateRequired);
                 }
-            } catch (e) {
-                // ignore if events aren't available
-            }
+            } catch (e) { } 
 
             form.querySelectorAll('button[type="submit"][name="paymentMethod"]').forEach(btn => {
                 btn.addEventListener('click', function () {
@@ -169,12 +169,28 @@
                 });
             });
 
-            // Intercept submit and send with fetch so we can automatically download the returned PDF
+            form.addEventListener('keydown', function (e) {
+                if (e.key !== 'Enter') return;
+
+                const tag = (e.target && e.target.tagName || '').toLowerCase();
+                if (tag === 'textarea') return;
+                if (e.target && (e.target.type === 'submit' || e.target.tagName.toLowerCase() === 'button')) return;
+
+                const methodButtons = Array.from(form.querySelectorAll('button[type="submit"][name="paymentMethod"]'));
+                let targetButton = methodButtons.find(b => b.closest('.accordion-collapse')?.classList.contains('show'));
+
+                if (!targetButton) targetButton = methodButtons.find(b => b.offsetParent !== null) || methodButtons[0];
+
+                if (targetButton) {
+                    e.preventDefault();
+                    targetButton.click();
+                }
+            });
+
             form.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 updateRequired();
 
-                // Validate client-side required fields
                 if (!form.checkValidity()) {
                     form.reportValidity();
                     return;
@@ -195,16 +211,16 @@
                     });
 
                     if (!response.ok) {
-                        // Try to read text error, otherwise show generic
                         let txt = '';
                         try { txt = await response.text(); } catch {}
                         alert('Betalning misslyckades. Server svarade: ' + (txt || response.statusText));
                         return;
                     }
 
+                    paymentSubmitted = true;
+
                     const contentType = response.headers.get('content-type') || '';
                     if (contentType.indexOf('application/pdf') === -1) {
-                        // Not a PDF - attempt to show text response (could be error)
                         const text = await response.text();
                         alert('Server response: ' + text);
                         return;
@@ -212,7 +228,6 @@
 
                     const blob = await response.blob();
 
-                    // Try to get filename from content-disposition header
                     function getFileNameFromContentDisposition(header) {
                         if (!header) return null;
                         const match = /filename\*=UTF-8''([^;]+)|filename="([^"]+)"|filename=([^;]+)/i.exec(header);
@@ -223,7 +238,6 @@
                     const cdHeader = response.headers.get('content-disposition');
                     let filename = getFileNameFromContentDisposition(cdHeader) || `${form.querySelector('input[name="bookingReference"]')?.value || '@Model.BookingReference'}_confirmation.pdf`;
 
-                    // Create temporary link to download
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
@@ -233,7 +247,6 @@
                     a.remove();
                     window.URL.revokeObjectURL(url);
 
-                    // Show success modal
                     const successModalEl = document.getElementById('paymentSuccessModal');
                     if (successModalEl) {
                         const modal = new bootstrap.Modal(successModalEl);
@@ -247,7 +260,6 @@
                 }
             });
 
-            // SignalR connection setup
             const bookingReference = '@Model.BookingReference';
             const connection = new signalR.HubConnectionBuilder()
                 .withUrl("/bookinghub")
@@ -257,17 +269,14 @@
             connection.on("BookingExpired", function (referenceNumber) {
                 console.log("Booking expired:", referenceNumber);
 
-                // Show modal
                 const modal = new bootstrap.Modal(document.getElementById('bookingExpiredModal'));
                 modal.show();
 
-                // Disable form submission
                 form.querySelectorAll('button[type="submit"]').forEach(btn => {
                     btn.disabled = true;
                 });
             });
 
-            // Redirect when OK button is clicked
             document.getElementById('redirectBtn').addEventListener('click', function() {
                 window.location.href = '@Url.Action("Browse", "Event")';
             });
@@ -284,37 +293,25 @@
                     console.error("SignalR Connection Error:", err);
                 });
 
-            // Lämna signalR gruppen när användaren går ifrån sidan.
             window.addEventListener('beforeunload', function() {
-                connection.invoke("LeaveBookingGroup", bookingReference).catch(err => console.error(err));
+                try { connection.invoke("LeaveBookingGroup", bookingReference); } catch (_) {}
 
-                // Avbryt bokningen
-                const cancelUrl = `/api/booking/cancle/${bookingReference}`;
+                if (paymentSubmitted) return;
 
-                if (navigator.sendBeacon) {
-                    fetch(cancelUrl, {
+                const url = `/api/booking/cancle/${encodeURIComponent(bookingReference)}`; 
+
+                try {
+                    fetch(url, {
                         method: 'DELETE',
                         keepalive: true,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }).catch(err => console.error('Failed to cancel booking:', err));
+                        credentials: 'same-origin'
+                    }).catch(err => {
+                        console.debug('Unload cancel fetch failed', err);
+                    });
+                } catch (e) {
+                    console.debug('Unable to send unload cancel request', e);
                 }
             });
-
-            // Ska tydligen vara bättre på mobil? 
-            document.addEventListener('visibilitychange', function() {
-                if (document.visibilityState === 'hidden') {
-                    const cancelUrl = `/api/booking/${bookingReference}`;
-                    fetch(cancelUrl, {
-                        method: 'DELETE',
-                        keepalive: true,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }).catch(err => console.error('Failed to cancel booking:', err));
-                }
-            });
-            });
+        });
     </script>
 }
