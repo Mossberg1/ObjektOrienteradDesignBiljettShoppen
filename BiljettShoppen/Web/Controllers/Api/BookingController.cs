@@ -25,7 +25,7 @@ namespace Web.Controllers.Api
             var result = await _mediator.Send(new CancleBookingCommand(ReferenceNumber), cancellationToken);
 
             if (!result)
-                return NotFound(new { message = $"Ingen bokning med referensnummer: {ReferenceNumber} hittades" });
+                return Ok(new { message = $"Ingen bokning med referensnummer: {ReferenceNumber} hittades" });
 
             return Ok(new { message = $"Bokning med referensnummer: {ReferenceNumber} har tagits bort." });
         }
