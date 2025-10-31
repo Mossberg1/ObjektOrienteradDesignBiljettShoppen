@@ -74,7 +74,14 @@ public class DataSeeder
     {
         var seatLayouts = new List<SeatLayout>
         {
-            new() { Name = "Stols konfigurations med 50 stolar", NumberOfRows = 5, NumberOfCols = 10, ArenaId = arenas[0].Id }, // 50 seats
+            new() 
+            { 
+                Name = "Stols konfigurations med 50 stolar", 
+                NumberOfRows = 5, 
+                NumberOfCols = 10, 
+                ArenaId = 
+                arenas[0].Id
+            }, // 50 seats
             new() { Name = "Stols konfiguration med 77 stolar", NumberOfRows = 7, NumberOfCols = 11, ArenaId = arenas[1].Id }, // 77 seats
         };
 

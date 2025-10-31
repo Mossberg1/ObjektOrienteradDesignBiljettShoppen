@@ -1,4 +1,5 @@
 ﻿using Application.Features.Arenas.Delete;
+using Application.Features.Arenas.GetArenaById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,23 @@ namespace Web.Controllers.Api
         public ArenaController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("{arenaId:int}/entrances")]
+        public async Task<IActionResult> GetEntrances([FromRoute] int arenaId) 
+        {
+            var query = new GetArenaByIdQuery(arenaId);
+            var arena = await _mediator.Send(query);
+
+            if (arena == null)
+                return NotFound();
+
+            var entrances = arena.EntrancesNavigation.Select(e => new
+            {
+                e.Id, e.Name
+            });
+
+            return Ok(entrances);
         }
 
         [HttpDelete("{arenaId:int}")]
