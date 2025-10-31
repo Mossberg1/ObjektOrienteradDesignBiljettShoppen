@@ -26,7 +26,7 @@ namespace Application.BackgroundServices
         private readonly ILogger<ThreadSafeBookingTimer> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
 
-        private const int _removeIntervalInMinutes = 10;
+        private const int _removeIntervalInMinutes = 1; // TODO: Ändra senare, satt till 1 minut för testning.
         private const int _checkIntervalInSeconds = 2;
 
         public ThreadSafeBookingTimer(
