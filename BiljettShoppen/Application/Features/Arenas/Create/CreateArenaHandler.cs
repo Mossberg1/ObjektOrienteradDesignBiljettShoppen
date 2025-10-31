@@ -3,19 +3,26 @@ using MediatR;
 using Models.Entities;
 
 namespace Application.Features.Arenas.Create
+/// <summary>
+/// Hanterar skapandet av en ny <see cref=Arena"/>.
+/// <para>
+/// Tar emot <see cref="CreateArenaCommand"/> via MediatR, sparar den i databasen <br/>
+/// och lägger till en huvudentré.
+/// </para>
+/// </summary>
 {
-    public class CreateArenaHandler : IRequestHandler<CreateArenaCommand, Arena> // Tar emot kommandot att skapa en Arena.
+    public class CreateArenaHandler : IRequestHandler<CreateArenaCommand, Arena>
     {
-        private readonly IApplicationDbContext _dbContext; // Ger CreateArenaHandler access till databasen.
+        private readonly IApplicationDbContext _dbContext;
 
-        public CreateArenaHandler(IApplicationDbContext dbContext) // Konstruktor som hjälper handlern att spara data i databasen.
+        public CreateArenaHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<Arena> Handle(CreateArenaCommand request, CancellationToken cancellationToken) // cancellationToken tillåter requesten att avbrytas.
+        public async Task<Arena> Handle(CreateArenaCommand request, CancellationToken cancellationToken)
         {
-            var arena = new Arena // Skapar upp en arena med följande data.
+            var arena = new Arena
             {
                 Name = request.Name,
                 Address = request.Address,
@@ -25,7 +32,7 @@ namespace Application.Features.Arenas.Create
                 NumberOfEntrances = 1
             };
 
-            _dbContext.Arenas.Add(arena); // Lägger till arenan i databasen.
+            _dbContext.Arenas.Add(arena);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             var mainEntrance = new Entrance

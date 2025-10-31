@@ -5,8 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Features.Bookings.UpdateConfirmationPath;
 
 namespace Application.Features.Bookings.UpdateConfirmationPath
+/// <summary>
+/// Hanterar uppdatering av bekräftelse-PDF-sökvägen för en befintlig <see cref="Models.Entities.Booking"/>.
+/// <para>
+/// Tar emot <see cref="UpdateConfirmationPathCommand"/> via MediatR, validerar sökvägen och uppdaterar bokningen i databasen.
+/// </para>
+/// </summary>
 {
     public class UpdateConfirmationPathHandler : IRequestHandler<UpdateConfirmationPathCommand, bool>
     {

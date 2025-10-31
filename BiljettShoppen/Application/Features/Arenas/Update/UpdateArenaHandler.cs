@@ -4,6 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Arenas.Update;
+/// <summary>
+/// Hanterar uppdatering av en befintlig <see cref="Arena"/>.
+/// <para>
+/// Tar emot <see cref="UpdateArenaCommand"/> via MediatR, hämtar arenan från databasen <br/>
+/// och uppdaterar dess egenskaper och sparar ändringarna.
+/// </para>
+/// </summary>
 
 public class UpdateArenaHandler : IRequestHandler<UpdateArenaCommand, Arena?>
 {

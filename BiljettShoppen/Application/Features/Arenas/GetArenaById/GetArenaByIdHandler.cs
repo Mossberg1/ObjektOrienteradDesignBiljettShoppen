@@ -2,8 +2,15 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using Application.Features.Arenas.GetArenaById;
 
 namespace Application.Features.Arenas.GetArenaById
+/// <summary>
+/// Hanterar hämtning av en <see cref="Arena"/> baserat på dess ID.
+/// <para>
+/// Tar emot <see cref="GetArenaByIdQuery"/> via MediatR och returnerar arenan om den finns.
+/// </para>
+/// </summary>
 {
     public class GetArenaByIdHandler : IRequestHandler<GetArenaByIdQuery, Arena?>
     {

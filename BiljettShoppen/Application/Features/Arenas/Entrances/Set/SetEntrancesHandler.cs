@@ -3,8 +3,16 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Exceptions;
+using Application.Features.Arenas.Entrances.Set;
 
 namespace Application.Features.Arenas.Entrances.Set
+/// <summary>
+/// Hanterar uppdatering av antalet entréer för en befintlig <see cref="Arena"/>.
+/// <para>
+/// Tar emot <see cref="SetEntrancesCommand"/> via MediatR, kontrollerar att arenan finns <br/>
+/// och uppdaterar antalet entréer för att spara ändringen i databasen.
+/// </para>
+/// </summary>
 {
     public class SetEntrancesHandler : IRequestHandler<SetEntrancesCommand, Arena>
     {

@@ -6,8 +6,16 @@ using Microsoft.Extensions.Logging;
 using Models.Entities;
 using Models.Enums;
 using Models.Exceptions;
+using Application.Features.Payments.PayBooking;
 
 namespace Application.Features.Payments.PayBooking
+/// <summary>
+/// Hanterar betalningen av en bokning.
+/// <para>
+/// Tar emot <see cref="PayBookingCommand"/> via MediatR, markerar bokningen som betald, <br/>
+/// uppdaterar biljetter och registrerar betalningen i databasen.
+/// </para>
+/// </summary>
 {
     public class PayBookingCommandHandler : IRequestHandler<PayBookingCommand, Models.Entities.Booking>
     {

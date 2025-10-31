@@ -4,6 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Bookings.Search;
+/// <summary>
+/// Hanterar hämtning av en <see cref="Booking"/> baserat på referensnummer.
+/// <para>
+/// Tar emot <see cref="GetBookingByReferenceQuery"/> via MediatR och returnerar bokningen <br/>
+/// inklusive dess biljetter, event och betalningsinformation.
+/// </para>
+/// </summary>
 
 public class GetBookingByReferenceHandler : IRequestHandler<GetBookingByReferenceQuery, Booking?>
 {

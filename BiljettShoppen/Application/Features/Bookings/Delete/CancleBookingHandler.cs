@@ -7,8 +7,15 @@ using Application.Interfaces;
 using DataAccess;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Application.Features.Bookings.Delete;
 
 namespace Application.Features.Bookings.Delete
+/// <summary>
+/// Hanterar borttagning av en <see cref="Models.Entities.Booking"/> från <see cref="IBookingTimer"/>.
+/// <para>
+/// Tar emot <see cref="DeleteBookingCommand"/> via MediatR och försöker ta bort bokningen med hjälp av referensnummer.
+/// </para>
+/// </summary>
 {
     public class CancleBookingHandler : IRequestHandler<CancleBookingCommand, bool>
     {

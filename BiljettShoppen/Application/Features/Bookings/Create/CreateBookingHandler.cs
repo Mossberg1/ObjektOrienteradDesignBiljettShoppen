@@ -3,8 +3,16 @@ using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Exceptions;
+using Application.Features.Bookings.Create;
 
 namespace Application.Features.Bookings.Create
+/// <summary>
+/// Hanterar skapandet av en ny <see cref="Models.Entities.Booking"/>.
+/// <para>
+/// Tar emot <see cref="CreateBookingCommand"/> via MediatR, validerar biljetter <br/> 
+/// och skapar bokningen. Lägger den även i <see cref="IBookingTimer"/> och sparar i databasen.
+/// </para>
+/// </summary>
 {
     public class CreateBookingHandler : IRequestHandler<CreateBookingCommand, Models.Entities.Booking>
     {

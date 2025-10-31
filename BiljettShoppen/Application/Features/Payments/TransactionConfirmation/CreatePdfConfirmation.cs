@@ -4,6 +4,12 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
 namespace Application.Features.Payments.TransactionConfirmation
+/// <summary>
+/// Genererar PDF-bekräftelse för genomförd transaktion.
+/// <para>
+/// PDF:en innehåller information om bokning, transaktionsdetaljer och biljetter.
+/// </para>
+/// </summary>
 {
     public class CreatePdfConfirmation
     {

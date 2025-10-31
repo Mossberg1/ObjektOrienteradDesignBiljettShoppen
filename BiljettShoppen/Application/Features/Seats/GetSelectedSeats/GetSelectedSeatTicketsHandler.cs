@@ -4,6 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Seats.GetSelectedSeats;
+/// <summary>
+/// Hämtar biljetter för specifikt valda sittplatser i ett evenemang.
+/// <para>
+/// Tar emot <see cref="GetSelectedSeatTicketsQuery"/> via MediatR och returnerar <br/>
+/// en lista av <see cref="Ticket"/> som matchar valda platser.
+/// </para>
+/// </summary>
 
 public class GetSelectedSeatTicketsHandler : IRequestHandler<GetSelectedSeatTicketsQuery, List<Ticket>>
 {

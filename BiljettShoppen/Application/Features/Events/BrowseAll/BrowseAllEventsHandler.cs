@@ -3,8 +3,15 @@ using DataAccess.Utils;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using Application.Features.Events.BrowseAll;
 
 namespace Application.Features.Events.BrowseAll
+/// <summary>
+/// Handler för <see cref="BrowseAllEventsQuery"/>.
+/// <para>
+/// Hämtar en lista av <see cref="Event"/> från databasen med olika filtreringsalternativ.
+/// </para>
+/// </summary>
 {
     public class BrowseAllEventsHandler : IRequestHandler<BrowseAllEventsQuery, PaginatedList<Event>>
     {

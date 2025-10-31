@@ -4,7 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace Application.Features.Events.ViewSeats;
-
+/// <summary>
+/// Handler som tar emot <see cref="ViewSeatsQuery"/> via MediatR <br/>
+/// och hämtar ett evenemang med platser sorterade per rad och kolumn.
+/// </summary>
+/// <remarks>
+/// Hämtar information om arenan och dess seatlayout.
+/// Returnerar null om evenemanget med det angivna Id:t inte finns.
+/// </remarks>
+/// <param name="request">Kommandot som innehåller Id för evenemanget som ska visas.</param>
+/// <param name="cancellationToken">Token för att avbryta operationen.</param>
+/// <returns>Evenemanget med dess seatlayout och arena, eller null om det inte finns.</returns>
 public class ViewSeatsHandler : IRequestHandler<ViewSeatsQuery, Event?>
 {
     private readonly IApplicationDbContext _dbContext;
