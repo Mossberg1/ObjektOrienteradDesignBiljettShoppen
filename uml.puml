@@ -6,9 +6,8 @@ enum SeatType {
 }
 
 enum PaymentMethod {
-    Invoice
     CreditCard
-    Swish
+    Invoice
 }
 
 enum EventType {
@@ -44,14 +43,14 @@ class Arena <<BaseEntity>> {
     + NumberOfSeats: int
     + NumberOfLoges: int
     + Indoors: bool
-    + StandardSeatLayoutId: int
-    + StandardSeatLayoutNavigation: SeatLayout
+    + NumberOfEntrances: int 
     + EntrancesNavigation: List<Entrance> 
     + SeatLayoutsNavigatyion: List<SeatLayout>
     + EventsNavigation: List<Event>
 }
-
+ 
 class SeatLayout <<BaseEntity>> {
+    + Name: string 
     + NumberOfRows: int
     + NumberOfCols: int
     + ArenaId: int
@@ -73,34 +72,32 @@ class Event <<BaseEntity>> {
     + StartTime: TimeOnly
     + EndTime: TimeOnly
     + ReleaseTicketsDate: DateTime
-    + NumberOfSeatsToSell: int
-    + NumberOfLogesToSell: int
     + Price: decimal
     + Cost: decimal
     + Type: EventType
     + IsFamilyFriendly: bool 
-    + TicketsNavigation: List<Ticket> 
     + ArenaId: int 
     + ArenaNavigation: Arena
     + SeatLayoutId: int
     + SeatLayoutNavigation: SeatLayout
+    + TicketsNavigation: List<Ticket> 
     + CalculateEventLength(): TimeSpan
     + CalculateEarnings(): decimal
     + TypeToString(): string
 }
 
 class Ticket <<BaseEntity>> {
-    + Id: int
     + Price: decimal
-    + FirstName: string
-    + LastName: string
+    + Description: string 
     + BookingId: int? 
-    + BookingNavigation: Booking? 
+    + BookingNavigation: booking? 
     + EventId: int 
-    + EventNavigation: Event
-    + BookableSpace: int
-    + BooakableSpaceNavigation: BookableSpace
-    + IsBooked(): bool
+    + EventNavigation: event 
+    + BookableSpaceId: int 
+    + BookableSpaceNavigation: bookableSpace
+    + PendingBookingReference: string? 
+    + IsPending: bool 
+    + IsBooked: bool 
 }
 
 class Seat <<BaseEntity>>{
@@ -119,17 +116,20 @@ class Loge <<BaseEntity>> {
 }
 
 class Booking <<BaseEntity>> {
-    + TotalPrice: decimal
-    + IsPaid: bool
+    + ReferenceNumber: string 
+    + Email: string 
+    + TotalPrice: decimal 
+    + IsPaid: bool 
+    + ConfirmationPdfPath: string 
+    + InvoicePdfPath: string? 
     + PaymentNavigation: Payment? 
     + TicketsNavigation: List<Ticket>
 }
 
 class Payment <<BaseEntity>> {
-    + Method: PaymentMethod
-    + BookingId: int
+    + BookingId: int 
     + BookingNavigation: Booking 
-    + PaymentMethodToString(): string
+    + PaymentMethod: PaymentMethod 
 }
 
 Arena "1" *-- "0..*" Event

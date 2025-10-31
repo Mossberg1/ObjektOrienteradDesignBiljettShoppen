@@ -5,6 +5,7 @@
 }
 
 <div class="container mt-4">
+    @Html.AntiForgeryToken()
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Hantera Arenor</h1>
         <a asp-controller="Admin" asp-action="CreateArena" class="btn btn-success">
@@ -64,7 +65,12 @@
                                 <a asp-controller="Admin" asp-action="UpdateArena" asp-route-arenaId="@arena.Id" class="btn btn-sm btn-outline-primary flex-fill">
                                     <i class="bi bi-pencil"></i> Redigera
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete(@arena.Id, '@arena.Name')">
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-danger"
+                                    data-arena-id="@arena.Id"
+                                    data-name="@arena.Name"
+                                    onclick="confirmDelete(this)">
                                     <i class="bi bi-trash"></i> Ta bort
                                 </button>
                             </div>
@@ -84,9 +90,29 @@
 
 @section Scripts {
     <script>
-        function confirmDelete(arenaId, arenaName) {
+        // decode HTML entities (in case Razor emitted encoded entities)
+        function decodeHtmlEntities(str) {
+            const txt = document.createElement('textarea');
+            txt.innerHTML = str;
+            return txt.value;
+        }
+
+        function confirmDelete(el) {
+            const arenaId = el.dataset.arenaId ? parseInt(el.dataset.arenaId, 10) : null;
+            // dataset.name will typically contain the decoded characters;
+            // if it contains any HTML entities, decodeHtmlEntities will fix that.
+            const rawName = el.dataset.name ?? '';
+            const arenaName = decodeHtmlEntities(rawName);
+
+            // debug: inspect what we actually read
+            console.log('delete:', { arenaId, rawName, arenaName });
+
+            if (!arenaId) {
+                alert('Ogiltigt arena-id.');
+                return;
+            }
+
             if (confirm(`Är du säker på att du vill ta bort arenan "${arenaName}"? Detta kan inte ångras.`)) {
-                // TODO: Implement delete action
                 fetch(`/api/arena/${arenaId}`, {
                     method: 'DELETE',
                     headers: {
