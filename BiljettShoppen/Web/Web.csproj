@@ -25,4 +25,9 @@
         <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\confirmations\" />
+      <Folder Include="wwwroot\invoices\" />
+    </ItemGroup>
+
 </Project>
