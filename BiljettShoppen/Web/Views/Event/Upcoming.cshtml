@@ -108,7 +108,7 @@
                                     var len = ev.CalculateEventLength();
                                     if (len.TotalMinutes >= 60)
                                     {
-                                        <text>@len.TotalHours h @len.Minutes m</text>
+                                        <text>@((int)len.TotalHours) h @len.Minutes m</text>
                                         ;
                                     }
                                     else
