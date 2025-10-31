@@ -9,6 +9,8 @@ using Application.Hubs;
 // TODO: Skapa sida för att skapa SeatLayout.
 // TODO: Bättre felmedelanden.
 // TODO: Ta bort bokning från timern om användaren lämnar betalningssidan.
+// Sida för att söka bokninig och sen ta bort en bokning.
+// Lägg till allt pris relaterat i decorator.
 
 var builder = WebApplication.CreateBuilder(args);
 

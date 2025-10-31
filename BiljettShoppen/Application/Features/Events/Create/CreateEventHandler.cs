@@ -1,3 +1,4 @@
+using Application.Features.Tickets.CreateTickets;
 using Application.Utils;
 using DataAccess.Interfaces;
 using MediatR;
@@ -8,9 +9,12 @@ namespace Application.Features.Events.Create;
 public class CreateEventHandler : IRequestHandler<CreateEventCommand, Event>
 {
     private readonly IApplicationDbContext _dbContext;
-    public CreateEventHandler(IApplicationDbContext dbContext)
+    private readonly IMediator _mediator;
+
+    public CreateEventHandler(IApplicationDbContext dbContext, IMediator mediator)
     {
         _dbContext = dbContext;
+        _mediator = mediator;
     }
 
     public async Task<Event> Handle(CreateEventCommand request, CancellationToken cancellationToken)
@@ -32,8 +36,11 @@ public class CreateEventHandler : IRequestHandler<CreateEventCommand, Event>
 
         eventEntity.ReleaseTicketsDate = DateTimeUtils.ToUtc(request.ReleaseTicketsDate);
 
-        _dbContext.Events.Add(eventEntity);
+        await _dbContext.Events.AddAsync(eventEntity);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        var createTicketsCommand = new CreateTicketsCommand(eventEntity.Id);
+        await _mediator.Send(createTicketsCommand, cancellationToken);
 
         return eventEntity;
     }
