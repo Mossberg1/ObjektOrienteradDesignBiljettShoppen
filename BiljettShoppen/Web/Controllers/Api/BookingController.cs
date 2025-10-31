@@ -18,11 +18,11 @@ namespace Web.Controllers.Api
             _mediator = mediator;
         }
 
-        [HttpDelete("{ReferenceNumber}")]
-        public async Task<IActionResult> DeleteBooking(string ReferenceNumber, CancellationToken cancellationToken)
+        [HttpDelete("cancle/{ReferenceNumber}")]
+        public async Task<IActionResult> CancleBooking(string ReferenceNumber, CancellationToken cancellationToken)
         {
 
-            var result = await _mediator.Send(new DeleteBookingCommand(ReferenceNumber), cancellationToken);
+            var result = await _mediator.Send(new CancleBookingCommand(ReferenceNumber), cancellationToken);
 
             if (!result)
                 return NotFound(new { message = $"Ingen bokning med referensnummer: {ReferenceNumber} hittades" });
