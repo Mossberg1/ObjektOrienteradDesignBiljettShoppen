@@ -7,10 +7,10 @@ using Application.Hubs;
 
 namespace Application.BackgroundServices;
 
-// Använd ConcurrentDictionary istället för thread-safety.
-// Kolla istället alla bokningar i listan varje iteration.
+// Använd ConcurrentDictionary istället för List pga thread-safety.
+// Kolla istället alla bokningar i listan varje iteration eftersom vi inte kan garantera att de läggs in i ordning pga nätverks delay.
 // För tillfället är operationen o(n) även fast vi kan hoppa ur tidigare.
-// Däremot eftersom listan inte har thread-safety så kan vi inte garantera att bokningarna ligger i ordning.
+// Däremot eftersom listan inte är thread-safe så kan vi inte garantera att bokningarna ligger i ordning.
 // Varje iteration kommer fortfarande vara o(n) även fast vi kollar igenom alla bokningar.
 // Med denna implementation är även borttagning o(n) och hitta bokning o(n).
 // Med ConcurrentDictionary blir borttagning o(1) och hitta bokning o(1).'

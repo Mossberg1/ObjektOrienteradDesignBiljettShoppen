@@ -7,9 +7,9 @@ using Application.Interfaces;
 using DataAccess;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Application.Features.Bookings.Delete;
+using Application.Features.Bookings.Cancle;
 
-namespace Application.Features.Bookings.Delete
+namespace Application.Features.Bookings.Cancle
 /// <summary>
 /// Hanterar borttagning av en <see cref="Models.Entities.Booking"/> från <see cref="IBookingTimer"/>.
 /// <para>
@@ -17,16 +17,16 @@ namespace Application.Features.Bookings.Delete
 /// </para>
 /// </summary>
 {
-    public class CancleBookingHandler : IRequestHandler<CancleBookingCommand, bool>
+    public class CancelBookingHandler : IRequestHandler<CancelBookingCommand, bool>
     {
         private readonly IBookingTimer _bookingTimer;
         private readonly ApplicationDbContext _dbContext;
-        private readonly ILogger<CancleBookingHandler> _logger;
+        private readonly ILogger<CancelBookingHandler> _logger;
 
-        public CancleBookingHandler(
+        public CancelBookingHandler(
             IBookingTimer bookingTimer, 
             ApplicationDbContext dbContext,
-            ILogger<CancleBookingHandler> logger
+            ILogger<CancelBookingHandler> logger
         )
         {
             _bookingTimer = bookingTimer;
@@ -34,7 +34,7 @@ namespace Application.Features.Bookings.Delete
             _dbContext = dbContext;
         }
 
-        public async Task<bool> Handle(CancleBookingCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
         {
             var booking = _bookingTimer.GetBooking(request.ReferenceNumber);
             if (booking == null)

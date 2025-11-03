@@ -25,9 +25,11 @@ public class GetBookingByReferenceHandler : IRequestHandler<GetBookingByReferenc
     {
         var booking = await _dbContext.Bookings
             .Include(b => b.TicketsNavigation)
-            .ThenInclude(t => t.BookableSpaceNavigation)
+                .ThenInclude(t => t.BookableSpaceNavigation)
+                    .ThenInclude(bs => bs.EntranceNavigation)
             .Include(b => b.TicketsNavigation)
-            .ThenInclude(t => t.EventNavigation)
+                .ThenInclude(t => t.EventNavigation)
+                    .ThenInclude(e => e.ArenaNavigation)
             .Include(b => b.PaymentNavigation)
             .FirstOrDefaultAsync(b => b.ReferenceNumber == request.ReferenceNumber, cancellationToken);
 

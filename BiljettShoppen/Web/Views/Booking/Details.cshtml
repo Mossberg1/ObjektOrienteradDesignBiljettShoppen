@@ -1,0 +1,153 @@
+﻿@model Models.Entities.Booking
+
+@{
+    ViewData["Title"] = "Bokningsdetaljer";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Bokningsdetaljer</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Booking Status -->
+                    <div class="alert @(Model.IsPaid ? "alert-success" : "alert-warning")" role="alert">
+                        <strong>Status:</strong>
+                        @if (Model.IsPaid)
+                        {
+                            <span>✓ Betald</span>
+                        }
+                        else
+                        {
+                            <span>⚠ Väntar på betalning</span>
+                        }
+                    </div>
+
+                    <!-- Reference Number -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Referensnummer:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="@Model.ReferenceNumber" readonly />
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('@Model.ReferenceNumber')">
+                                Kopiera
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">E-post:</label>
+                            <p class="form-control-plaintext">@Model.Email</p>
+                        </div>
+                    }
+
+                    <!-- Total Price -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Totalt pris:</label>
+                        <p class="form-control-plaintext fs-4 text-success">@Model.TotalPrice.ToString("C", new System.Globalization.CultureInfo("sv-SE"))</p>
+                    </div>
+
+                    <!-- Payment Information -->
+                    @if (Model.PaymentNavigation != null)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Betalningsmetod:</label>
+                            <p class="form-control-plaintext">@Model.PaymentNavigation.PaymentMethodToString()</p>
+                        </div>
+                    }
+
+                    <!-- Tickets -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Biljetter (@Model.TicketsNavigation.Count st):</label>
+                        <div class="list-group">
+                            @foreach (var ticket in Model.TicketsNavigation)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">@ticket.EventNavigation.Name</div>
+                                            <small class="text-muted">
+                                                @ticket.EventNavigation.Date.ToString("d MMMM yyyy") kl. @ticket.EventNavigation.StartTime.ToString("HH:mm")
+                                            </small>
+                                            <div>
+                                                <strong>Plats:</strong> @ticket.BookableSpaceNavigation.GetDescription()
+                                            </div>
+                                            <div>
+                                                <strong>Entré:</strong> @ticket.BookableSpaceNavigation.EntranceNavigation.Name
+                                            </div>
+                                            <div>
+                                                <strong>Arena:</strong> @ticket.EventNavigation.ArenaNavigation.Name
+                                            </div>
+                                        </div>
+                                        <span class="badge bg-primary rounded-pill fs-6">@ticket.Price.ToString("C", new System.Globalization.CultureInfo("sv-SE"))</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Created Date -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Bokad:</label>
+                        <p class="form-control-plaintext">@Model.CreatedAt.ToLocalTime().ToString("g")</p>
+                    </div>
+
+                    <!-- Download Links -->
+                    @if (Model.IsPaid)
+                    {
+                        <div class="mt-4">
+                            <h5>Dokument</h5>
+                            @if (!string.IsNullOrEmpty(Model.ConfirmationPdfPath))
+                            {
+                                <div class="mb-2">
+                                    <a asp-controller="Download" asp-action="DownloadBookingConfirmation" asp-route-referenceNumber="@Model.ReferenceNumber" class="btn btn-success">
+                                        📄 Ladda ner bekräftelse
+                                    </a>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.InvoicePdfPath))
+                            {
+                                <div class="mb-2">
+                                    <a asp-controller="Download" asp-action="DownloadBookingInvoice" asp-route-referenceNumber="@Model.ReferenceNumber" class="btn btn-info">
+                                        📄 Ladda ner faktura
+                                    </a>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top">
+                            <h5 class="text-danger">Avboka bokning</h5>
+                            <p class="text-muted">Om du vill avboka denna bokning kan du göra det här. En bekräftelse kommer att skickas till din e-post.</p>
+                            <form asp-controller="Booking" asp-action="Remove" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="referenceNumber" value="@Model.ReferenceNumber" />
+                                <button type="submit" class="btn btn-danger">
+                                    🗑️ Avboka bokning
+                                </button>
+                            </form>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Tillbaka till startsidan</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Referensnummer kopierat till urklipp!');
+            }).catch(err => {
+                console.error('Kunde inte kopiera text: ', err);
+            });
+        }
+    </script>
+}

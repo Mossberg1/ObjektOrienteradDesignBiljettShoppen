@@ -25,7 +25,7 @@
             </div>
 
             <!-- Payment Form -->
-            <form asp-action="ProcessPayment" method="post">
+            <form id="paymentForm" asp-action="ProcessPayment" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="BookingReference" />
                 <input type="hidden" name="paymentMethod" id="paymentMethod" value="" />
@@ -133,7 +133,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form[asp-action="ProcessPayment"]') || document.querySelector('form');
+            const form = document.getElementById('paymentForm');
             if (!form) return;
 
             let paymentSubmitted = false;

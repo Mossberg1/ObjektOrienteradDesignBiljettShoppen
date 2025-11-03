@@ -6,14 +6,15 @@ using System.Text.Json.Serialization;
 using Application.Hubs;
 
 // TODO: Bättre felmedelanden.
-// TODO: Lägg till möjlighet att ta bort en sökt bokning med email berkräftelse stubb.
 // TODO: Lägg till prisuträkning i decorator (eventtyp och tidsbaserad).
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDataAccessLayer(builder.Configuration);
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
