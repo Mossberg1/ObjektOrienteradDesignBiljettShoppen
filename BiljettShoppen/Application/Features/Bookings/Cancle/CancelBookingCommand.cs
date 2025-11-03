@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace Application.Features.Bookings.Delete
+namespace Application.Features.Bookings.Cancle
 /// <summary>
 /// Kommandot används för att ta bort en befintlig <see cref="Models.Entities.Booking"/>.
 /// <para>
@@ -15,5 +15,5 @@ namespace Application.Features.Bookings.Delete
 /// <param name="ReferenceNumber">Referensnumret för bokningen som ska tas bort (<see cref="Models.Entities.Booking"/>).</param>
 
 {
-    public record CancleBookingCommand(string ReferenceNumber) : IRequest<bool>;
+    public record CancelBookingCommand(string ReferenceNumber) : IRequest<bool>;
 }

@@ -39,12 +39,33 @@
                             </li>
                         }
                     </ul>
+
+                    <form asp-controller="Booking" asp-action="Search" method="get" class="d-flex align-items-center me-3 my-2 my-sm-0">
+                        <input type="text" name="referenceNumber" class="form-control form-control-sm me-2" placeholder="Bokningsreferens" style="min-width: 180px;" required />
+                        <button type="submit" class="btn btn-sm btn-outline-primary text-nowrap">Sök bokning</button>
+                    </form>
+
                     <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
     <div class="container">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                <strong>Fel:</strong> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <strong>Klart!</strong> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

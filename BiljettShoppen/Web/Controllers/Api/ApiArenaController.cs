@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Web.Controllers.Api
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class ArenaController : ControllerBase
+    [Route("api/arena")]
+    public class ApiArenaController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public ArenaController(IMediator mediator)
+        public ApiArenaController(IMediator mediator)
         {
             _mediator = mediator;
         }

@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Web.Controllers.Api
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class EventController : ControllerBase
+    [Route("api/event")]
+    public class ApiEventController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public EventController(IMediator mediator)
+        public ApiEventController(IMediator mediator)
         {
             _mediator = mediator;
         }
