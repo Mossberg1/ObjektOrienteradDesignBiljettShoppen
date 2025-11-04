@@ -24,20 +24,19 @@ public class CreateEventHandler : IRequestHandler<CreateEventCommand, Event>
 
     public async Task<Event> Handle(CreateEventCommand request, CancellationToken cancellationToken)
     {
-        var eventEntity = new Event
-        {
-            Name = request.Name,
-            Date = request.Date,
-            StartTime = request.StartTime,
-            EndTime = request.EndTime,
-            ReleaseTicketsDate = request.ReleaseTicketsDate,
-            Price = request.Price,
-            Cost = request.Cost,
-            Type = request.Type,
-            IsFamilyFriendly = request.IsFamilyFriendly,
-            ArenaId = request.ArenaId,
-            SeatLayoutId = request.SeatLayoutId,
-        };
+        var eventEntity = new Event(
+            request.Name,
+            request.Date,
+            request.StartTime,
+            request.EndTime,
+            request.ReleaseTicketsDate,
+            request.Price,
+            request.Cost,
+            request.Type,
+            request.IsFamilyFriendly,
+            request.ArenaId,
+            request.SeatLayoutId
+        );
 
         eventEntity.ReleaseTicketsDate = DateTimeUtils.ToUtc(request.ReleaseTicketsDate);
 

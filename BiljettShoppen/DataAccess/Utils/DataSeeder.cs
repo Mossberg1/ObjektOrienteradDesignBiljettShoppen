@@ -35,16 +35,8 @@ public class DataSeeder
     {
         var arenas = new List<Arena>
         {
-            new()
-            {
-                Address = "Falunvägen 15, 791 70 Falun", Name = "Tegelbyggnaden", NumberOfSeats = 50,
-                NumberOfLoges = 4, Indoors = true
-            },
-            new()
-            {
-                Address = "Borlängevägen 10, 784 34 Borlänge", Name = "Träbyggnaden", NumberOfSeats = 77,
-                NumberOfLoges = 0, Indoors = true
-            }
+            new("Tegelbyggnaden", "Falunvägen 15, 791 70 Falun", true),
+            new("Träbyggnaden", "Borlängevägen 10, 784 34 Borlänge", true)
         };
 
         await _dbContext.Arenas.AddRangeAsync(arenas);
@@ -57,12 +49,9 @@ public class DataSeeder
         var entrances = new List<Entrance>();
         foreach (var arena in arenas)
         {
-            entrances.Add(new Entrance { Name = "Huvudentré", VipEntrance = false, ArenaId = arena.Id });
-            entrances.Add(new Entrance { Name = "Sidoentré", VipEntrance = false, ArenaId = arena.Id });
-            if (arena.NumberOfLoges > 0)
-            {
-                entrances.Add(new Entrance { Name = "VIP-entré", VipEntrance = true, ArenaId = arena.Id });
-            }
+            entrances.Add(new("Huvudentré", false, arena.Id));
+            entrances.Add(new("Sidoentré", false, arena.Id));
+            entrances.Add(new("VIP-entré", true, arena.Id));
         }
 
         await _dbContext.Entrances.AddRangeAsync(entrances);
@@ -74,15 +63,8 @@ public class DataSeeder
     {
         var seatLayouts = new List<SeatLayout>
         {
-            new() 
-            { 
-                Name = "Stols konfigurations med 50 stolar", 
-                NumberOfRows = 5, 
-                NumberOfCols = 10, 
-                ArenaId = 
-                arenas[0].Id
-            }, // 50 seats
-            new() { Name = "Stols konfiguration med 77 stolar", NumberOfRows = 7, NumberOfCols = 11, ArenaId = arenas[1].Id }, // 77 seats
+            new("Stols konfigurations med 50 stolar", 5, 10, arenas[0].Id),
+            new("Stols konfiguration med 77 stolar", 7, 10, arenas[1].Id) 
         };
 
         await _dbContext.SeatLayouts.AddRangeAsync(seatLayouts);
@@ -101,15 +83,9 @@ public class DataSeeder
                 var isBenchRow = row == layout.NumberOfRows;
                 for (var col = 1; col <= layout.NumberOfCols; col++)
                 {
-                    seats.Add(new Seat
-                    {
-                        RowNumber = row,
-                        ColNumber = col,
-                        Type = isBenchRow ? SeatType.Bench : SeatType.Chair,
-                        Price = isBenchRow ? 200 : 250,
-                        SeatLayoutId = layout.Id,
-                        EntranceId = regularEntrance.Id
-                    });
+                    var type = isBenchRow ? SeatType.Bench : SeatType.Chair;
+                    var price = isBenchRow ? 200 : 250;
+                    seats.Add(new(row, col, type, layout.Id, price, regularEntrance.Id));
                 }
             }
         }
@@ -123,20 +99,32 @@ public class DataSeeder
     {
         var events = new List<Event>
         {
-            new()
-            {
-                Name = "Konsert med lokala band", Date = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(2)),
-                StartTime = new TimeOnly(19, 0, 0), EndTime = new TimeOnly(22, 0, 0),
-                Price = 300, Cost = 5000, Type = EventType.Concert, IsFamilyFriendly = true, ArenaId = arenas[0].Id,
-                SeatLayoutId = seatLayouts[0].Id
-            },
-            new()
-            {
-                Name = "Stand-up kväll", Date = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(3)),
-                StartTime = new TimeOnly(20, 0, 0), EndTime = new TimeOnly(21, 30, 0),
-                Price = 450, Cost = 8000, Type = EventType.ComedyShow, IsFamilyFriendly = false, ArenaId = arenas[1].Id,
-                SeatLayoutId = seatLayouts[1].Id
-            }
+            new(
+                "Konsert med lokala band",
+                DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(2)),
+                new TimeOnly(19, 0, 0),
+                new TimeOnly(22, 0, 0),
+                DateTime.UtcNow.AddDays(-1),
+                300,
+                5000,
+                EventType.Concert, 
+                true,
+                arenas[0].Id,
+                seatLayouts[0].Id
+            ),
+            new(
+                "Stand-up kväll",
+                DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(3)),
+                new TimeOnly(20, 0, 0),
+                new TimeOnly(21, 30, 0),
+                DateTime.UtcNow.AddDays(-1),
+                450,
+                8000,
+                EventType.ComedyShow,
+                false,
+                arenas[1].Id,
+                seatLayouts[1].Id
+            )
         };
 
         var eventTypes = Enum.GetValues<EventType>();
@@ -172,20 +160,21 @@ public class DataSeeder
             var price = 150 + (i % 5) * 50;
             var cost = 500 + i * 10;
 
-            events.Add(new Event
-            {
-                Name = $"Demo {type} #{i}",
-                Date = eventDate,
-                StartTime = start,
-                EndTime = end,
-                ReleaseTicketsDate = releaseDate,
-                Price = price,
-                Cost = cost,
-                Type = type,
-                IsFamilyFriendly = type == EventType.Theater || type == EventType.Concert,
-                ArenaId = arenaId,
-                SeatLayoutId = layout.Id
-            });
+            var isFamilyFriendly = type == EventType.Theater || type == EventType.Concert;
+
+            events.Add(new(
+                $"Demo {type} #{i}",
+                eventDate,
+                start,
+                end,
+                releaseDate,
+                price,
+                cost,
+                type,
+                isFamilyFriendly,
+                arenaId,
+                layout.Id
+            ));
         }
 
         await _dbContext.Events.AddRangeAsync(events);
@@ -204,13 +193,7 @@ public class DataSeeder
                 var totalPrice = ev.Price + seat.Price;
                 var description = $"Evenemang: {ev.Name} — {ev.Date.ToString("d MMM yyyy")} kl. {ev.StartTime.ToString("HH:mm")}, {seat.GetDescription()}, Pris: {totalPrice:0} kr";
 
-                tickets.Add(new Ticket
-                {
-                    Price = totalPrice,
-                    EventId = ev.Id,
-                    BookableSpaceId = seat.Id,
-                    Description = description
-                });
+                tickets.Add(new(totalPrice, description, ev.Id, seat.Id));
             }
         }
 
@@ -237,12 +220,8 @@ public class DataSeeder
 
         if (concertTickets.Count == 2)
         {
-            var booking1 = new Booking
-            {
-                ReferenceNumber = Guid.NewGuid().ToString("N"),
-                TotalPrice = concertTickets.Sum(t => t.Price),
-                IsPaid = true
-            };
+            var totalPrice = concertTickets.Sum(t => t.Price);
+            var booking1 = new Booking("test@example.com", totalPrice, true); 
 
             await _dbContext.Bookings.AddAsync(booking1);
             await _dbContext.SaveChangesAsync();
@@ -267,11 +246,7 @@ public class DataSeeder
         var paidBookings = bookings.Where(b => b.IsPaid);
         foreach (var booking in paidBookings)
         {
-            var payment = new Payment
-            {
-                PaymentMethod = PaymentMethod.CreditCard,
-                BookingId = booking.Id
-            };
+            var payment = new Payment(booking.Id, PaymentMethod.CreditCard);
             await _dbContext.Payments.AddAsync(payment);
         }
         await _dbContext.SaveChangesAsync();

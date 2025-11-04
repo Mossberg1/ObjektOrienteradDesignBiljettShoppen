@@ -34,12 +34,6 @@
 
                             <ul class="list-unstyled mb-3 small">
                                 <li class="mb-1">
-                                    <strong>Platser:</strong> @arena.NumberOfSeats
-                                </li>
-                                <li class="mb-1">
-                                    <strong>Loger:</strong> @arena.NumberOfLoges
-                                </li>
-                                <li class="mb-1">
                                     <strong>Inomhus:</strong>
                                     @if (arena.Indoors)
                                     {
@@ -49,9 +43,6 @@
                                     {
                                         <span class="badge bg-secondary">Nej</span>
                                     }
-                                </li>
-                                <li class="mb-1">
-                                    <strong>Entréer:</strong> @arena.NumberOfEntrances
                                 </li>
                                 @if (arena.SeatLayoutsNavigation != null && arena.SeatLayoutsNavigation.Any())
                                 {

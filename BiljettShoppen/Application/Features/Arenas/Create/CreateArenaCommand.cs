@@ -17,8 +17,6 @@ namespace Application.Features.Arenas.Create;
 public record CreateArenaCommand(
     string Name,
     string Address,
-    int NumberOfSeats,
-    int NumberOfLoges,
     bool Indoors
 ) : IRequest<Arena>;
 

@@ -206,8 +206,15 @@
                     const response = await fetch(action, {
                         method,
                         body: formData,
-                        credentials: 'same-origin'
+                        credentials: 'same-origin',
+                        redirect: 'manual'
                     });
+
+                    if (response.type === 'opaqueredirect' || response.status === 302 || response.status === 301) {
+                        paymentSubmitted = true;
+                        form.submit(); 
+                        return;
+        }
 
                     if (!response.ok) {
                         let txt = '';

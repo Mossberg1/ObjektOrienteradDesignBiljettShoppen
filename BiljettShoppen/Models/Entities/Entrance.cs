@@ -12,4 +12,13 @@ public class Entrance : BaseEntity
 
     [ForeignKey(nameof(ArenaId))]
     public Arena ArenaNavigation { get; set; }
+
+    public Entrance() { }
+
+    public Entrance(string name, bool vip, int arenaId) 
+    {
+        Name = name;
+        VipEntrance = vip;
+        ArenaId = arenaId;
+    }
 }

@@ -24,26 +24,27 @@ namespace Application.Features.SeatLayouts
             if (request.NumberOfCols <= 0 || request.NumberOfRows <= 0)
                 throw new ArgumentException("Antal rader och kolumner måste vara större än 0");
 
-            var layout = new SeatLayout 
-            {
-                Name = request.LayoutName,
-                NumberOfRows = request.NumberOfRows,
-                NumberOfCols = request.NumberOfCols,
-                ArenaId = request.ArenaId
-            };
-
+            var layout = new SeatLayout(
+                request.LayoutName, 
+                request.NumberOfRows, 
+                request.NumberOfCols, 
+                request.ArenaId    
+            );
 
             await _dbContext.SeatLayouts.AddAsync(layout, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var seats = request.Seats.Select(s => new Seat 
+            var seats = request.Seats.Select(s =>
             {
-                RowNumber = s.Row,
-                ColNumber = s.Col,
-                Type = s.Type,
-                Price = s.Type == SeatType.Chair ? request.ChairBasePrice : request.BenchBasePrice,
-                SeatLayoutId = layout.Id,
-                EntranceId = request.EntranceId
+                var price = s.Type == SeatType.Chair ? request.ChairBasePrice : request.BenchBasePrice;
+                return new Seat(
+                    s.Row,
+                    s.Col,
+                    s.Type,
+                    layout.Id,
+                    price,
+                    request.EntranceId
+                );
             }).ToList();
 
             await _dbContext.Seats.AddRangeAsync(seats, cancellationToken);

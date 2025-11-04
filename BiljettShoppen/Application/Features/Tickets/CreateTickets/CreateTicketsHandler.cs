@@ -38,14 +38,10 @@ public class CreateTicketsHandler : IRequestHandler<CreateTicketsCommand, bool>
         foreach (var seat in ev.SeatLayoutNavigation.SeatsNavigation)
         {
             var ticketComponent = PriceCalculationUtils.DecorateTicket(ev, seat);
+            var price = ticketComponent.GetPrice();
+            var description = ticketComponent.GetDescription();
 
-            var ticket = new Ticket
-            {
-                Price = ticketComponent.GetPrice(),
-                EventId = ev.Id,
-                BookableSpaceId = seat.Id,
-                Description = ticketComponent.GetDescription()
-            };
+            var ticket = new Ticket(price, description, ev.Id, seat.Id);
 
             tickets.Add(ticket);
         }

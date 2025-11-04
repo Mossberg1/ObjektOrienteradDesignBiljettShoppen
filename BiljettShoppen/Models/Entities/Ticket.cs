@@ -26,6 +26,16 @@ public class Ticket : BaseEntity
     // Håller reda på om biljetten är bokad men inte betald än.
     public string? PendingBookingReference { get; set; }
 
+    public Ticket() { }
+
+    public Ticket(decimal price, string description, int eventId, int bookableSpaceId) 
+    {
+        Price = price;
+        Description = description;
+        EventId = eventId;
+        BookableSpaceId = bookableSpaceId;
+    }
+
     public bool IsPending() => !string.IsNullOrEmpty(PendingBookingReference);
 
     public bool IsBooked() => BookingId.HasValue;

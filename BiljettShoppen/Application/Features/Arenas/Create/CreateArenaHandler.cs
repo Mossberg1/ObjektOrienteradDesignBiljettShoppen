@@ -22,25 +22,12 @@ namespace Application.Features.Arenas.Create
 
         public async Task<Arena> Handle(CreateArenaCommand request, CancellationToken cancellationToken)
         {
-            var arena = new Arena
-            {
-                Name = request.Name,
-                Address = request.Address,
-                NumberOfSeats = request.NumberOfSeats,
-                NumberOfLoges = request.NumberOfLoges,
-                Indoors = request.Indoors,
-                NumberOfEntrances = 1
-            };
+            var arena = new Arena(request.Name, request.Address, request.Indoors);
 
             _dbContext.Arenas.Add(arena);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var mainEntrance = new Entrance
-            {
-                Name = "Huvudentré",
-                VipEntrance = false,
-                ArenaId = arena.Id
-            };
+            var mainEntrance = new Entrance("Huvudentré", false, arena.Id);
 
             _dbContext.Entrances.Add(mainEntrance);
             await _dbContext.SaveChangesAsync(cancellationToken);

@@ -13,6 +13,20 @@ public class Payment : BaseEntity
 
     public PaymentMethod PaymentMethod { get; set; }
 
+    public Payment() { }
+
+    public Payment(int bookingId, PaymentMethod method) 
+    {
+        BookingId = bookingId;
+        PaymentMethod = method;
+    }
+
+    public Payment(Booking booking, PaymentMethod method) 
+    {
+        BookingNavigation = booking;
+        PaymentMethod = method;
+    }
+
     public string PaymentMethodToString()
     {
         return PaymentMethod.ToString();
