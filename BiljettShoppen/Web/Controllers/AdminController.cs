@@ -11,6 +11,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
+using Models.Entities;
 using Models.Enums;
 
 namespace Web.Controllers
@@ -128,7 +130,10 @@ namespace Web.Controllers
             var arena = await _mediator.Send(query);
 
             if (arena == null)
-                return NotFound();
+            {
+                TempData["ErrorMessage"] = $"Ingen arena med {arenaId} hittades.";
+                return RedirectToAction("BrowseArena");
+            }
 
             return View(arena);
         }
@@ -140,7 +145,10 @@ namespace Web.Controllers
             var query = new GetEventByIdQuery(eventId);
             var eventEntity = await _mediator.Send(query);
             if (eventEntity == null)
-                return NotFound();
+            {
+                TempData["ErrorMessage"] = $"Inget event med {eventId} hittades.";
+                return RedirectToAction("Browse");
+            }
 
             return View(eventEntity);
         }
@@ -151,7 +159,7 @@ namespace Web.Controllers
         public async Task<IActionResult> CreateArena(CreateArenaCommand command)
         {
             var created = await _mediator.Send(command);
-            return RedirectToAction("Browse");
+            return RedirectToAction("BrowseArena");
         }
 
         [HttpPost("Create/Event")]
@@ -178,11 +186,17 @@ namespace Web.Controllers
         public async Task<IActionResult> UpdateArena([FromRoute] int arenaId, [FromForm] UpdateArenaCommand command)
         {
             if (arenaId != command.Id)
-                return BadRequest();
+            {
+                TempData["ErrorMessage"] = "Någonting gick fel. Försök igen";
+                return RedirectToAction("BrowseArena");
+            }
 
             var result = await _mediator.Send(command);
             if (result == null)
-                return NotFound();
+            {
+                TempData["ErrorMessage"] = $"Ingen arena med {arenaId} hittades.";
+                return RedirectToAction("BrowseArena");
+            }
 
             return RedirectToAction("BrowseArena");
         }
@@ -194,11 +208,17 @@ namespace Web.Controllers
         public async Task<IActionResult> UpdateEvent([FromRoute] int eventId, [FromForm] UpdateEventCommand command)
         {
             if (eventId != command.Id)
-                return BadRequest();
+            {
+                TempData["ErrorMessage"] = "Någonting gick fel. Försök igen";
+                return RedirectToAction("Browse");
+            }
 
             var result = await _mediator.Send(command);
             if (result == null)
-                return NotFound();
+            {
+                TempData["ErrorMessage"] = $"Inget event med {eventId} hittades.";
+                return RedirectToAction("Browse");
+            }
 
             return RedirectToAction("Browse");
         }
