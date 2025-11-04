@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models.Exceptions;
 using Application.Features.Bookings.Create;
+using Models.Entities;
 
 namespace Application.Features.Bookings.Create
 /// <summary>
@@ -14,7 +15,7 @@ namespace Application.Features.Bookings.Create
 /// </para>
 /// </summary>
 {
-    public class CreateBookingHandler : IRequestHandler<CreateBookingCommand, Models.Entities.Booking>
+    public class CreateBookingHandler : IRequestHandler<CreateBookingCommand, Booking>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IBookingTimer _bookingTimer;
@@ -25,7 +26,7 @@ namespace Application.Features.Bookings.Create
             _bookingTimer = bookingTimer;
         }
 
-        public async Task<Models.Entities.Booking> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
+        public async Task<Booking> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
         {
             var eventId = request.TicketsNavigation.FirstOrDefault()?.EventId;
             if (eventId.HasValue)
@@ -41,11 +42,7 @@ namespace Application.Features.Bookings.Create
                 }
             }
 
-            var booking = new Models.Entities.Booking
-            {
-                TotalPrice = request.TotalPrice,
-                TicketsNavigation = request.TicketsNavigation,
-            };
+            var booking = new Booking(request.TotalPrice, request.TicketsNavigation);
 
              _bookingTimer.AddBooking(booking);
 

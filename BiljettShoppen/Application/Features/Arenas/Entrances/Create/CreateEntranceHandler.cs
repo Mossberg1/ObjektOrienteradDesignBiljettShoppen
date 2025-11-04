@@ -36,12 +36,7 @@ namespace Application.Features.Arenas.Entrances.Create
             if (arenaExists)
                 throw new IdNotFoundException($"Arena med ID {request.ArenaId} hittades inte.");
 
-            var entrance = new Entrance
-            {
-                Name = request.Name,
-                VipEntrance = request.VipEntrance,
-                ArenaId = request.ArenaId
-            };
+            var entrance = new Entrance(request.Name, request.VipEntrance, request.ArenaId);
 
             _dbContext.Entrances.Add(entrance);
             await _dbContext.SaveChangesAsync(cancellationToken);

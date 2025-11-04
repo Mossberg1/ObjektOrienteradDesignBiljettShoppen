@@ -58,11 +58,7 @@ namespace Application.Features.Payments.PayBooking
                 _dbContext.Tickets.Update(ticket);
             }
 
-            var payment = new Payment
-            {
-                PaymentMethod = request.PaymentMethod,
-                BookingNavigation = booking
-            };
+            var payment = new Payment(booking, request.PaymentMethod);
 
             await _dbContext.Payments.AddAsync(payment, cancellationToken);
 

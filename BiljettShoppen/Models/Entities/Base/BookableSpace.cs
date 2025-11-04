@@ -4,7 +4,17 @@ namespace Models.Entities.Base;
 
 public abstract class BookableSpace : BaseEntity
 {
-    public decimal Price { get; set; }
+    private decimal _price;
+
+    public decimal Price 
+    { 
+        get { return _price; }
+        set 
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(Price));
+            _price = value;
+        }
+    }
 
     public int EntranceId { get; set; }
 
