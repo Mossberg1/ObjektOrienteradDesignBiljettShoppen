@@ -168,7 +168,7 @@ namespace Web.Controllers
         public async Task<IActionResult> CreateEvent(CreateEventCommand command)
         {
             var created = await _mediator.Send(command);
-            return RedirectToAction("Browse");
+            return RedirectToAction("Browse", "Admin");
         }
 
         [HttpPost("Create/SeatLayout")]
