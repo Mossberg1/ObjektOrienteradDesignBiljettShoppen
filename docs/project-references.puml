@@ -1,0 +1,14 @@
+@startuml
+
+package "Web" {}
+package "Models" {}
+package "Application" {}
+package "DataAccess" {}
+
+Web --> Models
+Web --> Application
+Application --> Models
+Application --> DataAccess
+DataAccess --> Models
+
+@enduml

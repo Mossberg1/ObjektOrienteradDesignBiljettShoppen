@@ -10,13 +10,13 @@ using Microsoft.Extensions.Logging;
 using Application.Features.Bookings.Cancle;
 
 namespace Application.Features.Bookings.Cancle
-/// <summary>
-/// Hanterar borttagning av en <see cref="Models.Entities.Booking"/> från <see cref="IBookingTimer"/>.
-/// <para>
-/// Tar emot <see cref="DeleteBookingCommand"/> via MediatR och försöker ta bort bokningen med hjälp av referensnummer.
-/// </para>
-/// </summary>
 {
+    /// <summary>
+    /// Hanterar borttagning av en <see cref="Models.Entities.Booking"/> från <see cref="IBookingTimer"/>.
+    /// <para>
+    /// Tar emot <see cref="DeleteBookingCommand"/> via MediatR och försöker ta bort bokningen med hjälp av referensnummer.
+    /// </para>
+    /// </summary>
     public class CancelBookingHandler : IRequestHandler<CancelBookingCommand, bool>
     {
         private readonly IBookingTimer _bookingTimer;

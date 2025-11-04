@@ -4,6 +4,9 @@
 .idea
 .vscode
 
+BiljettShoppen/Web/wwwroot/invoices
+BiljettShoppen/Web/wwwroot/confirmations
+
 ###################
 # compiled source #
 ###################

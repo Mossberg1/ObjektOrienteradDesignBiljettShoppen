@@ -1,0 +1,65 @@
+@startuml
+
+interface ITicketComponent {
+    GetPrice(): decimal
+    GetDescription(): string
+}
+
+class TicketComponent {
+    - _event: Event
+    + TicketComponent(event: Event)
+    + GetPrice(): decimal
+    + GetDescription(): string
+}
+
+abstract class TicketDecorator {
+    # _wrappedTicket: ITicketComponent
+    # TicketDecorator(wrappedTicket: ITicketComponent)
+    + GetPrice(): decimal
+    + GetDescription(): string
+}
+
+class EventTypeDecorator {
+    # _wrappedTicket: ITicketComponent
+    - _type: EventType
+    + EventTypeDecorator(wrappedTicket: ITicketComponent, type: EventType)
+    + GetPrice(): decimal
+    + GetDescription(): string
+}
+
+class TimeDecorator {
+    # _wrappedTicket: ITicketComponent
+    - _eventStartDate: DateTime
+    - _ticketsReleaseDate: DateTime
+    - _priceIncreaseFactor: decimal
+    + TimeDecorator(wrappedTicket: ITicketComponent, eventStartDate: DateTime, ticketsReleaseDate: DateTime)
+    + TimeDecorator(wrappedTicket: ITicketComponent, eventStartDate: DateTime, ticketsReleaseDate: DateTime, priceIncreaseFactor: decimal)
+    + GetPrice(): decimal
+    + GetDescription(): string
+}
+
+class FamilyEventDecorator {
+    # _wrappedTicket: ITicketComponent
+    - _isFamilyFriendly: bool
+    + FamilyEventDecorator(wrappedTicket: ITicketComponent, isFamilyFriendly: bool)
+    + GetPrice(): decimal
+    + GetDescription(): string
+}
+
+class BookableSpaceDecorator {
+    # _wrappedTicket: ITicketComponent
+    - _bookableSpace: BookableSpace
+    + BookablespaceDecorator(wrappedTicket: ITicketComponent, bookableSpace: BookableSpace)
+    + GetPrice(): decimal
+    + GetDescription(): string
+}
+
+ITicketComponent  <|.. TicketComponent
+ITicketComponent <|.. TicketDecorator
+TicketDecorator o-- ITicketComponent
+TicketDecorator <|-- EventTypeDecorator
+TicketDecorator <|-- TimeDecorator
+TicketDecorator <|-- FamilyEventDecorator
+TicketDecorator <|-- BookableSpaceDecorator
+
+@enduml
