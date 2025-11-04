@@ -132,7 +132,7 @@ namespace Web.Controllers
             if (arena == null)
             {
                 TempData["ErrorMessage"] = $"Ingen arena med {arenaId} hittades.";
-                return RedirectToAction("BrowseArena");
+                return RedirectToAction("Arena");
             }
 
             return View(arena);
@@ -159,7 +159,7 @@ namespace Web.Controllers
         public async Task<IActionResult> CreateArena(CreateArenaCommand command)
         {
             var created = await _mediator.Send(command);
-            return RedirectToAction("BrowseArena");
+            return RedirectToAction("Arena");
         }
 
         [HttpPost("Create/Event")]
@@ -188,17 +188,17 @@ namespace Web.Controllers
             if (arenaId != command.Id)
             {
                 TempData["ErrorMessage"] = "Någonting gick fel. Försök igen";
-                return RedirectToAction("BrowseArena");
+                return RedirectToAction("Arena");
             }
 
             var result = await _mediator.Send(command);
             if (result == null)
             {
                 TempData["ErrorMessage"] = $"Ingen arena med {arenaId} hittades.";
-                return RedirectToAction("BrowseArena");
+                return RedirectToAction("Arena");
             }
 
-            return RedirectToAction("BrowseArena");
+            return RedirectToAction("Arena");
         }
 
 
