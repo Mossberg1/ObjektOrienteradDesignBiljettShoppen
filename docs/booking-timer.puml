@@ -1,0 +1,87 @@
+@startuml
+
+left to right direction
+
+package "Microsoft.Extensions.Hosting" {
+    abstract class BackgroundService {
+        + StartAsync(cancellationToken: CancellationToken): Task
+        + StopAsync(cancellationToken: CancellationToken): Task
+        + ExecuteAsync(stoppingToken: CancellationToken): Task
+    }
+}
+
+package "Microsoft.AspNetCore.SignalR" {
+    abstract class Hub {
+        + Context: HubCallerContext
+        + Groups: IGroupManager
+    }
+}
+
+class BookingHub {
+    + Context: HubCallerContext
+    + Groups: IGroupManager
+    + JoinBookingGroup(bookingReference: string): Task
+    + LeaveBookingGroup(bookingReference: string): Task
+}
+
+together {
+interface IBookingTimer {
+    + AddBooking(booking: Booking): void
+    + RemoveBooking(booking: Booking): bool
+    + GetBooking(referenceNumber: string): Booking?
+}
+
+class BookingTimer {
+    - _bookings: ConcurrentDictionary<string, Booking>
+    - _hubContext: IHubContext<BookingHub>
+    - _logger: ILogger<BookingTimer>
+    - _scopeFactory: IServiceScopeFactory
+    + BookingTimer(hubContext: IHubContext<BookingHub>, logger: ILogger<BookingTimer>, scopeFactory: IServiceScopeFactory)
+    + StartAsync(cancellationToken: CancellationToken): Task
+    + StopAsync(cancellationToken: CancellationToken): Task
+    + ExecuteAsync(stoppingToken: CancellationToken): Task
+    + AddBooking(booking: Booking): void
+    + RemoveBooking(booking: Booking): bool
+    + GetBooking(referenceNumber: string): Booking?
+    - ClearAllPendingBookingsFromDatabase(cancellationToken: CancellationToken): Task
+    - MakeTicketsAvailableAsync(pendingBookingReference: string): Task
+}
+}
+
+together {
+class CreateBookingHandler {
+    - _dbContext: ApplicationDbContext
+    - _bookingTimer: IBookingTimer
+    + CreateBookingHandler(dbContext: ApplicationDbContext, bookingTimer: IBookingTimer)
+    + Handle(command: CreateBookingCommand, cancellationToken: CancellationToken): Task<Booking>
+}
+
+class PayBookingHandler {
+    - _dbContext: ApplicationDbContext
+    - _bookingTimer: IBookingTimer
+    - _logger: ILogger<PayBookingHandler>
+    + PayBookingHandler(dbContext: ApplicationDbContext, bookingTimer: IBookingTimer, logger: ILogger<PayBookingHandler>)
+    + Handle(command: PayBookingCommand, cancellationToken: CancellationToken): Task<Booking>
+}
+
+class CancelBookingHandler {
+    - _bookingTimer: IBookingTimer
+    - _dbContext: ApplicationDbContext
+    - _logger: ILogger<CancelBookingHandler>
+    + CancelBookingHandler(bookingTimer: IBookingTimer, dbContext: ApplicationDbContext, logger: ILogger<CancelBookingTimer>)
+    + Handle(command: CancelBookingCommand, cancellationToken: CancellationToken): Task<bool>
+}
+}
+
+IBookingTimer <|.. BookingTimer
+BackgroundService <|-- BookingTimer
+
+BookingTimer o-left- BookingHub
+
+CreateBookingHandler o-- IBookingTimer
+PayBookingHandler o-- IBookingTimer
+CancelBookingHandler o-- IBookingTimer
+
+Hub <|-- BookingHub
+
+@enduml
