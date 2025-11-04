@@ -64,16 +64,7 @@ namespace Application.BackgroundServices
                         {
                             _logger.LogInformation($"Boknings tid har gått ut för: {booking.ReferenceNumber}");
 
-                            using var scope = _scopeFactory.CreateScope();
-                            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-                            foreach (var ticket in booking.TicketsNavigation)
-                            {
-                                ticket.PendingBookingReference = null;
-                                dbContext.Tickets.Update(ticket);
-                            }
-
-                            await dbContext.SaveChangesAsync();
+                            await MakeTicketsAvailableAsync(booking.ReferenceNumber);
 
                             await _hubContext.Clients.Group(booking.ReferenceNumber)
                                 .SendAsync("BookingExpired", booking.ReferenceNumber, stoppingToken);
@@ -91,7 +82,7 @@ namespace Application.BackgroundServices
             await base.StopAsync(cancellationToken);
         }
 
-        public async void AddBooking(Booking booking)
+        public void AddBooking(Booking booking)
         {
             _bookings.TryAdd(booking.ReferenceNumber, booking);
             _logger.LogInformation($"Bokning: {booking.ReferenceNumber} tillagd i timern.");
@@ -131,6 +122,17 @@ namespace Application.BackgroundServices
 
                 await dbContext.SaveChangesAsync(cancellationToken);
             }
+        }
+
+        private async Task MakeTicketsAvailableAsync(string pendingBookingReference)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            await dbContext.Tickets.Where(t => t.PendingBookingReference == pendingBookingReference)
+                .ExecuteUpdateAsync(spc => 
+                    spc.SetProperty(t => t.PendingBookingReference, (string?)null)
+                );
         }
     }
 }
