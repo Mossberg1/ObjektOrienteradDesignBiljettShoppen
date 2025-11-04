@@ -13,6 +13,7 @@ using Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models.Entities;
 using Models.Enums;
 using System.Runtime.InteropServices;
 using Web.Files;
@@ -88,7 +89,10 @@ public class EventController : Controller
         var query = new ViewSeatsQuery(eventId);
         var ev = await _mediator.Send(query);
         if (ev == null)
-            return NotFound();
+        {
+            TempData["ErrorMessage"] = $"Inget event med {eventId} hittades.";
+            return RedirectToAction("Browse");
+        }
 
         // TODO: Bryt ut byggande av viewmodel till egen klass.
         var seats = ev.SeatLayoutNavigation.SeatsNavigation;
@@ -129,7 +133,10 @@ public class EventController : Controller
     )
     {
         if (selectedSeats == null)
-            return BadRequest();
+        {
+            TempData["ErrorMessage"] = "Stolarna du har valt verkar inte finnas. Något kan ha ändrats medans du gjorde din bokning, försök igen.";
+            return RedirectToAction("Browse");
+        }
 
         var tickets = await _mediator.Send(new GetSelectedSeatTicketsQuery(selectedSeats, eventId));
         var totalPrice = tickets.Sum(s => s.Price);
@@ -152,12 +159,14 @@ public class EventController : Controller
         if (string.IsNullOrEmpty(bookingReference))
         {
             _logger.LogInformation("Bokningsreferens saknas.");
-            return BadRequest();
+            TempData["ErrorMessage"] = "Något gick fel, försök igen.";
+            return RedirectToAction("Browse");
         }
 
         if (creditCardForm == null && invoiceForm == null)
         {
-            return BadRequest();
+            TempData["ErrorMessage"] = "Något gick fel vid val av betalmetod. Var vänlig försök igen";
+            return RedirectToAction("Browse");
         }
 
         var bookingEmail = string.Empty;
@@ -172,7 +181,10 @@ public class EventController : Controller
             );
 
             if (!result)
-                return BadRequest();
+            {
+                TempData["ErrorMessage"] = "Något gick fel, vänligen försök igen.";
+                return RedirectToAction("Browse");
+            }
 
             bookingEmail = creditCardForm.Email;
 
@@ -186,7 +198,8 @@ public class EventController : Controller
         else
         {
             _logger.LogWarning("Ogiltig betalningsmetod eller formulärdata.");
-            return BadRequest();
+            TempData["ErrorMessage"] = "Något gick fel, vänligen försök igen.";
+            return RedirectToAction("Browse");
         }
 
         var command = new PayBookingCommand(bookingReference, paymentMethod);
