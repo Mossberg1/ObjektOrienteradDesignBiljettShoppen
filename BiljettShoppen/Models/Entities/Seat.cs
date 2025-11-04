@@ -15,7 +15,7 @@ public class Seat : BookableSpace
         set 
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(RowNumber));
-            _colNumber = value;
+            _rowNumber = value;
         }
     }
     public int ColNumber 

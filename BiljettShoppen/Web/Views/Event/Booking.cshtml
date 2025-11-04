@@ -54,6 +54,9 @@
             <h4>Välj platser</h4>
             <div class="screen">SCEN</div>
             <div id="seat-map" class="seat-map-container">
+                @{
+                    var seatIndex = 1;
+                }
                 @foreach (var seat in Model.Seats)
                 {
                     var seatClass = seat.Type.ToString().ToLower();
@@ -62,7 +65,7 @@
                          data-seat-id="@seat.Id"
                          data-seat-info="Rad @seat.RowNumber, Plats @seat.ColNumber"
                          data-price="@seat.Price">
-                        @seat.ColNumber
+                        @(seatIndex++)
                     </div>
                 }
             </div>
