@@ -1,4 +1,5 @@
 using Application.Decorators.TicketDecorator;
+using Application.Utils;
 using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,6 @@ namespace Application.Features.Tickets.CreateTickets;
 /// baserat på evenemangets seat-layout.
 /// </para>
 /// </summary>
-
 public class CreateTicketsHandler : IRequestHandler<CreateTicketsCommand, bool>
 {
     private readonly IApplicationDbContext _dbContext;
@@ -37,8 +37,7 @@ public class CreateTicketsHandler : IRequestHandler<CreateTicketsCommand, bool>
         // Skapa biljetter för varje plats i layouten.
         foreach (var seat in ev.SeatLayoutNavigation.SeatsNavigation)
         {
-            ITicketComponent ticketComponent = new TicketComponent(ev);
-            ticketComponent = new BookableSpaceDecorator(ticketComponent, seat);
+            var ticketComponent = PriceCalculationUtils.DecorateTicket(ev, seat);
 
             var ticket = new Ticket
             {

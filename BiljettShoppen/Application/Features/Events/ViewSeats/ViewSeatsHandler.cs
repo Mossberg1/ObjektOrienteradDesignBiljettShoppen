@@ -1,3 +1,4 @@
+using Application.Utils;
 using DataAccess.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -26,13 +27,42 @@ public class ViewSeatsHandler : IRequestHandler<ViewSeatsQuery, Event?>
 
     public async Task<Event?> Handle(ViewSeatsQuery request, CancellationToken cancellationToken)
     {
-        return await _dbContext.Events
+        var ev = await _dbContext.Events
             .Include(e => e.SeatLayoutNavigation)
             .ThenInclude(sl => sl.SeatsNavigation
                 .OrderBy(s => s.RowNumber)
                 .ThenBy(s => s.ColNumber)
             )
             .Include(e => e.ArenaNavigation)
+            .Include(e => e.TicketsNavigation)
             .FirstOrDefaultAsync(e => e.Id == request.EventId, cancellationToken: cancellationToken);
+
+        if (ev == null)
+            return null;
+
+        foreach (var ticket in ev.TicketsNavigation)
+        {
+            if (ticket.IsBooked() || ticket.IsPending())
+                continue;
+
+            var seat = ev.SeatLayoutNavigation.SeatsNavigation.FirstOrDefault(s => s.Id == ticket.BookableSpaceId);
+            if (seat == null)
+                continue;
+
+            var ticketComponent = PriceCalculationUtils.DecorateTicket(ev, seat);
+
+            var newPrice = ticketComponent.GetPrice();
+
+            if (ticket.Price != newPrice)
+            {
+                ticket.Price = newPrice;
+                _dbContext.Tickets.Update(ticket);
+            }
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return ev;
     }
 }
+

@@ -5,9 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using System.Text.Json.Serialization;
 using Application.Hubs;
 
-// TODO: Bättre felmedelanden.
-// TODO: Lägg till prisuträkning i decorator (eventtyp och tidsbaserad).
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
