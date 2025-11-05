@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36623.8 d17.14
+VisualStudioVersion = 17.14.36623.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{EF0C9D62-F2D8-48E4-83AA-5AB6C6C04BE3}"
 EndProject
@@ -10,8 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{8281A5BF-86E5-480A-97E6-BFE7AD1D6D41}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{6D202DBB-224A-4026-BFBD-D15CACB99330}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingTimer.Test", "BookingTimer.Test\BookingTimer.Test.csproj", "{74761B3E-651C-4302-821A-98E8D3AA1B6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +33,6 @@ Global
 		{6D202DBB-224A-4026-BFBD-D15CACB99330}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D202DBB-224A-4026-BFBD-D15CACB99330}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D202DBB-224A-4026-BFBD-D15CACB99330}.Release|Any CPU.Build.0 = Release|Any CPU
-		{74761B3E-651C-4302-821A-98E8D3AA1B6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{74761B3E-651C-4302-821A-98E8D3AA1B6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{74761B3E-651C-4302-821A-98E8D3AA1B6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{74761B3E-651C-4302-821A-98E8D3AA1B6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

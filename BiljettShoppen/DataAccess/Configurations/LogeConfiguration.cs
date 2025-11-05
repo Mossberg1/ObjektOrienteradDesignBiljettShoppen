@@ -4,6 +4,9 @@ using Models.Entities;
 
 namespace DataAccess.Configurations;
 
+/// <summary>
+/// Databas konfiguration för Loge tabellen.
+/// </summary>
 internal sealed class LogeConfiguration : IEntityTypeConfiguration<Loge>
 {
     public void Configure(EntityTypeBuilder<Loge> builder)

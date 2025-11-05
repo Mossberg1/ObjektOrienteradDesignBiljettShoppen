@@ -2,6 +2,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Utils;
 
+/// <summary>
+/// Datastruktur för att hämta in paginerade listor från databasen.
+/// Innehåller information om aktuell sida, total antal sidor, total antal objekt.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class PaginatedList<T>
 {
     public IReadOnlyCollection<T> Items { get; }

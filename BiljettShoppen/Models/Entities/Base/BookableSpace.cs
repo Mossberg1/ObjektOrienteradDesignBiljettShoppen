@@ -2,6 +2,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models.Entities.Base;
 
+/// <summary>
+/// Denna abstracta klass blir till en egen tabell i databasen med (TPH) Table Per Hierarchy strategi.
+/// Vilket innebär att Seat och Loge delar tabell. Där Loge specifika kolumner blir nullable för Seat.
+/// Och tvärtom för Loge. Detta gör att vi kan använda oss av en abstrakt klass i våran kod för
+/// att öka flexibiliteten. Det kan låta konstigt att vi ska sätta vissa värden till null i den delade
+/// tabellen. Däremot är det inget som märks av i koden och hanteras helt och hållet automatiskt
+/// av Entity Framework Core i bakgrunden. Denna strategi är vald för att den ska ge bäst prestanda.
+/// </summary>
 public abstract class BookableSpace : BaseEntity
 {
     private decimal _price;

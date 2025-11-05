@@ -4,6 +4,9 @@ using Models.Entities.Base;
 
 namespace DataAccess.Configurations;
 
+/// <summary>
+/// Databas konfiguration för BookableSpace tabellen.
+/// </summary>
 internal sealed class BookableSpaceConfiguration : IEntityTypeConfiguration<BookableSpace>
 {
     public void Configure(EntityTypeBuilder<BookableSpace> builder)

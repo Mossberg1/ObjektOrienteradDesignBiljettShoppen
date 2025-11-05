@@ -8,6 +8,12 @@ using System.Reflection;
 
 namespace DataAccess;
 
+/// <summary>
+/// ApplicationDbContext för EntityFramework Core.
+/// Denna behålls public för att man ska ha möjlighet att
+/// använda mer anvancerade funktioner från EntityFramework Core.
+/// Däremot om det inte behövs så bör IApplicationDbContext användas istället.
+/// </summary>
 public class ApplicationDbContext : IdentityDbContext<IdentityUser>, IApplicationDbContext
 {
     // Registrera databas tabeller.

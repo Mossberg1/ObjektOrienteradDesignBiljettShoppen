@@ -4,6 +4,9 @@ using Models.Entities.Base;
 
 namespace DataAccess.Interfaces;
 
+/// <summary>
+/// Interface för ApplicationDbContext.
+/// </summary>
 public interface IApplicationDbContext
 {
     DbSet<Arena> Arenas { get; set; }
