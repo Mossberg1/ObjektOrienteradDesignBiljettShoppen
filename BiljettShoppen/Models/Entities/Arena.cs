@@ -15,6 +15,8 @@ public class Arena : BaseEntity
 
     public List<Event> EventsNavigation { get; set; } = new List<Event>();
 
+    public List<Loge> LogesNavigation { get; set; } = new List<Loge>();
+
     public Arena() { }
 
     public Arena(string name, string address, bool indoors) 

@@ -22,7 +22,7 @@ abstract class TicketDecorator {
 class EventTypeDecorator {
     # _wrappedTicket: ITicketComponent
     - _type: EventType
-    + EventTypeDecorator(wrappedTicket: ITicketComponent, type: EventType)
+    + EventTypeDecorator(\n\twrappedTicket: ITicketComponent, \n\ttype: EventType\n)
     + GetPrice(): decimal
     + GetDescription(): string
 }
@@ -32,8 +32,8 @@ class TimeDecorator {
     - _eventStartDate: DateTime
     - _ticketsReleaseDate: DateTime
     - _priceIncreaseFactor: decimal
-    + TimeDecorator(wrappedTicket: ITicketComponent, eventStartDate: DateTime, ticketsReleaseDate: DateTime)
-    + TimeDecorator(wrappedTicket: ITicketComponent, eventStartDate: DateTime, ticketsReleaseDate: DateTime, priceIncreaseFactor: decimal)
+    + TimeDecorator(\n\twrappedTicket: ITicketComponent, \n\teventStartDate: DateTime, \n\tticketsReleaseDate: DateTime, \n\tpriceIncreaseFactor: decimal\n)
+    + TimeDecorator(\n\twrappedTicket: ITicketComponent, \n\teventStartDate: DateTime, \n\tticketsReleaseDate: DateTime, \n\tpriceIncreaseFactor: decimal\n)
     + GetPrice(): decimal
     + GetDescription(): string
 }
@@ -41,7 +41,7 @@ class TimeDecorator {
 class FamilyEventDecorator {
     # _wrappedTicket: ITicketComponent
     - _isFamilyFriendly: bool
-    + FamilyEventDecorator(wrappedTicket: ITicketComponent, isFamilyFriendly: bool)
+    + FamilyEventDecorator(\n\twrappedTicket: ITicketComponent, \n\tisFamilyFriendly: bool\n)
     + GetPrice(): decimal
     + GetDescription(): string
 }
@@ -49,7 +49,7 @@ class FamilyEventDecorator {
 class BookableSpaceDecorator {
     # _wrappedTicket: ITicketComponent
     - _bookableSpace: BookableSpace
-    + BookablespaceDecorator(wrappedTicket: ITicketComponent, bookableSpace: BookableSpace)
+    + BookableSpaceDecorator(\n\twrappedTicket: ITicketComponent, \n\tbookableSpace: BookableSpace\n)
     + GetPrice(): decimal
     + GetDescription(): string
 }
