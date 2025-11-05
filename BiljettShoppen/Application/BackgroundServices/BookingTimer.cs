@@ -1,86 +1,138 @@
+﻿using Application.Hubs;
 using Application.Interfaces;
+using DataAccess;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Models.Entities;
-using Microsoft.AspNetCore.SignalR;
-using Application.Hubs;
+using Models.Entities.Base;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.WebSockets;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Application.BackgroundServices;
-
-// Använd ConcurrentDictionary istället för List pga thread-safety.
-// Kolla istället alla bokningar i listan varje iteration eftersom vi inte kan garantera att de läggs in i ordning pga nätverks delay.
-// För tillfället är operationen o(n) även fast vi kan hoppa ur tidigare.
-// Däremot eftersom listan inte är thread-safe så kan vi inte garantera att bokningarna ligger i ordning.
-// Varje iteration kommer fortfarande vara o(n) även fast vi kollar igenom alla bokningar.
-// Med denna implementation är även borttagning o(n) och hitta bokning o(n).
-// Med ConcurrentDictionary blir borttagning o(1) och hitta bokning o(1).'
-// En ConcurrentDictionary undviker att elements behöver flyttas i minnet vid borttagning?
-// En ConcurrentDictionary behöver inte skapa en ny array när max capacity nås?
-[Obsolete]
-public class BookingTimer : BackgroundService, IBookingTimer
+namespace Application.BackgroundServices
 {
-    private readonly ILogger<BookingTimer> _logger;
-    private readonly IHubContext<BookingHub> _hubContext;
-    private List<Booking> _bookings;
-
-    private const int _removeIntervalInMinutes = 10;
-    private const int _checkIntervalInSeconds = 1;
-
-    public BookingTimer(ILogger<BookingTimer> logger, IHubContext<BookingHub> hubContext)
+    public class BookingTimer : BackgroundService, IBookingTimer
     {
-        _logger = logger;
-        _hubContext = hubContext;
-        _bookings = [];
-    }
+        private readonly ConcurrentDictionary<string, Booking> _bookings;
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        _logger.LogInformation("Boknings timern har startat.");
+        private readonly IHubContext<BookingHub> _hubContext;
+        private readonly ILogger<BookingTimer> _logger;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        while (!stoppingToken.IsCancellationRequested)
+        private const int _removeIntervalInMinutes = 10;
+        private const int _checkIntervalInSeconds = 2;
+
+        public BookingTimer(
+            IHubContext<BookingHub> hubContext, 
+            ILogger<BookingTimer> logger,
+            IServiceScopeFactory scopeFactory
+        ) 
         {
-            if (_bookings.Count != 0)
-            {
-                var firstBooking = _bookings[0];
-                while (firstBooking.CreatedAt.AddMinutes(_removeIntervalInMinutes) <= DateTime.UtcNow)
-                {
-                    _bookings.RemoveAt(0);
-                    _logger.LogInformation($"Boknings tid har gått ut: {firstBooking.ReferenceNumber}");
+            _bookings = new ConcurrentDictionary<string, Booking>();
 
-                    await _hubContext.Clients.Group(firstBooking.ReferenceNumber)
-                        .SendAsync("BookingExpired", firstBooking.ReferenceNumber, stoppingToken);
-
-                    if (_bookings.Count != 0)
-                    {
-                        firstBooking = _bookings[0];
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-
-            await Task.Delay(TimeSpan.FromSeconds(_checkIntervalInSeconds), stoppingToken);
+            _hubContext = hubContext;
+            _logger = logger;
+            _scopeFactory = scopeFactory;
         }
 
-        _logger.LogInformation("Boknings timern har stoppats.");
-    }
+        public override async Task StartAsync(CancellationToken cancellationToken) 
+        {
+            await ClearAllPendingBookingsFromDatabase(cancellationToken);
+            await base.StartAsync(cancellationToken);
+        }
 
-    public void AddBooking(Booking booking)
-    {
-        _logger.LogInformation($"Bokning tillagd i timern: {booking.ReferenceNumber}");
-        _bookings.Add(booking);
-    }
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
+        {
+            _logger.LogInformation("ThreadSafeBookingTimer har startat.");
 
-    public bool RemoveBooking(Booking booking)
-    {
-        _logger.LogInformation($"Bokning borttagen från timern: {booking.ReferenceNumber}");
-        return _bookings.Remove(booking);
-    }
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                var bookingsSnapshot = _bookings.Values.ToArray();
 
-    public Booking? GetBooking(string bookingReference)
-    {
-        return _bookings.FirstOrDefault(b => b.ReferenceNumber == bookingReference);
+                foreach (var booking in bookingsSnapshot)
+                {
+                    if (booking.CreatedAt.AddMinutes(_removeIntervalInMinutes) <= DateTime.UtcNow)
+                    {
+                        if (_bookings.TryRemove(booking.ReferenceNumber, out _))
+                        {
+                            _logger.LogInformation($"Boknings tid har gått ut för: {booking.ReferenceNumber}");
+
+                            await MakeTicketsAvailableAsync(booking.ReferenceNumber);
+
+                            await _hubContext.Clients.Group(booking.ReferenceNumber)
+                                .SendAsync("BookingExpired", booking.ReferenceNumber, stoppingToken);
+                        }
+                    }
+                }  
+                
+                await Task.Delay(TimeSpan.FromSeconds(_checkIntervalInSeconds), stoppingToken);
+            }
+        }
+
+        public override async Task StopAsync(CancellationToken cancellationToken) 
+        {
+            await ClearAllPendingBookingsFromDatabase(cancellationToken);
+            await base.StopAsync(cancellationToken);
+        }
+
+        public void AddBooking(Booking booking)
+        {
+            _bookings.TryAdd(booking.ReferenceNumber, booking);
+            _logger.LogInformation($"Bokning: {booking.ReferenceNumber} tillagd i timern.");
+        }
+
+        public Booking? GetBooking(string bookingReference)
+        {
+            return _bookings.TryGetValue(bookingReference, out var booking) ? booking : null;
+        }
+
+        public bool RemoveBooking(Booking booking)
+        {
+            var result = _bookings.TryRemove(booking.ReferenceNumber, out _);
+            if (result)
+            { 
+                _logger.LogInformation($"Bokning: {booking.ReferenceNumber} borttagen från timern.");
+            }
+
+            return result;
+        }
+
+        private async Task ClearAllPendingBookingsFromDatabase(CancellationToken cancellationToken) 
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            var pending = await dbContext.Tickets
+                .Where(t => t.PendingBookingReference != null)
+                .ToListAsync(cancellationToken);
+
+            if (pending.Any())
+            {
+                foreach (var ticket in pending)
+                {
+                    ticket.PendingBookingReference = null;
+                }
+
+                await dbContext.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        private async Task MakeTicketsAvailableAsync(string pendingBookingReference)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            await dbContext.Tickets.Where(t => t.PendingBookingReference == pendingBookingReference)
+                .ExecuteUpdateAsync(spc => 
+                    spc.SetProperty(t => t.PendingBookingReference, (string?)null)
+                );
+        }
     }
 }

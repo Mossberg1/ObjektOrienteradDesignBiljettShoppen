@@ -15,10 +15,10 @@ public static class DependencyInjection
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
-        services.AddSingleton<IBookingTimer, ThreadSafeBookingTimer>();
+        services.AddSingleton<IBookingTimer, BookingTimer>();
 
         // Lägg till background services
-        services.AddHostedService(provider => (ThreadSafeBookingTimer)provider.GetRequiredService<IBookingTimer>());
+        services.AddHostedService(provider => (BookingTimer)provider.GetRequiredService<IBookingTimer>());
 
         services.AddScoped<IEmailService, EmailServiceStub>();
         services.AddScoped<ICreditCardPaymentService, CreditCardPaymentStubService>();
