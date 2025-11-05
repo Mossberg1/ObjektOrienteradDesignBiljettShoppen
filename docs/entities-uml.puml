@@ -1,5 +1,4 @@
 @startuml
-together{
 
 enum SeatType {
     Chair
@@ -16,7 +15,6 @@ enum EventType {
     Sports
     Theater
     ComedyShow
-}
 }
 
 abstract class BaseEntity {
@@ -51,7 +49,7 @@ class Arena <<BaseEntity>> {
     + EventsNavigation: List<Event>
     + LogesNavigation: List<Loge>
     + Arena()
-    + Arena(name:string,adress:string,indoors:bool)
+    + Arena(name:string,adress:string,indoors:bool )
 }
  
 class SeatLayout <<BaseEntity>> {
@@ -167,19 +165,19 @@ class Payment <<BaseEntity>> {
 }
 
 Arena "1" *-- "0..*" Event
-BookableSpace *-- Entrance
+BookableSpace  o-- "1" Entrance
 Arena "1" *-- "1..*" Entrance
 Ticket "1..*" *-- "0..1" Booking
-Booking "1" *-- "0..1" Payment
-Ticket "1..*" *-- "1"  Event
+Booking "1" o-- "0..1" Payment
+Ticket "1..*" o-- "1"  Event
 
 BookableSpace <|-- Seat
 BookableSpace <|-- Loge
-Ticket *-- BookableSpace
+Ticket "0..*" o-- "1" BookableSpace
 
 SeatLayout "1" *-- "1..*" Seat
 Arena "1" *-- "0..*" SeatLayout
-Event "0..1" *-- "1" SeatLayout
+Event "0..1" o-- "1" SeatLayout
 Arena "1" *-- "0..*" Loge
 
 @enduml
