@@ -43,6 +43,7 @@ namespace Application.Features.Payments.TransactionConfirmation
                             column.Item().Text("Transaktion Detaljer:");
                             column.Item().Text($" - Total pris: {booking.TotalPrice}kr");
                             column.Item().Text(" - Datum: " + DateTime.Now.ToString("dd/MM/yyyy"));
+                            column.Item().Text($"- Boknings-ID: {booking.ReferenceNumber}");
 
                             column.Item().PaddingTop(5, Unit.Millimetre).Text("Biljetter:").FontSize(14).SemiBold();
 
