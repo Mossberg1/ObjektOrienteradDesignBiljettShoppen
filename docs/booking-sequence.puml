@@ -1,0 +1,24 @@
+@startuml
+
+title "Bokningsprocessen"
+
+== Användaren påbörjar en bokning ==
+
+actor User as "Användare"
+participant "CreateBookingHandler"
+participant "PayBookingHandler"
+participant "BookingTimer"
+database "databas"
+
+User -> "CreateBookingHandler" : Bookar biljetter
+"CreateBookingHandler" -> "BookingTimer" : Starta bokningstimer
+"CreateBookingHandler" -> "databas" : Markera biljetter som reserverade
+"CreateBookingHandler" -> User : Få ett referensenummer till bokningen
+
+== Användaren betalar bokningen ==
+User -> "PayBookingHandler" : Betala bokningen
+"PayBookingHandler" -> "BookingTimer" : Ta bort bokningen ur timern
+"PayBookingHandler" -> "databas" : Markera biljetterna som betalade
+"PayBookingHandler" -> User : Bekräfta betalningen
+
+@enduml
