@@ -1,8 +1,18 @@
 ﻿namespace Application.Services;
 
-
+/// <summary>
+/// Klass för att validera kreditkortsuppgifter.
+/// Med hjälp av Luhns algoritm. Om man vill 
+/// testa kortnummer under utveckling kan man 
+/// hämta testnummer från: https://docs.stripe.com/testing
+/// </summary>
 public class CardValidator
 {
+    /// <summary>
+    /// Validerar ett kortnummer med luhns algoritm.
+    /// </summary>
+    /// <param name="cardNumber">Kortnummer i sträng format</param>
+    /// <returns>true om kortnummret är korrekt, annars false.</returns>
     public static bool ValidateCardNumber(string cardNumber)
     {
         if (string.IsNullOrWhiteSpace(cardNumber))
@@ -16,6 +26,9 @@ public class CardValidator
         return CheckCard(cleaned);
     }
 
+    /// <summary>
+    /// Privat hjälpmetod för att kontrollera kortnummer med Luhns algoritm.
+    /// </summary>
     private static bool CheckCard(string cardNumber)
     {
         int sum = 0;
@@ -39,6 +52,11 @@ public class CardValidator
         return sum % 10 == 0;
     }
 
+    /// <summary>
+    /// Hämtar korttyp baserat på kortnummer.
+    /// </summary>
+    /// <param name="cardNumber">Kortnummret i sträng format</param>
+    /// <returns>Korttyp i sträng format</returns>
     public static string GetCardType(string cardNumber)
     {
         if (string.IsNullOrWhiteSpace(cardNumber))
@@ -63,6 +81,11 @@ public class CardValidator
         return "Okänd";
     }
 
+    /// <summary>
+    /// Kontrollerar om utgångsdatum är giltigt och inte har passerat.
+    /// </summary>
+    /// <param name="expiryDate">Utgångsdatum i sträng format 'MM/YY'</param>
+    /// <returns>true om valideringen har lyckats annars false.</returns>
     public static bool ValidateExpiryDate(string expiryDate)
     {
         if (string.IsNullOrWhiteSpace(expiryDate))
@@ -88,6 +111,9 @@ public class CardValidator
         return expiryDateTime >= DateTime.Now.Date;
     }
 
+    /// <summary>
+    /// Validerar CVC kod.
+    /// </summary>
     public static bool ValidateCvc(string cvc, string cardNumber = null)
     {
         if (string.IsNullOrWhiteSpace(cvc))

@@ -1,5 +1,8 @@
 namespace Application.Decorators.TicketDecorator;
 
+/// <summary>
+/// Bas klass för prisberäknings decorator.
+/// </summary>
 public abstract class TicketDecorator : ITicketComponent
 {
     protected readonly ITicketComponent _wrappedTicket;

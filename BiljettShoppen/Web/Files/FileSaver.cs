@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace Web.Files
 {
+    /// <summary>
+    /// Klass för att spara filer på servern i wwwroot mappen.
+    /// </summary>
     public static class FileSaver
     {
         private readonly static IWebHostEnvironment _env = WebApplication.CreateBuilder().Environment;

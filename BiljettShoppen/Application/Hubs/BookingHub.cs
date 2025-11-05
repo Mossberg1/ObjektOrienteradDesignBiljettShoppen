@@ -2,6 +2,10 @@
 
 namespace Application.Hubs
 {
+    /// <summary>
+    /// SignalR hub för att möjliggöra direkt kommunikation mellan server och klient
+    /// under bokningsprocessen utifall att bokningstiden har gått ut.
+    /// </summary>
     public class BookingHub : Hub
     {
         public async Task JoinBookingGroup(string bookingReference)

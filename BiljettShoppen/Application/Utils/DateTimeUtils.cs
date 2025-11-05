@@ -6,8 +6,6 @@
         /// Postgres kräver datum i UTC-format.
         /// Denna metod konverterar DateTime till UTC.
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
         public static DateTime ToUtc(DateTime value)
         {
             if (value.Kind == DateTimeKind.Utc)

@@ -18,6 +18,13 @@ using System.Threading.Tasks;
 
 namespace Application.BackgroundServices
 {
+    /// <summary>
+    /// Timer för att hålla reda på om en bokning inte har blivit
+    /// betald inom X antal minuter. Om bokningen blir betald bör
+    /// den tas bort från timern via RemoveBooking metoden.
+    /// Om man vill lägga till en bokning till timern används AddBooking metoden.
+    /// Denna timer kan även kommunicera direkt med klienter via SignalR hubben BookingHub.
+    /// </summary>
     public class BookingTimer : BackgroundService, IBookingTimer
     {
         private readonly ConcurrentDictionary<string, Booking> _bookings;

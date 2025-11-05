@@ -4,6 +4,9 @@ using Models.Entities;
 
 namespace DataAccess.Configurations;
 
+/// <summary>
+/// Databas konfiguration för Ticket tabellen.
+/// </summary>
 internal sealed class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 {
     public void Configure(EntityTypeBuilder<Ticket> builder)

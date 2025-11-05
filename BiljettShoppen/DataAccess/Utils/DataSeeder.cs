@@ -5,6 +5,10 @@ using Models.Enums;
 
 namespace DataAccess.Utils;
 
+/// <summary>
+/// Klass för att skapa fake data i databasen.
+/// För att enkelt kunna testa programmet under utveckling.
+/// </summary>
 public class DataSeeder
 {
     private readonly IApplicationDbContext _dbContext;

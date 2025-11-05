@@ -4,6 +4,9 @@ using Models.Entities;
 
 namespace DataAccess.Configurations;
 
+/// <summary>
+/// Databas konfiguration för Seat tabellen.
+/// </summary>
 internal sealed class SeatConfiguration : IEntityTypeConfiguration<Seat>
 {
     public void Configure(EntityTypeBuilder<Seat> builder)

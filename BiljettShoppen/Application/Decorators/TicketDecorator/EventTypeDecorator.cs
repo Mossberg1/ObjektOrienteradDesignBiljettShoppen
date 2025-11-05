@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Application.Decorators.TicketDecorator
 {
+    /// <summary>
+    /// Decorator för att beräkna priset baserat på evenemangstyp.
+    /// </summary>
     public class EventTypeDecorator : TicketDecorator
     {
         private readonly EventType _type;

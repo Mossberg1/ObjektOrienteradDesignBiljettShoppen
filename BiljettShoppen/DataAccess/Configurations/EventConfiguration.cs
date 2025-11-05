@@ -4,6 +4,9 @@ using Models.Entities;
 
 namespace DataAccess.Configurations;
 
+/// <summary>
+/// Databas konfiguration för Event tabellen.
+/// </summary>
 internal sealed class EventConfiguration : IEntityTypeConfiguration<Event>
 {
     public void Configure(EntityTypeBuilder<Event> builder)

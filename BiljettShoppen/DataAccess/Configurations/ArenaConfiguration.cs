@@ -4,6 +4,9 @@ using Models.Entities;
 
 namespace DataAccess.Configurations;
 
+/// <summary>
+/// Databas konfiguration för Arena tabellen.
+/// </summary>
 internal sealed class ArenaConfiguration : IEntityTypeConfiguration<Arena>
 {
     public void Configure(EntityTypeBuilder<Arena> builder)

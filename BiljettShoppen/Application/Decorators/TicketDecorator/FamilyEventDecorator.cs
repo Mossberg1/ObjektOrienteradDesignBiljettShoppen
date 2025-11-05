@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.Decorators.TicketDecorator
 {
+    /// <summary>
+    /// Decorator för att beräkna pris beroende på om evenemanget är ett familjeevenemang eller inte.
+    /// </summary>
     public class FamilyEventDecorator : TicketDecorator
     {
         private readonly bool _isFamilyEvent;

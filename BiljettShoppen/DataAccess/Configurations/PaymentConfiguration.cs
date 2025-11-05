@@ -4,6 +4,9 @@ using Models.Entities;
 
 namespace DataAccess.Configurations;
 
+/// <summary>
+/// Databas konfiguration för Payment tabellen
+/// </summary>
 internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 {
     public void Configure(EntityTypeBuilder<Payment> builder)

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.Decorators.TicketDecorator
 {
+    /// <summary>
+    /// Decorator för att beräkna pris beroende på tid kvar till evenemanget.
+    /// </summary>
     public class TimeDecorator : TicketDecorator
     {
         private readonly DateTime _eventStartDate;
