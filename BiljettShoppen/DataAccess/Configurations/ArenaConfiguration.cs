@@ -23,6 +23,11 @@ internal sealed class ArenaConfiguration : IEntityTypeConfiguration<Arena>
             .HasForeignKey(e => e.ArenaId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasMany(a => a.LogesNavigation)
+            .WithOne(l => l.ArenaNavigation)
+            .HasForeignKey(l => l.ArenaId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         // Constraints
         builder.ToTable(tb =>
         {

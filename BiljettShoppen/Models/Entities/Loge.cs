@@ -1,4 +1,5 @@
 ﻿using Models.Entities.Base;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models.Entities
 {
@@ -17,6 +18,11 @@ namespace Models.Entities
                 _numberOfPeople = value;
             }
         }
+
+        public int ArenaId { get; set; }
+
+        [ForeignKey(nameof(ArenaId))]
+        public Arena ArenaNavigation { get; set; }
 
         public Loge() { }
 
