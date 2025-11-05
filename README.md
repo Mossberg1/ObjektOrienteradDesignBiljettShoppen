@@ -22,6 +22,10 @@ docker compose up -d
 ```bash
 dotnet ef database update --project BiljettShoppen/DataAccess
 ```
+Detta kommando genererar ett felmedelande trotts att objekten skapats i databasen och att allt fungerar som det ska. Skulle ef core inte vara intsallerat på din dator går det att installera med: 
+```bash
+dotnet tool install --global dotnet-ef
+```
 
 ### Kör projektet
 ```
