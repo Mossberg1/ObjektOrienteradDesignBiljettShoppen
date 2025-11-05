@@ -39,7 +39,7 @@ namespace Application.Features.Payments.GenerateInvoice
                         {
                             column.Item().Text("Det här är din faktura för bokningen.");
                             column.Item().Text("Bokningsdetaljer:");
-                            column.Item().Text($" - Boknings-ID: {booking.Id}");
+                            column.Item().Text($" - Boknings-ID: {booking.ReferenceNumber}");
                             column.Item().Text($" - Total pris: {booking.TotalPrice}kr");
                             column.Item().Text(" - Datum: " + DateTime.Now.ToString("dd/MM/yyyy"));
                             column.Item().Text(" - Förfallodag: " + DateTime.Now.AddDays(14).ToString("dd/MM/yyyy"));
